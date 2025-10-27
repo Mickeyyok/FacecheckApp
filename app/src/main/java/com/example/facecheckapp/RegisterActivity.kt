@@ -48,7 +48,7 @@ class RegisterActivity : AppCompatActivity() {
             Toast.makeText(this, "สมัครสมาชิกสำเร็จ!", Toast.LENGTH_SHORT).show()
 
             // กลับไปหน้า MainActivity
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, ConsentActivity::class.java)
             startActivity(intent)
             finish()
         }
