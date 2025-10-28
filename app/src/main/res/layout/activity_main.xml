@@ -32,6 +32,7 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:background="@drawable/btn_login_bg"
+        android:textStyle="bold"
         android:text="เข้าสู่ระบบ"
         android:textColor="@android:color/black" />
 
@@ -41,6 +42,7 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:background="@drawable/btn_login_bg"
+        android:textStyle="bold"
         android:layout_marginTop="16dp"
         android:textColor="@android:color/black" />
 
