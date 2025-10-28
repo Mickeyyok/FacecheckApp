@@ -1,0 +1,77 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient"
+    tools:context=".RegScanActivity">
+
+    <!-- 🔵 วงกลมกล้องพร้อมขอบ -->
+    <FrameLayout
+        android:id="@+id/cameraCircleContainer"
+        android:layout_width="280dp"
+        android:layout_height="280dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="140dp"
+        android:background="@drawable/circle_mask"
+        android:clipToOutline="true">
+
+        <!-- 🎥 กล้อง -->
+        <androidx.camera.view.PreviewView
+            android:id="@+id/previewView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:clipToOutline="true" />
+
+        <!-- 🔘 ขอบวงกลม -->
+        <View
+            android:id="@+id/borderCircle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/circle_red"
+            android:alpha="0.8" />
+    </FrameLayout>
+
+
+    <!-- 🔄 ข้อความสถานะ -->
+    <TextView
+        android:id="@+id/faceStatusText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cameraCircleContainer"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="กำลังสแกนใบหน้าเพื่อลงทะเบียน..."
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        android:textStyle="bold" />
+
+    <ProgressBar
+        android:id="@+id/loadingBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/faceStatusText"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+        android:indeterminate="true" />
+
+
+    <!-- 🔘 ปุ่มลงทะเบียน -->
+    <Button
+        android:id="@+id/btnRegister"
+        android:layout_width="200dp"
+        android:layout_height="55dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="90dp"
+        android:text="ลงทะเบียน"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:background="@drawable/btn_primary" />
+
+
+
+</RelativeLayout>

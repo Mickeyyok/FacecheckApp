@@ -2,6 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- ✅ สิทธิ์ที่จำเป็น -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <!-- ✅ ระบุว่าอุปกรณ์นี้ต้องมีกล้อง -->
+    <uses-feature android:name="android.hardware.camera.any" />
+    <uses-feature android:name="android.hardware.camera.front" android:required="false" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -11,20 +21,29 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FacecheckApp">
+
+        <!-- ✅ หน้าเริ่มต้นของแอป -->
         <activity
             android:name=".MainActivity"
-
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".ConsentActivity"/>
 
+        <!-- ✅ หน้าล็อกอิน -->
+        <activity android:name=".LoginActivity" />
+
+        <!-- ✅ หน้าลงทะเบียนใบหน้า (ถ่ายรูป/บันทึกข้อมูลใบหน้า) -->
+        <activity android:name=".RegisterActivity" />
+
+        <!-- ✅ หน้ายินยอมการใช้งาน / นโยบาย -->
+        <activity android:name=".ConsentActivity" />
+
+        <activity android:name=".SuccessActivity" />
+
+        <activity android:name=".RegScanActivity" />
 
     </application>
 

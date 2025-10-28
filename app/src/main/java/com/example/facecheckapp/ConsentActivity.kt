@@ -21,8 +21,8 @@ class ConsentActivity : AppCompatActivity() {
             if (checkAgree.isChecked && checkUnderstand.isChecked) {
                 Toast.makeText(this, "ขอบคุณที่ยินยอม", Toast.LENGTH_SHORT).show()
 
-                // เปิดหน้าใหม่ (ถัดจาก Consent)
-                val intent = Intent(this, MainActivity::class.java)
+                // ✅ เปิดหน้า RegScanActivity หลังจากยินยอม
+                val intent = Intent(this, RegScanActivity::class.java)
                 startActivity(intent)
                 finish()
             } else {
@@ -31,7 +31,7 @@ class ConsentActivity : AppCompatActivity() {
         }
 
         btnCancel.setOnClickListener {
-            finish() // ปิดหน้ากลับไปหน้าก่อนหน้า
+            finish() // ปิดหน้านี้ กลับหน้าก่อนหน้า
         }
     }
 }
