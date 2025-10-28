@@ -72,8 +72,8 @@
             android:layout_height="50dp"
             android:text="ยอมรับและดำเนินการต่อ"
             android:textStyle="bold"
-            android:textColor="@android:color/black"
-            android:background="@drawable/btn_primary"
+            android:backgroundTint="#000080"
+            android:textColor="@color/white"
             android:layout_marginTop="16dp" />
 
         <Button
@@ -82,8 +82,8 @@
             android:layout_height="50dp"
             android:text="ยกเลิก"
             android:textStyle="bold"
-            android:textColor="@android:color/black"
-            android:background="@drawable/btn_primary"
+            android:backgroundTint="#000080"
+            android:textColor="@color/white"
             android:layout_marginTop="8dp" />
 
 

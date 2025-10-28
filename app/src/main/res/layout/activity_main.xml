@@ -31,19 +31,22 @@
         android:id="@+id/btnLogin"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/btn_login_bg"
         android:textStyle="bold"
         android:text="เข้าสู่ระบบ"
-        android:textColor="@android:color/black" />
+        android:textColor="@android:color/white"
+        android:backgroundTint="#000080"
+
+        />
 
     <Button
         android:id="@+id/btnRegister"
         android:text="ลงทะเบียน"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/btn_login_bg"
+        android:backgroundTint="#000080"
+        android:textColor="@color/white"
         android:textStyle="bold"
         android:layout_marginTop="16dp"
-        android:textColor="@android:color/black" />
 
+         />
 </LinearLayout>
