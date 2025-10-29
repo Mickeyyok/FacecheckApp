@@ -1,10 +1,9 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@android:color/white"
-    tools:context=".AddSubjectActivity">
+    >
 
     <!-- 🔹 ส่วนหัว (Gradient ฟ้า→น้ำเงิน) -->
     <RelativeLayout
@@ -13,15 +12,15 @@
         android:background="@drawable/bg_gradient">
 
         <TextView
-            android:id="@+id/titleAddSubject"
+            android:id="@+id/titleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="เพิ่มวิชา"
             android:textColor="@android:color/white"
-            android:textSize="22sp"
+            android:textSize="24sp"
             android:textStyle="bold"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="35dp" />
 
         <ImageView
             android:id="@+id/btnNotification"
@@ -29,7 +28,7 @@
             android:layout_height="30dp"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="25dp"
-            android:layout_marginTop="45dp"
+            android:layout_marginTop="35dp"
             android:src="@drawable/ic_notifications"
             android:tint="@android:color/white" />
     </RelativeLayout>
@@ -77,7 +76,7 @@
             android:text="เข้าร่วมวิชา"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:background="@drawable/btn_primary"
+            android:backgroundTint="#000080"
             android:textColor="@android:color/white" />
 
     </LinearLayout>
@@ -85,4 +84,4 @@
     <!-- ⚙️ Bottom Navigation -->
     <include layout="@layout/bottom_navbar" />
 
-</LinearLayout>
+</RelativeLayout>

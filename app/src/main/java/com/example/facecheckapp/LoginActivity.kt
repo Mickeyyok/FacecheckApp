@@ -2,7 +2,6 @@ package com.example.facecheckapp
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.InputType
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 
@@ -14,11 +13,8 @@ class LoginActivity : AppCompatActivity() {
 
         val etUsername = findViewById<EditText>(R.id.etUsername)
         val etPassword = findViewById<EditText>(R.id.etPassword)
-
         val btnLogin = findViewById<Button>(R.id.btnLogin)
         val btnBack = findViewById<Button>(R.id.btnBack)
-
-
 
         // ✅ ปุ่มเข้าสู่ระบบ
         btnLogin.setOnClickListener {
@@ -30,12 +26,14 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // ตรวจสอบรหัส (ตัวอย่างจำลอง)
+            // 🔐 ตัวอย่างจำลองการเข้าสู่ระบบ
             if (username == "admin" && password == "1234") {
                 Toast.makeText(this, "เข้าสู่ระบบสำเร็จ", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, MainActivity::class.java)
+
+                // 👉 ไปหน้า HomePageActivity แทน MainActivity
+                val intent = Intent(this, HomepageActivity::class.java)
                 startActivity(intent)
-                finish()
+
             } else {
                 Toast.makeText(this, "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง", Toast.LENGTH_SHORT).show()
             }
