@@ -1,0 +1,8 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@android:color/white" /> <!-- พื้นขาว -->
+    <stroke
+        android:width="2dp"
+        android:color="#3F51B5" /> <!-- สีกรอบ -->
+    <corners android:radius="30dp" /> <!-- มุมโค้ง -->
+</shape>

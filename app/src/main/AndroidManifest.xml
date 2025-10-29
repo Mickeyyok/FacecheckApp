@@ -45,6 +45,9 @@
 
         <activity android:name=".RegScanActivity" />
 
+        <activity android:name=".HomePageActivity" />
+
+
     </application>
 
 </manifest>

@@ -69,8 +69,9 @@
         android:text="ลงทะเบียน"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:background="@drawable/btn_primary" />
+        android:backgroundTint="#000080"
+        android:textColor="@color/white"
+    />
 
 
 

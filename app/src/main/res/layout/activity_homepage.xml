@@ -1,0 +1,209 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    >
+
+    <!-- 🔹 ส่วนหัว -->
+    <RelativeLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        android:background="@drawable/bg_gradient">
+
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="หน้าหลัก"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="35dp" />
+
+        <ImageView
+            android:id="@+id/btnNotification"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="25dp"
+            android:layout_marginTop="35dp"
+            android:src="@drawable/ic_notifications"
+            android:tint="@android:color/white" />
+    </RelativeLayout>
+
+    <!-- 🔸 เนื้อหา (เว้นที่ด้านล่างไว้สำหรับ Bottom Bar) -->
+    <ScrollView
+        android:id="@+id/scrollContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/headerLayout"
+        android:layout_above="@id/bottomBar"
+        android:background="@android:color/white"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- 🧾 ช่องเพิ่มรหัสวิชา -->
+            <EditText
+                android:id="@+id/inputSubjectCode"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="30dp"
+                android:hint="*กรุณาเพิ่มรหัสวิชา"
+                android:background="@drawable/input_box"
+                android:paddingStart="15dp"
+                android:textSize="16sp"
+                android:inputType="text" />
+
+            <!-- ✅ ปุ่มเช็กชื่อ -->
+            <Button
+                android:id="@+id/btnCheckin"
+                android:layout_width="250dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="50dp"
+                android:text="เช็กชื่อ"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:backgroundTint="#000080"
+                android:textColor="@android:color/white" />
+
+            <!-- ➕ ปุ่มเพิ่มรายวิชา -->
+            <Button
+                android:id="@+id/btnAddSubject"
+                android:layout_width="250dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="15dp"
+                android:text="เพิ่มรายวิชา"
+                android:textSize="18sp"
+                android:textStyle="bold"
+
+                android:textColor="@android:color/black" />
+
+            <!-- 📊 หัวข้อสรุป -->
+            <TextView
+                android:id="@+id/summaryTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:text="สรุปการเข้าเรียน"
+                android:textColor="@android:color/black"
+                android:textSize="19dp"
+                android:textStyle="bold" />
+
+            <!-- 🧮 ตารางสรุป -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <LinearLayout
+                        android:layout_width="120dp"
+                        android:layout_height="80dp"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/box_outline"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="ตรงเวลา"
+                            android:textSize="15sp"
+                            android:textColor="@android:color/black" />
+                        <TextView
+                            android:id="@+id/tvOnTime"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="-"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="120dp"
+                        android:layout_height="80dp"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/box_outline"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="มาสาย"
+                            android:textSize="15sp"
+                            android:textColor="@android:color/black" />
+                        <TextView
+                            android:id="@+id/tvLate"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="-"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <LinearLayout
+                        android:layout_width="120dp"
+                        android:layout_height="80dp"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/box_outline"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="ขาด"
+                            android:textSize="15sp"
+                            android:textColor="@android:color/black" />
+                        <TextView
+                            android:id="@+id/tvAbsent"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="-"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- ⚙️ Bottom Navigation -->
+    <include
+        android:id="@+id/bottomBar"
+        layout="@layout/bottom_navbar"
+        android:layout_alignParentBottom="true" />
+
+</RelativeLayout>
