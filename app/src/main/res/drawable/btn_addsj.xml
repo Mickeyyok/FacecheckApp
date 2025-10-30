@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- สีพื้นหลัง (โปร่งใสหรือสีขาว) -->
+    <solid android:color="@android:color/transparent" />
+
+    <!-- ขอบสีม่วง -->
+    <stroke
+        android:width="2dp"
+        android:color="#6B4FBF" />
+
+    <!-- มุมโค้งมน -->
+    <corners android:radius="25dp" />
+
+</shape>

@@ -78,12 +78,14 @@
             <Button
                 android:id="@+id/btnAddSubject"
                 android:layout_width="250dp"
-                android:layout_height="55dp"
-                android:layout_marginTop="15dp"
+                android:layout_height="47dp"
+                android:layout_marginTop="6dp"
                 android:text="เพิ่มรายวิชา"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"
+                android:background="@drawable/btn_addsj"
+                android:stateListAnimator="@null" />
 
             <!-- 📊 หัวข้อสรุป -->
             <TextView
