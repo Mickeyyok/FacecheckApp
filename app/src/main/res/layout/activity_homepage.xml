@@ -31,7 +31,8 @@
             android:layout_marginEnd="25dp"
             android:layout_marginTop="35dp"
             android:src="@drawable/ic_notifications"
-            android:tint="@android:color/white" />
+            android:tint="@android:color/white"
+            />
     </RelativeLayout>
 
     <!-- 🔸 เนื้อหา (เว้นที่ด้านล่างไว้สำหรับ Bottom Bar) -->
