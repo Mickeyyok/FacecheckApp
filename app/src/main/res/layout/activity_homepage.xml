@@ -31,8 +31,7 @@
             android:layout_marginEnd="25dp"
             android:layout_marginTop="35dp"
             android:src="@drawable/ic_notifications"
-            android:tint="@android:color/white"
-            />
+            android:tint="@android:color/white" />
     </RelativeLayout>
 
     <!-- 🔸 เนื้อหา (เว้นที่ด้านล่างไว้สำหรับ Bottom Bar) -->
@@ -79,8 +78,8 @@
             <Button
                 android:id="@+id/btnAddSubject"
                 android:layout_width="250dp"
-                android:layout_height="47dp"
-                android:layout_marginTop="6dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="15dp"
                 android:text="เพิ่มรายวิชา"
                 android:textSize="18sp"
                 android:textStyle="bold"
