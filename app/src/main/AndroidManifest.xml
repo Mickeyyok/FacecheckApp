@@ -47,6 +47,11 @@
 
         <activity android:name=".HomepageActivity" />
 
+        <activity android:name=".AddSubjectActivity" />
+
+        <activity android:name=".subjectsActivity" />
+
+
 
     </application>
 

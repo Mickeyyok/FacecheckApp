@@ -27,7 +27,7 @@ class LoginActivity : AppCompatActivity() {
             }
 
             // 🔐 ตัวอย่างจำลองการเข้าสู่ระบบ
-            if (username == "admin" && password == "1234") {
+            if (username == "1" && password == "1") {
                 Toast.makeText(this, "เข้าสู่ระบบสำเร็จ", Toast.LENGTH_SHORT).show()
 
                 // 👉 ไปหน้า HomePageActivity แทน MainActivity

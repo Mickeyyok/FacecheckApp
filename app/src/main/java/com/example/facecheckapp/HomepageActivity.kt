@@ -12,6 +12,11 @@ class HomepageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_homepage)
 
+        val btnaddsubject = findViewById<Button>(R.id.btnAddSubject)
 
+        btnaddsubject.setOnClickListener {
+            val intent = Intent(this, AddSubjectActivity::class.java)
+            startActivity(intent)
+        }
         }
     }
