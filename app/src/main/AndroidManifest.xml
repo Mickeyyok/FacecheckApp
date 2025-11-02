@@ -25,7 +25,7 @@
 
         <!-- ✅ หน้าเริ่มต้นของแอป -->
         <activity
-            android:name=".MainActivity"
+            android:name=".HistoryActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -57,6 +57,7 @@
         <activity android:name=".CreaetimeActivity" />
 
         <activity android:name=".ClassDetailActivity" />
+
 
 
 
