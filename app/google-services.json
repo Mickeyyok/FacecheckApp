@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "252009193241",
+    "project_id": "facecheckapp-dea12",
+    "storage_bucket": "facecheckapp-dea12.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:252009193241:android:fee57d8645642de234ef88",
+        "android_client_info": {
+          "package_name": "com.example.facecheckapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZefa6UV_msNQVDfFpBgRdRbxNwlvytQs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
