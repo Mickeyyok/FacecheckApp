@@ -24,7 +24,7 @@
 
         <!-- ✅ หน้าเริ่มต้นของแอป -->
         <activity
-            android:name=".MainActivity"
+            android:name=".HistoryActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -45,7 +45,13 @@
 
         <activity android:name=".RegScanActivity" />
 
-        <activity android:name=".HomePageActivity" />
+        <activity android:name=".HomepageActivity" />
+
+        <activity android:name=".AddSubjectActivity" />
+
+        <activity android:name=".subjectsActivity" />
+
+
 
 
     </application>
