@@ -12,77 +12,100 @@
         android:gravity="center_horizontal"
         android:padding="24dp">
 
-        <!-- Top Spacer -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="60dp" />
-
-        <!-- Title -->
+        <!-- หัวข้อ -->
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ลงทะเบียน"
+            android:text="สมัครสมาชิก"
             android:textColor="@android:color/white"
-            android:textSize="32sp"
-            android:textStyle="bold" />
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:layout_marginTop="50dp" />
 
-        <!-- Required fields note -->
-        <TextView
-            android:id="@+id/tv_required"
-            android:layout_width="match_parent"
+        <!-- 🔹 เลือกบทบาท -->
+        <RadioGroup
+            android:id="@+id/role_group"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="*ของมหาวิทยาลัย"
-            android:textColor="@android:color/black"
-            android:textSize="12sp"
-            android:layout_marginTop="1dp"
-            android:gravity="end"
-            android:paddingEnd="16dp" />
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp">
 
+            <RadioButton
+                android:id="@+id/rb_student"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="นักศึกษา"
+                android:checked="true"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
 
+            <RadioButton
+                android:id="@+id/rb_teacher"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="อาจารย์"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:layout_marginStart="16dp" />
+        </RadioGroup>
 
-        <!-- Input: Username / Citizen ID -->
+        <!-- 🔹 รหัสนักศึกษา -->
         <EditText
             android:id="@+id/et_userid"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="16dp"
             android:hint="รหัสนักศึกษา"
-            android:inputType="text"
+            android:inputType="number"
             android:background="@drawable/edittext_bg"
             android:gravity="center"
             android:textColor="@android:color/black"
             android:textColorHint="#80000000"
             android:textSize="16sp" />
 
-        <!-- Input: Full name -->
+        <!-- 🔹 รหัสอาจารย์ -->
+        <EditText
+            android:id="@+id/et_teacher_id"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="16dp"
+            android:hint="รหัสอาจารย์ (5 หลัก)"
+            android:inputType="number"
+            android:background="@drawable/edittext_bg"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            android:textColorHint="#80000000"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
+        <!-- 🔹 ชื่อ -->
         <EditText
             android:id="@+id/et_name"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="16dp"
-            android:hint="ชื่อ "
-            android:inputType="textPersonName"
+            android:hint="ชื่อ"
             android:background="@drawable/edittext_bg"
             android:gravity="center"
             android:textColor="@android:color/black"
             android:textColorHint="#80000000"
             android:textSize="16sp" />
+
+        <!-- 🔹 นามสกุล -->
         <EditText
             android:id="@+id/et_Lastname"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_marginTop="16dp"
             android:hint="นามสกุล"
             android:background="@drawable/edittext_bg"
-            android:inputType="textPersonName"
-            android:padding="16dp"
-            android:textAlignment="center"
+            android:gravity="center"
             android:textColor="@android:color/black"
             android:textColorHint="#80000000"
             android:textSize="16sp" />
 
-        <!-- Input: Password -->
+        <!-- 🔹 รหัสผ่าน -->
         <EditText
             android:id="@+id/et_password"
             android:layout_width="match_parent"
@@ -96,7 +119,7 @@
             android:textColorHint="#80000000"
             android:textSize="16sp" />
 
-        <!-- Input: Confirm Password -->
+        <!-- 🔹 ยืนยันรหัสผ่าน -->
         <EditText
             android:id="@+id/et_confirm_password"
             android:layout_width="match_parent"
@@ -110,9 +133,7 @@
             android:textColorHint="#80000000"
             android:textSize="16sp" />
 
-        <!-- Register Button -->
-
-        <!-- Back Button -->
+        <!-- ปุ่มลงทะเบียน -->
         <Button
             android:id="@+id/btn_register"
             android:layout_width="match_parent"
@@ -120,23 +141,18 @@
             android:layout_marginTop="32dp"
             android:text="ลงทะเบียน"
             android:backgroundTint="#000080"
-            android:textColor="@color/white"
+            android:textColor="@android:color/white"
             android:textStyle="bold" />
 
+        <!-- ปุ่มย้อนกลับ -->
         <Button
             android:id="@+id/btn_back"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:backgroundTint="#000080"
-            android:textColor="@color/white"
-            android:textStyle="bold"
             android:text="ย้อนกลับ"
-             />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="32dp" />
-
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
     </LinearLayout>
 </ScrollView>

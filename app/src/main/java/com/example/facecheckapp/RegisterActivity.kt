@@ -18,7 +18,10 @@ class RegisterActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        val etUserid = findViewById<EditText>(R.id.et_userid)
+        // ✳️ผูกตัวแปรกับ
+        val rbStudent = findViewById<RadioButton>(R.id.rb_student)
+        val rbTeacher = findViewById<RadioButton>(R.id.rb_teacher)
+        val etUserId = findViewById<EditText>(R.id.et_userid)
         val etName = findViewById<EditText>(R.id.et_name)
         val etLastname = findViewById<EditText>(R.id.et_Lastname)
         val etPassword = findViewById<EditText>(R.id.et_password)
@@ -26,14 +29,16 @@ class RegisterActivity : AppCompatActivity() {
         val btnRegister = findViewById<Button>(R.id.btn_register)
         val btnBack = findViewById<Button>(R.id.btn_back)
 
+        // 🔹 ปุ่มสมัครสมาชิก
         btnRegister.setOnClickListener {
-            val studentId = etUserid.text.toString().trim()
+            val userId = etUserId.text.toString().trim()
             val firstName = etName.text.toString().trim()
             val lastName = etLastname.text.toString().trim()
             val password = etPassword.text.toString().trim()
             val confirmPassword = etConfirmPassword.text.toString().trim()
 
-            if (studentId.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || password.isEmpty()) {
+            // ✅ ตรวจว่ากรอกครบหรือไม่
+            if (userId.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "กรุณากรอกข้อมูลให้ครบ", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -43,9 +48,23 @@ class RegisterActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val email = "$studentId@facecheck.com"
+            val isTeacher = rbTeacher.isChecked
+            val email = "$userId@facecheck.com"
 
-            // 🔹 ตรวจสอบว่ามีบัญชีอยู่แล้วหรือไม่
+            // ✅ ตรวจรูปแบบรหัส
+            if (isTeacher) {
+                if (userId.length != 5 || !userId.all { it.isDigit() }) {
+                    Toast.makeText(this, "รหัสอาจารย์ต้องเป็นตัวเลข 5 หลักเท่านั้น", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+            } else {
+                if (userId.length != 13 || !userId.all { it.isDigit() }) {
+                    Toast.makeText(this, "รหัสนักศึกษาต้องเป็นตัวเลข 13 หลักเท่านั้น", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+            }
+
+            // ✅ ตรวจว่ามีบัญชีอยู่แล้วหรือไม่
             auth.fetchSignInMethodsForEmail(email).addOnSuccessListener { result ->
                 if (result.signInMethods?.isNotEmpty() == true) {
                     Toast.makeText(this, "มีบัญชีนี้อยู่แล้ว กรุณาเข้าสู่ระบบ", Toast.LENGTH_SHORT).show()
@@ -54,19 +73,29 @@ class RegisterActivity : AppCompatActivity() {
                     auth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
-                                val userId = auth.currentUser?.uid ?: ""
+                                val userUid = auth.currentUser?.uid ?: return@addOnCompleteListener
                                 val user = mapOf(
-                                    "student_id" to studentId,
+                                    "id" to userId,
                                     "first_name" to firstName,
-                                    "last_name" to lastName
+                                    "last_name" to lastName,
+                                    "role" to if (isTeacher) "teacher" else "student"
                                 )
-                                database.child(userId).setValue(user)
 
-                                Toast.makeText(this, "สมัครสมาชิกสำเร็จ!", Toast.LENGTH_SHORT).show()
-
-                                // 🚀 ไปหน้า RegScanActivity
-                                startActivity(Intent(this, ConsentActivity::class.java))
-                                finish()
+                                // ✅ บันทึกข้อมูลลง Firebase Database
+                                database.child(userUid).setValue(user)
+                                    .addOnSuccessListener {
+                                        if (isTeacher) {
+                                            Toast.makeText(this, "สมัครอาจารย์สำเร็จ! กรุณาเข้าสู่ระบบ", Toast.LENGTH_LONG).show()
+                                            startActivity(Intent(this, MainActivity::class.java))
+                                        } else {
+                                            Toast.makeText(this, "สมัครนักศึกษาสำเร็จ! ไปสแกนใบหน้าเลย", Toast.LENGTH_SHORT).show()
+                                            startActivity(Intent(this, ConsentActivity::class.java))
+                                        }
+                                        finish()
+                                    }
+                                    .addOnFailureListener {
+                                        Toast.makeText(this, "บันทึกข้อมูลไม่สำเร็จ: ${it.message}", Toast.LENGTH_LONG).show()
+                                    }
                             } else {
                                 Toast.makeText(this, "เกิดข้อผิดพลาด: ${task.exception?.message}", Toast.LENGTH_LONG).show()
                             }
@@ -75,6 +104,7 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
 
+        // 🔙 ปุ่มย้อนกลับ
         btnBack.setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
             finish()

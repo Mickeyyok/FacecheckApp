@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="@drawable/bg_gradient"
+    tools:context=".TeacherHomeActivity" >
+
+
+    <!-- ปุ่มสร้างคลาส -->
+    <Button
+        android:id="@+id/btn_create_class"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_add"
+        android:text="สร้างคลาส"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:padding="10dp"
+        android:backgroundTint="#FFFFFF"
+        android:textColor="#000000"
+        android:drawablePadding="8dp"
+        android:elevation="4dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="10dp" />
+
+    <!-- หัวข้อ -->
+    <TextView
+        android:id="@+id/tv_my_classes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="คลาสของฉัน"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_marginTop="10dp" />
+
+    <!-- รายการคลาส -->
+    <ListView
+        android:id="@+id/list_classes"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:divider="@android:color/transparent" />
+
+</LinearLayout>
