@@ -68,5 +68,5 @@ dependencies {
     implementation("com.google.firebase:firebase-database-ktx")
 
     // (ถ้าภายหลังอยากเก็บไฟล์ภาพ)
-    // implementation("com.google.firebase:firebase-storage-ktx")
+    implementation("com.google.firebase:firebase-storage-ktx")
 }

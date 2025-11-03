@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+
     <!-- ✅ ระบุว่าอุปกรณ์นี้ต้องมีกล้อง -->
     <uses-feature android:name="android.hardware.camera.any" />
     <uses-feature android:name="android.hardware.camera.front" android:required="false" />
@@ -49,8 +50,12 @@
 
         <activity android:name=".AddSubjectActivity" />
 
-
         <activity android:name=".TeacherHomeActivity" />
+
+        <activity android:name=".CreaetimeActivity" />
+
+        <activity android:name=".CreateClassActivity" />
+
 
 
 

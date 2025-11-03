@@ -1,48 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:padding="20dp"
     android:background="@drawable/bg_gradient"
-    tools:context=".TeacherHomeActivity" >
+    tools:context=".MyClassActivity">
 
-
-    <!-- ปุ่มสร้างคลาส -->
-    <Button
-        android:id="@+id/btn_create_class"
+    <!-- 🔹 ส่วนหัว -->
+    <RelativeLayout
+        android:id="@+id/headerLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/ic_add"
-        android:text="สร้างคลาส"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:padding="10dp"
-        android:backgroundTint="#FFFFFF"
-        android:textColor="#000000"
-        android:drawablePadding="8dp"
-        android:elevation="4dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="10dp" />
+        android:layout_height="180dp"
+        android:background="@drawable/bg_gradient"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="40dp">
 
-    <!-- หัวข้อ -->
-    <TextView
-        android:id="@+id/tv_my_classes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="คลาสของฉัน"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:layout_marginTop="10dp" />
+        <!-- ปุ่ม "สร้างคลาส" -->
+        <Button
+            android:id="@+id/btn_create_class"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_add"
+            android:text="สร้างคลาส"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:backgroundTint="#FFFFFF"
+            android:textColor="#000000"
+            android:drawablePadding="8dp"
+            android:elevation="4dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="10dp" />
+    </RelativeLayout>
 
-    <!-- รายการคลาส -->
-    <ListView
-        android:id="@+id/list_classes"
+    <!-- 🔸 พื้นหลังโค้งด้านล่าง -->
+    <LinearLayout
+        android:id="@+id/classSection"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="10dp"
-        android:divider="@android:color/transparent" />
+        android:orientation="vertical"
+        android:background="@drawable/bg_white_rounded_top"
+        android:layout_below="@id/headerLayout"
+        android:paddingTop="16dp"
+        android:paddingHorizontal="16dp"
+        android:layout_above="@id/bottomBar"
+        android:elevation="6dp">
 
-</LinearLayout>
+        <!-- หัวข้อ “คลาสของฉัน” -->
+        <TextView
+            android:id="@+id/tvMyClassTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="คลาสของฉัน"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="4dp" />
+
+        <!-- รายการคลาส -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerClasses"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="8dp" />
+    </LinearLayout>
+
+    <!-- ⚙️ Bottom Navigation -->
+    <include
+        android:id="@+id/bottomBar"
+        layout="@layout/bottom_navbar"
+        android:layout_alignParentBottom="true" />
+
+</RelativeLayout>
