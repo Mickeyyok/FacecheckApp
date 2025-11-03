@@ -3,6 +3,7 @@ package com.example.facecheckapp
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
@@ -12,15 +13,20 @@ import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
+import java.io.ByteArrayOutputStream
 
 class RegScanActivity : AppCompatActivity() {
 
@@ -29,13 +35,22 @@ class RegScanActivity : AppCompatActivity() {
     private lateinit var borderCircle: View
     private lateinit var btnRegister: Button
     private lateinit var loadingBar: ProgressBar
+
     private var isFaceDetected = false
+
+    // ✅ Firebase references
+    private lateinit var storageRef: StorageReference
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_regscan)
 
-        // 🔹 ผูกตัวแปรกับ XML
+        // ✅ Initialize Firebase
+        storageRef = FirebaseStorage.getInstance().reference
+        auth = FirebaseAuth.getInstance()
+
+        // ✅ Bind UI elements
         previewView = findViewById(R.id.previewView)
         faceStatusText = findViewById(R.id.faceStatusText)
         borderCircle = findViewById(R.id.borderCircle)
@@ -54,17 +69,13 @@ class RegScanActivity : AppCompatActivity() {
         // 🚀 ปุ่มลงทะเบียน
         btnRegister.setOnClickListener {
             if (isFaceDetected) {
-                faceStatusText.text = "✅ ตรวจพบใบหน้าแล้ว กำลังวิเคราะห์..."
+                faceStatusText.text = "✅ ตรวจพบใบหน้าแล้ว กำลังบันทึก..."
                 faceStatusText.setBackgroundColor(Color.parseColor("#4CAF50"))
                 loadingBar.visibility = View.VISIBLE
 
-                // ⏳ รอ 3 วิก่อนเปลี่ยนหน้า
                 Handler(Looper.getMainLooper()).postDelayed({
-                    loadingBar.visibility = View.GONE
-                    val intent = Intent(this, SuccessActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                }, 3000)
+                    captureAndUploadFace()
+                }, 1500)
             } else {
                 faceStatusText.text = "❌ โปรดให้กล้องตรวจจับใบหน้าก่อนลงทะเบียน"
                 faceStatusText.setBackgroundColor(Color.parseColor("#F44336"))
@@ -145,6 +156,46 @@ class RegScanActivity : AppCompatActivity() {
             }
     }
 
+    // 📸 ถ่ายภาพและอัปโหลดขึ้น Firebase Storage
+    private fun captureAndUploadFace() {
+        val bitmap = previewView.bitmap
+        if (bitmap == null) {
+            Toast.makeText(this, "ไม่สามารถจับภาพได้", Toast.LENGTH_SHORT).show()
+            loadingBar.visibility = View.GONE
+            return
+        }
+
+        val baos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos)
+        val data = baos.toByteArray()
+
+        val userId = auth.currentUser?.uid
+        if (userId == null) {
+            Toast.makeText(this, "ไม่พบผู้ใช้ที่ล็อกอินอยู่", Toast.LENGTH_SHORT).show()
+            loadingBar.visibility = View.GONE
+            return
+        }
+
+        val faceRef = storageRef.child("faces/$userId.jpg")
+
+        faceRef.putBytes(data)
+            .addOnSuccessListener {
+                Log.d("FaceCheck", "✅ บันทึกภาพใบหน้าสำเร็จ")
+                Toast.makeText(this, "บันทึกใบหน้าสำเร็จ!", Toast.LENGTH_SHORT).show()
+                loadingBar.visibility = View.GONE
+
+                // 👉 ไปหน้า HomepageActivity
+                val intent = Intent(this, HomepageActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+            .addOnFailureListener { e ->
+                Log.e("FaceCheck", "❌ อัปโหลดภาพล้มเหลว: ${e.message}")
+                Toast.makeText(this, "เกิดข้อผิดพลาดในการอัปโหลดภาพ: ${e.message}", Toast.LENGTH_SHORT).show()
+                loadingBar.visibility = View.GONE
+            }
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -157,6 +208,7 @@ class RegScanActivity : AppCompatActivity() {
             startCamera()
         } else {
             Log.e("Permission", "ไม่ได้รับอนุญาตให้ใช้กล้อง")
+            Toast.makeText(this, "ไม่ได้รับสิทธิ์ใช้กล้อง", Toast.LENGTH_SHORT).show()
         }
     }
 }

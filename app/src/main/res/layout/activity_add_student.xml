@@ -1,0 +1,48 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_gradient"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="เพิ่มรายชื่อนักศึกษา"
+        android:textColor="@android:color/white"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="32dp" />
+
+    <EditText
+        android:id="@+id/etStudentId"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="รหัสนักศึกษา (13 หลัก)"
+        android:inputType="number"
+        android:gravity="center"
+        android:background="@drawable/edittext_bg"
+        android:textColor="#000000"
+        android:textColorHint="#888888"
+        android:layout_marginBottom="20dp" />
+
+    <Button
+        android:id="@+id/btnAddStudent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="เพิ่มนักศึกษา"
+        android:backgroundTint="#4CAF50"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:layout_marginBottom="20dp" />
+
+    <ListView
+        android:id="@+id/studentListView"
+        android:layout_width="wrap_content"
+        android:layout_height="590dp"
+        android:layout_weight="1"
+        android:background="#FFFFFF"
+        android:dividerHeight="1dp" />
+
+</LinearLayout>

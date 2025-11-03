@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/box_outline"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:layout_marginBottom="12dp">
+
+    <TextView
+        android:id="@+id/tvClassCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SP999-1 วิชาการตลาด"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/tvClassInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="อาคาร 21 ห้อง 21509"
+        android:textColor="#555555"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp" />
+
+    <TextView
+        android:id="@+id/tvClassTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10:00 - 12:00 น."
+        android:textColor="#777777"
+        android:textSize="13sp"
+        android:layout_marginTop="2dp" />
+
+    <Button
+        android:id="@+id/btnDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="รายละเอียดคลาส"
+        android:layout_marginTop="8dp"
+        android:layout_gravity="end"
+        android:backgroundTint="#2196F3"
+        android:textColor="@android:color/white"
+        android:textSize="13sp" />
+</LinearLayout>

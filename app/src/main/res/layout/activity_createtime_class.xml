@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    tools:context=".SetTimeActivity">
+
+    <RelativeLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        android:background="@drawable/bg_gradient">
+
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ตั้งเวลา"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="35dp" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/scrollContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/headerLayout"
+        android:layout_above="@id/bottomBar"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/box_outline"
+            android:gravity="center_horizontal">
+
+            <LinearLayout
+                android:id="@+id/timeBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:elevation="3dp"
+                android:layout_marginTop="30dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ตั้งเวลาเช็กชื่อ"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/etStartTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:hint="เวลาเริ่ม (เช่น 08:00)"
+                    android:background="@drawable/input_box"
+                    android:gravity="center"
+                    android:textColor="#000000"
+                    android:textColorHint="#888888"
+                    android:layout_marginBottom="8dp" />
+
+                <EditText
+                    android:id="@+id/etLateTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:hint="เวลาสาย (เช่น 08:30)"
+                    android:background="@drawable/input_box"
+                    android:gravity="center"
+                    android:textColor="#000000"
+                    android:textColorHint="#888888"
+                    android:layout_marginBottom="8dp" />
+
+                <EditText
+                    android:id="@+id/etEndTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:hint="เวลาปิดเช็กชื่อ (เช่น 09:00)"
+                    android:background="@drawable/input_box"
+                    android:gravity="center"
+                    android:textColor="#000000"
+                    android:textColorHint="#888888"
+                    android:layout_marginBottom="20dp" />
+
+                <Button
+                    android:id="@+id/btnSaveTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="บันทึกเวลา"
+                    android:backgroundTint="#4CAF50"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <include
+        android:id="@+id/bottomBar"
+        layout="@layout/bottom_navbar"
+        android:layout_alignParentBottom="true" />
+</RelativeLayout>
