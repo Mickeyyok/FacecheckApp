@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    tools:context=".NotificationActivity">
+
+    <!-- 🔹 ส่วนหัว -->
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:background="@drawable/bg_gradient">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="การแจ้งเตือน"
+            android:textColor="@android:color/white"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+
+    <!-- 🔸 กล่องเนื้อหาการแจ้งเตือน -->
+    <ScrollView
+        android:layout_below="@id/header"
+        android:layout_above="@id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:paddingBottom="16dp">
+
+            <!-- 🔔 การ์ดแจ้งเตือน: มาสาย -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/btn_addsj"
+                android:elevation="3dp"
+                android:padding="30dp"
+                android:layout_marginBottom="16dp">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_notifications"
+                    android:tint="#FFC107"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:text="แจ้งเตือน: มาสาย\n[รหัสนักเรียน] มาสายในวันนี้ เวลา 10:50 น.\nโปรดตรวจสอบสาเหตุ"
+                    android:textColor="#000000"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <!-- 🔔 การ์ดแจ้งเตือน: ขาดเรียน -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/btn_addsj"
+                android:elevation="3dp"
+                android:padding="30dp">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_notifications"
+                    android:tint="#F44336"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:text="แจ้งเตือน: ขาดเรียนวันนี้\n[รหัสนักเรียน] ขาดเรียนวิชา [รหัสวิชา] ในวันนี้ หากมีเหตุจำเป็นโปรดแจ้งอาจารย์ผู้สอน"
+                    android:textColor="#000000"
+                    android:textSize="15sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- 🔻 แถบเมนูด้านล่าง -->
+    <include
+        android:id="@+id/bottomBar"
+        layout="@layout/bottom_navbar"
+        android:layout_alignParentBottom="true" />
+
+</RelativeLayout>

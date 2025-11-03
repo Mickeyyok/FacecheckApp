@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".HistoryActivity">
+    android:gravity="center_horizontal">
 
     <!-- 🔹 ส่วนหัว -->
     <RelativeLayout
@@ -12,7 +12,6 @@
         android:layout_height="90dp"
         android:background="@drawable/bg_gradient">
 
-        <!-- 🔸 ชื่อหัวเรื่อง -->
         <TextView
             android:id="@+id/titleText"
             android:layout_width="wrap_content"
@@ -25,11 +24,37 @@
             android:layout_centerVertical="true" />
     </RelativeLayout>
 
-    <!-- 🧾 รายการประวัติ -->
+    <!-- 🧾 ปุ่มเลือกปี -->
+    <Button
+        android:id="@+id/btnyear"
+        android:layout_width="250dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="50dp"
+        android:text="ปี                              2568"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:background="@drawable/btn_addsj"
+        android:stateListAnimator="@null"/>
+
+    <!-- 🧾 ปุ่มเลือกภาคการศึกษา -->
+    <Button
+        android:id="@+id/btnCheckin"
+        android:layout_width="250dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="12dp"
+        android:text="ภาคการศึกษา                  2568"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:background="@drawable/btn_addsj"
+        android:stateListAnimator="@null"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerHistory"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="16dp"
         android:background="@android:color/white" />
+
 </LinearLayout>
