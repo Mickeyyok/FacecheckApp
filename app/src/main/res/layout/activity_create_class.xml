@@ -122,7 +122,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="ถัดไป"
-                    android:backgroundTint="#4CAF50"
+                    android:backgroundTint="#3b50ce
+"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
                     android:layout_marginBottom="12dp" />
@@ -135,11 +136,6 @@
     </ScrollView>
 
 
-    <!-- ⚙️ Bottom Navigation -->
-    <include
-        android:id="@+id/bottomBar"
-        layout="@layout/bottom_navbar"
-        android:layout_alignParentBottom="true"
-        />
+
 
 </RelativeLayout>
