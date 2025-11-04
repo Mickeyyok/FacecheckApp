@@ -7,6 +7,8 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.FirebaseDatabase
+import java.text.SimpleDateFormat
+import java.util.*
 
 class CreaetimeActivity : AppCompatActivity() {
 
@@ -38,18 +40,18 @@ class CreaetimeActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            // 🔹 เก็บข้อมูลเวลาไว้ในคลาส
             val timeData = mapOf(
                 "startTime" to startTime,
                 "lateTime" to lateTime,
                 "endTime" to endTime
             )
 
-            // 🧠 บันทึกเวลาเข้า class เดิม
             database.child(classId).child("attendanceTime").setValue(timeData)
                 .addOnSuccessListener {
                     Toast.makeText(this, "บันทึกเวลาสำเร็จ", Toast.LENGTH_SHORT).show()
 
-                    // 👉 ไปหน้า MyClassActivity แล้วเคลียร์ stack
+                    // 👉 กลับไปหน้า MyClassActivity
                     val intent = Intent(this, TeacherHomeActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
@@ -58,6 +60,30 @@ class CreaetimeActivity : AppCompatActivity() {
                 .addOnFailureListener {
                     Toast.makeText(this, "เกิดข้อผิดพลาด: ${it.message}", Toast.LENGTH_LONG).show()
                 }
+        }
+    }
+
+    /**
+     * ✅ ฟังก์ชันตรวจสถานะการมาเรียน
+     * @param currentTime เวลาเข้าเรียนจริง เช่น "08:15"
+     * @param startTime เวลาเริ่มเช็กชื่อ เช่น "08:00"
+     * @param lateTime เวลาสาย เช่น "08:30"
+     * @param endTime เวลาสิ้นสุด เช่น "10:00"
+     * @return สถานะการเข้าเรียน ("ปกติ", "สาย", "ขาด")
+     */
+    private fun getAttendanceStatus(currentTime: String, startTime: String, lateTime: String, endTime: String): String {
+        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+
+        val now = sdf.parse(currentTime)
+        val start = sdf.parse(startTime)
+        val late = sdf.parse(lateTime)
+        val end = sdf.parse(endTime)
+
+        return when {
+            now!!.before(start) || now == start -> "ปกติ"   // เข้ามาก่อนหรือเท่ากับเวลาเริ่ม
+            now.after(start) && now.before(late) -> "สาย"   // ระหว่างเวลาเริ่ม - เวลาสาย
+            now.after(end) || now == end -> "ขาด"          // หลังจากเวลาสิ้นสุด
+            else -> "สาย"
         }
     }
 }
