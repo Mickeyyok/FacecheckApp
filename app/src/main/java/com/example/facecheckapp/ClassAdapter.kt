@@ -12,7 +12,7 @@ class ClassAdapter(private val classList: List<ClassData>) :
     RecyclerView.Adapter<ClassAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val tvClassName: TextView = view.findViewById(R.id.tvClassCode)
+        val tvClassCode: TextView = view.findViewById(R.id.tvClassCode)
         val tvClassInfo: TextView = view.findViewById(R.id.tvClassInfo)
         val tvClassTime: TextView = view.findViewById(R.id.tvClassTime)
         val btnDetail: Button = view.findViewById(R.id.btnDetail)
@@ -25,15 +25,17 @@ class ClassAdapter(private val classList: List<ClassData>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val classData = classList[position]
-        holder.tvClassName.text = "${classData.subjectCode} - ${classData.className}"
-        holder.tvClassInfo.text = "ปี ${classData.year} เทอม ${classData.semester}"
-        holder.tvClassTime.text = "ผู้สอน: ${classData.teacherName}"
+        val item = classList[position]
 
+        holder.tvClassCode.text = "${item.subjectCode ?: "-"} ${item.className ?: ""}"
+        holder.tvClassInfo.text = "ห้อง ${item.classRoom ?: "-"}"
+        holder.tvClassTime.text = "${item.startTime ?: "-"} - ${item.endTime ?: "-"} น."
+
+        // ✅ เปิดหน้า ClassDetailActivity พร้อมส่ง classId ไปด้วย
         holder.btnDetail.setOnClickListener {
             val context = holder.itemView.context
-            val intent = Intent(context, ClassData::class.java)
-            intent.putExtra("classId", classData.classId)
+            val intent = Intent(context, ClassDetailActivity::class.java)
+            intent.putExtra("classId", item.classId)
             context.startActivity(intent)
         }
     }
