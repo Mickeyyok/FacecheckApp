@@ -87,7 +87,7 @@ class ClassDetailActivity : AppCompatActivity() {
                 val text = SpannableStringBuilder()
 
                 // 🟢 ตรง
-                val green = "ตรง"
+                val green = "ตรง "
                 text.append(green)
                 text.setSpan(
                     ForegroundColorSpan(Color.parseColor("#00C853")),
@@ -97,7 +97,7 @@ class ClassDetailActivity : AppCompatActivity() {
                 text.append(startTime)
 
                 // 🟠 สาย
-                val orange = "  สาย"
+                val orange = "  สาย "
                 text.append(orange)
                 text.setSpan(
                     ForegroundColorSpan(Color.parseColor("#FF8C00")),
@@ -107,7 +107,7 @@ class ClassDetailActivity : AppCompatActivity() {
                 text.append(lateTime)
 
                 // 🔴 ขาด
-                val red = "  ขาด"
+                val red = "  ขาด "
                 text.append(red)
                 text.setSpan(
                     ForegroundColorSpan(Color.parseColor("#E53935")),
