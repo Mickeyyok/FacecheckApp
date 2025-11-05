@@ -143,8 +143,7 @@
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 android:textSize="16sp"
-                android:background="@drawable/bg_button_blue"
-                android:backgroundTint="@null"
+                android:backgroundTint="#000080"
                 android:layout_marginBottom="12dp"
                 android:elevation="4dp" />
 
@@ -156,9 +155,8 @@
                 android:text="ลบคลาส"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="#2196F3"
-                android:background="@drawable/bg_button_outline"
-                android:backgroundTint="@null" />
+                android:textColor="@color/white"
+                android:backgroundTint="#F44336" />
 
         </LinearLayout>
 

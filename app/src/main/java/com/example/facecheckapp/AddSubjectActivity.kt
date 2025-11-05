@@ -19,7 +19,6 @@ class AddSubjectActivity : AppCompatActivity() {
 
         // เชื่อม View
         edtSubjectCode = findViewById(R.id.edtSubjectCode)
-        edtSubjectName = findViewById(R.id.edtSubjectName)
         btnJoinSubject = findViewById(R.id.btnJoinSubject)
 
         // ปุ่ม "เข้าร่วมวิชา"

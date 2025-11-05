@@ -1,48 +1,100 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@drawable/bg_gradient"
-    android:padding="24dp">
+    android:background="#FFFFFF">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="เพิ่มรายชื่อนักศึกษา"
-        android:textColor="@android:color/white"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="32dp" />
-
-    <EditText
-        android:id="@+id/etStudentId"
+    <!-- Header -->
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="รหัสนักศึกษา (13 หลัก)"
-        android:inputType="number"
-        android:gravity="center"
-        android:background="@drawable/edittext_bg"
-        android:textColor="#000000"
-        android:textColorHint="#888888"
-        android:layout_marginBottom="20dp" />
+        android:layout_height="110dp"
+        android:background="@drawable/bg_gradient">
 
-    <Button
-        android:id="@+id/btnAddStudent"
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="50dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_back"
+            android:tint="@android:color/white" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="เพิ่มรายชื่อ"
+            android:textColor="@android:color/white"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="55dp" />
+    </RelativeLayout>
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="เพิ่มนักศึกษา"
-        android:backgroundTint="#4CAF50"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:layout_marginBottom="20dp" />
+        android:layout_height="match_parent"
+        android:padding="24dp"
+        android:fillViewport="true">
 
-    <ListView
-        android:id="@+id/studentListView"
-        android:layout_width="wrap_content"
-        android:layout_height="590dp"
-        android:layout_weight="1"
-        android:background="#FFFFFF"
-        android:dividerHeight="1dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
+            <!-- ช่องค้นหา -->
+            <EditText
+                android:id="@+id/etStudentId"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="รหัสนักศึกษา"
+                android:inputType="number"
+                android:gravity="center"
+                android:background="@drawable/input_box"
+                android:textColor="#000000"
+                android:textColorHint="#888888"
+                android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/btnSearch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ค้นหา"
+                android:backgroundTint="#4285F4"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:layout_marginBottom="20dp" />
+
+            <TextView
+                android:id="@+id/tvRecentLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="เพิ่มล่าสุด"
+                android:textSize="16sp"
+                android:textColor="#000000"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone" />
+
+            <!-- รายการนักศึกษาที่ค้นพบ -->
+            <!-- android:background="@drawable/rounded_white_bg"  -->
+
+            <ListView
+                android:id="@+id/studentListView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:dividerHeight="8dp" />
+
+            <Button
+                android:id="@+id/btnAddStudent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="เพิ่มนักศึกษา"
+                android:backgroundTint="#4285F4"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp" />
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
