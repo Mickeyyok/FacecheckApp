@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient">
+
+    <!-- 🔹 ส่วนหัว (Gradient + ปุ่ม Back + Title) -->
+    <RelativeLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@drawable/bg_gradient"
+        android:paddingTop="35dp"
+        android:paddingHorizontal="16dp">
+
+        <!-- ปุ่มย้อนกลับ -->
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_arrow_back_white"
+            android:tint="@android:color/white"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true" />
+
+        <!-- ชื่อหัวข้อ -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="รายละเอียดวิชา"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:textSize="22sp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+
+    <!-- 🔸 พื้นหลังขาวโค้งด้านล่าง -->
+    <LinearLayout
+        android:id="@+id/contentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@drawable/bg_white_rounded_top"
+        android:layout_below="@id/headerLayout"
+        android:padding="16dp"
+        android:layout_above="@id/bottomBar"
+        android:elevation="6dp">
+
+        <!-- 🔹 Tab Layout -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/tabInfo"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="ข้อมูล"
+                android:gravity="center"
+                android:textColor="#2196F3"
+                android:textStyle="bold"
+                android:paddingVertical="10dp"
+                android:background="@drawable/tab_selected_bg" />
+
+            <TextView
+                android:id="@+id/tabStudent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="นักศึกษา"
+                android:gravity="center"
+                android:textColor="#888888"
+                android:paddingVertical="10dp"
+                android:background="@drawable/tab_unselected_bg" />
+
+            <TextView
+                android:id="@+id/tabReport"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="การเข้ารายงาน"
+                android:gravity="center"
+                android:textColor="#888888"
+                android:paddingVertical="10dp"
+                android:background="@drawable/tab_unselected_bg" />
+        </LinearLayout>
+
+        <!-- 🔹 เนื้อหาข้อมูลวิชา -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingTop="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ข้อมูลวิชา"
+                    android:textStyle="bold"
+                    android:textColor="#000"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- ✅ include แก้ไขแล้ว -->
+                <include
+                    layout="@layout/item_class_detail_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+        </ScrollView>
+
+
+        <!-- 🔹 ปุ่มล่าง -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:paddingHorizontal="20dp">
+
+            <!-- ปุ่มแก้ไขข้อมูลวิชา -->
+            <Button
+                android:id="@+id/btnEditClass"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="แก้ไขข้อมูลวิชา"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:backgroundTint="#000080"
+                android:layout_marginBottom="12dp"
+                android:elevation="4dp" />
+
+            <!-- ปุ่มลบคลาส -->
+            <Button
+                android:id="@+id/btnDeleteClass"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="ลบคลาส"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:backgroundTint="#F44336" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

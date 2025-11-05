@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/bg_info_card"
+    android:layout_marginTop="8dp"
+    android:elevation="3dp">
+
+    <!-- หัวข้อ -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ข้อมูลวิชา"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="#000"
+        android:layout_marginBottom="8dp" />
+
+    <!-- เส้นคั่น -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E0E0E0"
+        android:layout_marginBottom="8dp" />
+
+    <!-- 🔹 แถวข้อมูล (ชื่อ + ค่า) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="6dp">
+
+        <TextView
+            android:text="ชื่อวิชา"
+            style="@style/InfoLabel"
+            android:textColor="#1976D2"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/tvSubjectName"
+            style="@style/InfoValue"
+            android:layout_weight="2" />
+    </LinearLayout>
+
+    <View style="@style/DividerLine" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="6dp">
+
+        <TextView
+            android:text="รหัสวิชา"
+            style="@style/InfoLabel"
+            android:textColor="#1976D2"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/tvSubjectCode"
+            style="@style/InfoValue"
+            android:layout_weight="2" />
+    </LinearLayout>
+
+    <View style="@style/DividerLine" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="6dp">
+
+        <TextView
+            android:text="ชื่ออาจารย์"
+            style="@style/InfoLabel"
+            android:textColor="#1976D2"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/tvTeacherName"
+            style="@style/InfoValue"
+            android:layout_weight="2" />
+    </LinearLayout>
+
+    <View style="@style/DividerLine" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="6dp">
+
+        <TextView
+            android:text="วันที่เรียน"
+            style="@style/InfoLabel"
+            android:textColor="#1976D2"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/tvDayTime"
+            style="@style/InfoValue"
+            android:layout_weight="2" />
+    </LinearLayout>
+
+    <View style="@style/DividerLine" />
+
+    <!-- 🔹 เวลาเช็กชื่อ -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="6dp">
+
+        <TextView
+            android:text="เวลาเช็กชื่อ"
+            style="@style/InfoLabel"
+            android:textColor="#1976D2"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/tvCheckTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:textColor="#000"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <View style="@style/DividerLine" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="6dp">
+
+        <TextView
+            android:text="ห้องเรียน"
+            style="@style/InfoLabel"
+            android:textColor="#1976D2"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/tvClassRoom"
+            style="@style/InfoValue"
+            android:layout_weight="2" />
+    </LinearLayout>
+
+    <View style="@style/DividerLine" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="6dp">
+
+        <TextView
+            android:text="ปีการศึกษา"
+            style="@style/InfoLabel"
+            android:textColor="#1976D2"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/tvYear"
+            style="@style/InfoValue"
+            android:layout_weight="2" />
+    </LinearLayout>
+
+    <View style="@style/DividerLine" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="6dp">
+
+        <TextView
+            android:text="ภาคเรียน"
+            style="@style/InfoLabel"
+            android:textColor="#1976D2"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/tvSemester"
+            style="@style/InfoValue"
+            android:layout_weight="2" />
+    </LinearLayout>
+</LinearLayout>

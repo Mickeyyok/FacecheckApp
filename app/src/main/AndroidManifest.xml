@@ -52,9 +52,12 @@
 
         <activity android:name=".TeacherHomeActivity" />
 
+        <activity android:name=".CreateClassActivity" />
+
         <activity android:name=".CreaetimeActivity" />
 
-        <activity android:name=".CreateClassActivity" />
+        <activity android:name=".ClassDetailActivity" />
+
 
 
 

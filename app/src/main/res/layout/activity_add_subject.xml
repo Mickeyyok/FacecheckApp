@@ -39,40 +39,27 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="30dp"
-        android:gravity="center">
+        android:layout_marginTop="100dp"
+        >
 
-        <!-- ช่องรหัสวิชา -->
+        <!-- ปุ่มเข้าร่วมวิชา -->
+
         <EditText
             android:id="@+id/edtSubjectCode"
             android:layout_width="match_parent"
             android:layout_height="55dp"
+            android:background="@drawable/input_box"
             android:hint="รหัสวิชา"
-            android:background="@drawable/input_box"
+            android:inputType="text"
             android:paddingStart="15dp"
-            android:textSize="16sp"
-            android:layout_marginTop="-150dp"
-            android:inputType="text" />
+            android:textSize="16sp" />
 
-        <!-- ช่องชื่อวิชา -->
-        <EditText
-            android:id="@+id/edtSubjectName"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:hint="ชื่อวิชา"
-            android:background="@drawable/input_box"
-            android:paddingStart="15dp"
-            android:textSize="16sp"
-            android:layout_marginTop="15dp"
-
-            android:inputType="text" />
-
-        <!-- ปุ่มเข้าร่วมวิชา -->
         <Button
             android:id="@+id/btnJoinSubject"
             android:layout_width="250dp"
             android:layout_height="55dp"
             android:layout_gravity="center"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="60dp"
             android:text="เข้าร่วมวิชา"
             android:textSize="18sp"
             android:textStyle="bold"
