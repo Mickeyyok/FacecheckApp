@@ -1,8 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="#FFFFFF"
+    tools:context=".AddStudentActivity">
 
     <!-- Header -->
     <RelativeLayout
@@ -17,7 +19,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="50dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_back"
+            android:src="@drawable/ic_arrow_back_white"
             android:tint="@android:color/white" />
 
         <TextView
@@ -56,15 +58,7 @@
                 android:textColorHint="#888888"
                 android:layout_marginBottom="12dp" />
 
-            <Button
-                android:id="@+id/btnSearch"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="ค้นหา"
-                android:backgroundTint="#4285F4"
-                android:textColor="@android:color/white"
-                android:textStyle="bold"
-                android:layout_marginBottom="20dp" />
+
 
             <TextView
                 android:id="@+id/tvRecentLabel"

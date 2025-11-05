@@ -58,8 +58,9 @@
 
         <activity android:name=".ClassDetailActivity" />
 
+        <activity android:name=".AddStudentActivity" />
 
-
+        <activity android:name=".StudentListActivity" />
 
 
 
