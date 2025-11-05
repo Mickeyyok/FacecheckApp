@@ -1,6 +1,7 @@
 package com.example.facecheckapp
 
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,15 +30,26 @@ class ClassAdapter(private val classList: List<ClassData>) :
 
         holder.tvClassCode.text = "${item.subjectCode ?: "-"} ${item.className ?: ""}"
         holder.tvClassInfo.text = "ห้อง ${item.classRoom ?: "-"}"
-        holder.tvClassTime.text = "${item.startTime ?: "-"} - ${item.endTime ?: "-"} น."
+        holder.tvClassTime.text = item.classTime ?: "-"
 
-        // ✅ เปิดหน้า ClassDetailActivity พร้อมส่ง classId ไปด้วย
+        // ➤ เปิดหน้า ClassDetailActivity
         holder.btnDetail.setOnClickListener {
             val context = holder.itemView.context
             val intent = Intent(context, ClassDetailActivity::class.java)
             intent.putExtra("classId", item.classId)
+            intent.putExtra("className", item.className)
+            intent.putExtra("subjectCode", item.subjectCode)
+            intent.putExtra("classRoom", item.classRoom)
+            intent.putExtra("classTime", item.classTime)
+            Log.d("ClassAdapter", "Opening detail for classId = ${item.classId}")
+            Log.d("ClassDetailActivity", "Received classId = ${intent.getStringExtra("classId")}")
+
+
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
             context.startActivity(intent)
         }
+
     }
 
     override fun getItemCount(): Int = classList.size

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -25,30 +26,19 @@
     </RelativeLayout>
 
     <!-- 🔸 เนื้อหาหลัก -->
-    <ScrollView
-        android:id="@+id/scrollContent"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/headerLayout"
-        android:layout_above="@id/bottomBar"
-
-        android:padding="20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-
+            android:layout_marginTop="50dp"
             android:gravity="center_horizontal">
 
-
-            <!-- 🔹 กล่องกรอกข้อมูลคลาส -->
             <LinearLayout
                 android:id="@+id/classBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-
                 android:padding="16dp"
                 android:elevation="3dp"
                 android:layout_marginTop="30dp">
@@ -64,18 +54,8 @@
                     android:textColor="#000000"
                     android:textColorHint="#888888"
                     android:layout_marginBottom="10dp" />
-                <EditText
-                    android:id="@+id/etClassRoom"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:hint="ห้องเรียน (เช่น 2301 )"
-                    android:background="@drawable/input_box"
-                    android:textColor="#000000"
-                    android:textColorHint="#888888"
-                    android:layout_marginBottom="10dp"
-                    android:gravity="center" />
 
-                <!-- ชื่ออาจารย์ -->
+                <!-- รหัสวิชา -->
                 <EditText
                     android:id="@+id/etSubjectCode"
                     android:layout_width="match_parent"
@@ -86,25 +66,34 @@
                     android:textColor="#000000"
                     android:textColorHint="#888888"
                     android:layout_marginBottom="10dp" />
-                <!-- รหัสวิชา -->
+
+                <!-- ห้องเรียน -->
+                <EditText
+                    android:id="@+id/etClassRoom"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:hint="ห้องเรียน (เช่น 2301)"
+                    android:background="@drawable/input_box"
+                    android:gravity="center"
+                    android:textColor="#000000"
+                    android:textColorHint="#888888"
+                    android:layout_marginBottom="10dp" />
+
+                <!-- ชื่ออาจารย์ -->
                 <EditText
                     android:id="@+id/etTeacherName"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:layout_marginBottom="10dp"
+                    android:hint="ชื่ออาจารย์ผู้สอน"
                     android:background="@drawable/input_box"
                     android:gravity="center"
-
-                    android:hint="ชื่ออาจารย์ผู้สอน"
                     android:textColor="#000000"
-                    android:textColorHint="#888888" />
+                    android:textColorHint="#888888"
+                    android:layout_marginBottom="10dp" />
 
-
-
-
-
+                <!-- ปีการศึกษา -->
                 <EditText
-                    android:id="@+id/etStudentyear"
+                    android:id="@+id/etStudentYear"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:hint="ปีการศึกษา"
@@ -114,8 +103,10 @@
                     android:textColor="#000000"
                     android:textColorHint="#888888"
                     android:layout_marginBottom="10dp" />
+
+                <!-- ภาคเรียน -->
                 <EditText
-                    android:id="@+id/etsemeter"
+                    android:id="@+id/etSemester"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:hint="ภาคเรียน"
@@ -126,31 +117,64 @@
                     android:textColorHint="#888888"
                     android:layout_marginBottom="10dp" />
 
+                <!-- 🔹 วัน/เวลา ที่เรียน -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="วัน/เวลา ที่เรียน"
+                    android:textStyle="bold"
+                    android:textColor="#000"
+                    android:textSize="16sp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp" />
 
-                <!-- ปุ่มสร้างคลาส -->
-                <Button
-                    android:id="@+id/btnNext"
+                <EditText
+                    android:id="@+id/etClassTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:hint="เช่น วันจันทร์ 10:00-12:00 น."
+                    android:background="@drawable/input_box"
+                    android:gravity="center"
+                    android:inputType="text"
+                    android:textColor="#000"
+                    android:textColorHint="#888"
+                    android:layout_marginBottom="20dp" />
+
+                <!-- ปุ่ม -->
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="ถัดไป"
-                    android:backgroundTint="#4CAF50"
-                    android:textColor="@android:color/white"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="12dp" />
+                    android:orientation="horizontal"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center">
 
+                    <Button
+                        android:id="@+id/btnBack"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="ย้อนกลับ"
+                        android:textColor="#2196F3"
+                        android:background="@drawable/outline_button"
+                        android:layout_marginEnd="8dp" />
 
-
-
+                    <Button
+                        android:id="@+id/btnNext"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="ถัดไป"
+                        android:textColor="@android:color/white"
+                        android:backgroundTint="#2196F3" />
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-    </ScrollView>
 
 
     <!-- ⚙️ Bottom Navigation -->
     <include
         android:id="@+id/bottomBar"
         layout="@layout/bottom_navbar"
-        android:layout_alignParentBottom="true"
-        />
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

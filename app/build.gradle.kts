@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.example.facecheckapp"
-    compileSdk = 36 // ❗ เปลี่ยนตรงนี้เป็นตัวเลข ไม่ใช่ release(36)
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.facecheckapp"
         minSdk = 24
-        targetSdk = 36 // ❗ ตัวเลขเช่นเดียวกัน
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -39,7 +39,7 @@ android {
 }
 
 dependencies {
-    // ✅ Android base libraries
+    // ✅ AndroidX
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -58,15 +58,16 @@ dependencies {
     // ✅ ML Kit Face Detection
     implementation("com.google.mlkit:face-detection:16.1.5")
 
-    // ✅ Firebase (ใช้ BOM เพื่อให้เวอร์ชันเข้ากันอัตโนมัติ)
+    // ✅ Firebase (BOM ช่วยให้เวอร์ชันเข้ากันอัตโนมัติ)
     implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
-
-    // Firebase Authentication
     implementation("com.google.firebase:firebase-auth-ktx")
-
-    // Firebase Realtime Database
     implementation("com.google.firebase:firebase-database-ktx")
-
-    // (ถ้าภายหลังอยากเก็บไฟล์ภาพ)
+    implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
+
+    // ✅ Utilities
+    implementation("com.google.guava:guava:31.1-android")
 }
+
+// 🔹 ปลั๊กอิน Google Services ต้องอยู่บรรทัดสุดท้าย
+apply(plugin = "com.google.gms.google-services")
