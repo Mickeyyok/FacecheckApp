@@ -1,5 +1,6 @@
 package com.example.facecheckapp
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.SpannableStringBuilder
@@ -16,14 +17,30 @@ class ClassDetailActivity : AppCompatActivity() {
 
     private lateinit var dbRef: DatabaseReference
 
+    private lateinit var tabInfo: TextView
+    private lateinit var tabStudent: TextView
+    private lateinit var tabReport: TextView
+    private lateinit var btnBack: ImageButton
+
+    private lateinit var tvTitle: TextView
+    private lateinit var tvSubjectName: TextView
+    private lateinit var tvSubjectCode: TextView
+    private lateinit var tvTeacherName: TextView
+    private lateinit var tvDayTime: TextView
+    private lateinit var tvCheckTime: TextView
+    private lateinit var tvClassRoom: TextView
+    private lateinit var tvYear: TextView
+    private lateinit var tvSemester: TextView
+
+    private var classId: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_class_detail)
 
-        // ✅ ใช้ Firebase Realtime Database
         dbRef = FirebaseDatabase.getInstance().getReference("classes")
+        classId = intent.getStringExtra("classId")
 
-        val classId = intent.getStringExtra("classId")
         if (classId.isNullOrEmpty()) {
             Toast.makeText(this, "ไม่พบข้อมูลคลาส", Toast.LENGTH_SHORT).show()
             finish()
@@ -32,25 +49,51 @@ class ClassDetailActivity : AppCompatActivity() {
 
         Log.d("ClassDetailActivity", "✅ Received classId = $classId")
 
-        // 🔹 เชื่อม View ต่าง ๆ
-        val btnBack = findViewById<ImageButton>(R.id.btnBack)
-        val tvTitle = findViewById<TextView>(R.id.tvTitle)
-        val tvSubjectName = findViewById<TextView>(R.id.tvSubjectName)
-        val tvSubjectCode = findViewById<TextView>(R.id.tvSubjectCode)
-        val tvTeacherName = findViewById<TextView>(R.id.tvTeacherName)
-        val tvDayTime = findViewById<TextView>(R.id.tvDayTime)
-        val tvCheckTime = findViewById<TextView>(R.id.tvCheckTime)
-        val tvClassRoom = findViewById<TextView>(R.id.tvClassRoom)
-        val tvYear = findViewById<TextView>(R.id.tvYear)
-        val tvSemester = findViewById<TextView>(R.id.tvSemester)
+        // ✅ เชื่อม View
+        btnBack = findViewById(R.id.btnBack)
+        tabInfo = findViewById(R.id.tabInfo)
+        tabStudent = findViewById(R.id.tabStudent)
+        tabReport = findViewById(R.id.tabReport)
+
+        tvTitle = findViewById(R.id.tvTitle)
+        tvSubjectName = findViewById(R.id.tvSubjectName)
+        tvSubjectCode = findViewById(R.id.tvSubjectCode)
+        tvTeacherName = findViewById(R.id.tvTeacherName)
+        tvDayTime = findViewById(R.id.tvDayTime)
+        tvCheckTime = findViewById(R.id.tvCheckTime)
+        tvClassRoom = findViewById(R.id.tvClassRoom)
+        tvYear = findViewById(R.id.tvYear)
+        tvSemester = findViewById(R.id.tvSemester)
 
         // 🔹 ปุ่มย้อนกลับ
         btnBack.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        // 🔹 โหลดข้อมูลจาก Realtime Database
-        dbRef.child(classId).addListenerForSingleValueEvent(object : ValueEventListener {
+        // ✅ แท็บ "ข้อมูล" (active)
+        setActiveTab(tabInfo)
+
+        // 🔹 กดแท็บ “นักศึกษา”
+        tabStudent.setOnClickListener {
+            val intent = Intent(this, StudentListActivity::class.java)
+            intent.putExtra("classId", classId)
+            startActivity(intent)
+        }
+
+        // 🔹 กดแท็บ “การเข้ารายงาน”
+        /*tabReport.setOnClickListener {
+            val intent = Intent(this, ReportListActivity::class.java)
+            intent.putExtra("classId", classId)
+            startActivity(intent)
+        }*/
+
+        // โหลดข้อมูลคลาส
+        loadClassData()
+    }
+
+    // ✅ ฟังก์ชันโหลดข้อมูลจาก Firebase
+    private fun loadClassData() {
+        dbRef.child(classId!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (!snapshot.exists()) {
                     Toast.makeText(this@ClassDetailActivity, "ไม่พบข้อมูลในฐานข้อมูล", Toast.LENGTH_SHORT).show()
@@ -63,55 +106,43 @@ class ClassDetailActivity : AppCompatActivity() {
                 val classRoom = snapshot.child("classRoom").getValue(String::class.java) ?: "-"
                 val year = snapshot.child("year").getValue(String::class.java) ?: "-"
                 val semester = snapshot.child("semester").getValue(String::class.java) ?: "-"
-
-                // 🔹 วันที่เรียน และเวลาตั้งคลาส
                 val classTime = snapshot.child("classTime").getValue(String::class.java) ?: "-"
-                val dayTime = snapshot.child("dayTime").getValue(String::class.java) ?: "-"
-
-                // 🔹 เวลาต่าง ๆ สำหรับการเช็กชื่อ
                 val startTime = snapshot.child("startTime").getValue(String::class.java) ?: "-"
                 val lateTime = snapshot.child("lateTime").getValue(String::class.java) ?: "-"
                 val endTime = snapshot.child("endTime").getValue(String::class.java) ?: "-"
 
-                // 🔹 แสดงข้อมูลพื้นฐาน
+                // แสดงข้อมูลใน UI
                 tvTitle.text = className
                 tvSubjectName.text = className
                 tvSubjectCode.text = subjectCode
                 tvTeacherName.text = teacherName
-                tvDayTime.text = classTime // วันที่เรียน
+                tvDayTime.text = classTime
                 tvClassRoom.text = classRoom
                 tvYear.text = year
                 tvSemester.text = semester
 
-                // 🔹 แสดงเวลาเช็กชื่อ (ตรง / สาย / ขาด)
+                // ✅ แสดงเวลาเช็กชื่อ (ตรง/สาย/ขาด)
                 val text = SpannableStringBuilder()
 
-                // 🟢 ตรง
-                val green = "ตรง"
+                val green = "ตรง "
                 text.append(green)
-                text.setSpan(
-                    ForegroundColorSpan(Color.parseColor("#00C853")),
-                    text.length - green.length, text.length,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-                text.append(startTime)
+                text.setSpan(ForegroundColorSpan(Color.parseColor("#00C853")), 0, green.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                text.append(startTime).append("  ")
 
-                // 🟠 สาย
-                val orange = "  สาย"
+                val orange = "สาย "
                 text.append(orange)
                 text.setSpan(
                     ForegroundColorSpan(Color.parseColor("#FF8C00")),
-                    text.length - orange.length + 2, text.length,
+                    text.length - orange.length, text.length,
                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
-                text.append(lateTime)
+                text.append(lateTime).append("  ")
 
-                // 🔴 ขาด
-                val red = "  ขาด"
+                val red = "ขาด "
                 text.append(red)
                 text.setSpan(
                     ForegroundColorSpan(Color.parseColor("#E53935")),
-                    text.length - red.length + 2, text.length,
+                    text.length - red.length, text.length,
                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
                 text.append(endTime)
@@ -124,5 +155,16 @@ class ClassDetailActivity : AppCompatActivity() {
                 Log.e("ClassDetailActivity", "❌ Database error: ${error.message}")
             }
         })
+    }
+
+    // ✅ เปลี่ยนสีแท็บที่ active
+    private fun setActiveTab(activeTab: TextView) {
+        val allTabs = listOf(tabInfo, tabStudent, tabReport)
+        allTabs.forEach {
+            it.setTextColor(Color.parseColor("#888888"))
+            it.setBackgroundResource(R.drawable.tab_unselected_bg)
+        }
+        activeTab.setTextColor(Color.parseColor("#2196F3"))
+        activeTab.setBackgroundResource(R.drawable.tab_selected_bg)
     }
 }

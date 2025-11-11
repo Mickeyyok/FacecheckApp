@@ -11,12 +11,13 @@ class AddStudentActivity : AppCompatActivity() {
     private lateinit var etStudentId: EditText
     private lateinit var btnAddStudent: Button
     private lateinit var listView: ListView
+    private lateinit var btnBack: ImageButton
 
     private val database = FirebaseDatabase.getInstance()
     private lateinit var teacherUid: String
     private var classId: String? = null
 
-    private val studentList = mutableListOf<String>()
+    private val studentList = mutableListOf<StudentData>()
     private lateinit var adapter: ArrayAdapter<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,11 +27,12 @@ class AddStudentActivity : AppCompatActivity() {
         etStudentId = findViewById(R.id.etStudentId)
         btnAddStudent = findViewById(R.id.btnAddStudent)
         listView = findViewById(R.id.studentListView)
+        btnBack = findViewById(R.id.btnBack)
 
         teacherUid = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        classId = intent.getStringExtra("classId") // รับค่า class จากหน้าก่อนหน้า
+        classId = intent.getStringExtra("classId")
 
-        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, studentList)
+        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, mutableListOf<String>())
         listView.adapter = adapter
 
         loadExistingStudents()
@@ -44,16 +46,20 @@ class AddStudentActivity : AppCompatActivity() {
 
             checkAndAddStudent(studentId)
         }
+
+        btnBack.setOnClickListener { finish() }
     }
 
     private fun loadExistingStudents() {
         val classRef = database.getReference("classes/$teacherUid/$classId/students")
         classRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                studentList.clear()
+                adapter.clear()
                 for (child in snapshot.children) {
-                    val name = "${child.key} - ${child.child("first_name").value ?: ""} ${child.child("last_name").value ?: ""}"
-                    studentList.add(name)
+                    val firstName = child.child("first_name").value?.toString() ?: "-"
+                    val lastName = child.child("last_name").value?.toString() ?: "-"
+                    val studentId = child.key ?: "-"
+                    adapter.add("$firstName $lastName ($studentId)")
                 }
                 adapter.notifyDataSetChanged()
             }
@@ -65,8 +71,8 @@ class AddStudentActivity : AppCompatActivity() {
     private fun checkAndAddStudent(studentId: String) {
         val usersRef = database.getReference("users")
 
-        // 🔍 ตรวจว่ารหัสนี้มีอยู่ใน users หรือไม่
-        usersRef.orderByChild("student_id").equalTo(studentId)
+        // 🔍 ตรวจว่ารหัสนี้มีอยู่ใน users หรือไม่ (แก้จาก student_id → id)
+        usersRef.orderByChild("id").equalTo(studentId)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
@@ -79,7 +85,6 @@ class AddStudentActivity : AppCompatActivity() {
                                 "status" to "ปกติ"
                             )
 
-                            // เพิ่มเข้า class
                             val studentRef = database.getReference("classes/$teacherUid/$classId/students/$studentId")
                             studentRef.setValue(studentData)
 
@@ -94,4 +99,5 @@ class AddStudentActivity : AppCompatActivity() {
                 override fun onCancelled(error: DatabaseError) {}
             })
     }
+
 }
