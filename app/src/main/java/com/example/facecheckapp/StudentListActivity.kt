@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -15,6 +16,10 @@ class StudentListActivity : AppCompatActivity() {
     private lateinit var tvTotal: TextView
     private lateinit var btnAddStudent: Button
     private lateinit var btnBack: ImageButton
+
+    private lateinit var tabInfo: TextView
+    private lateinit var tabStudent: TextView
+    private lateinit var tabReport: TextView
 
     private val studentList = mutableListOf<StudentData>()
     private lateinit var adapter: StudentAdapter
@@ -32,6 +37,11 @@ class StudentListActivity : AppCompatActivity() {
         btnAddStudent = findViewById(R.id.btnAddStudent)
         btnBack = findViewById(R.id.btnBack)
 
+        // ✅ แท็บ
+        tabInfo = findViewById(R.id.tabInfo)
+        tabStudent = findViewById(R.id.tabStudent)
+        tabReport = findViewById(R.id.tabReport)
+
         teacherUid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         classId = intent.getStringExtra("classId")
 
@@ -42,9 +52,8 @@ class StudentListActivity : AppCompatActivity() {
         }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = StudentAdapter(studentList, classId!!) // ✅ เพิ่ม classId เข้ามา
+        adapter = StudentAdapter(studentList, classId!!)
         recyclerView.adapter = adapter
-
 
         loadStudents()
 
@@ -55,6 +64,22 @@ class StudentListActivity : AppCompatActivity() {
         }
 
         btnBack.setOnClickListener { finish() }
+
+        // ✅ ตั้งสีแท็บ active
+        setActiveTab(tabStudent)
+
+        // ✅ กดแท็บ "ข้อมูล"
+        tabInfo.setOnClickListener {
+            val intent = Intent(this, ClassDetailActivity::class.java)
+            intent.putExtra("classId", classId)
+            startActivity(intent)
+            finish()
+        }
+
+        // ✅ (ถ้ามีหน้า Report ในอนาคต)
+        tabReport.setOnClickListener {
+            Toast.makeText(this, "หน้านี้ยังไม่เปิดใช้งาน", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun loadStudents() {
@@ -80,5 +105,17 @@ class StudentListActivity : AppCompatActivity() {
                 Toast.makeText(this@StudentListActivity, "โหลดข้อมูลไม่สำเร็จ", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    // ✅ ใช้ ContextCompat เพื่อป้องกัน Deprecated Warning
+    private fun setActiveTab(activeTab: TextView) {
+        val allTabs = listOf(tabInfo, tabStudent, tabReport)
+
+        allTabs.forEach {
+            it.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray))
+            it.setBackgroundResource(R.drawable.tab_unselected_bg)
+        }
+        activeTab.setTextColor(ContextCompat.getColor(this, android.R.color.holo_blue_dark))
+        activeTab.setBackgroundResource(R.drawable.tab_selected_bg)
     }
 }

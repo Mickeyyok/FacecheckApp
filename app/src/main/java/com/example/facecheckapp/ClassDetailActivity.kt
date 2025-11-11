@@ -1,5 +1,6 @@
 package com.example.facecheckapp
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -7,6 +8,7 @@ import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.util.Log
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
@@ -21,6 +23,7 @@ class ClassDetailActivity : AppCompatActivity() {
     private lateinit var tabStudent: TextView
     private lateinit var tabReport: TextView
     private lateinit var btnBack: ImageButton
+    private lateinit var btnDeleteClass: Button
 
     private lateinit var tvTitle: TextView
     private lateinit var tvSubjectName: TextView
@@ -54,6 +57,7 @@ class ClassDetailActivity : AppCompatActivity() {
         tabInfo = findViewById(R.id.tabInfo)
         tabStudent = findViewById(R.id.tabStudent)
         tabReport = findViewById(R.id.tabReport)
+        btnDeleteClass = findViewById(R.id.btnDeleteClass)
 
         tvTitle = findViewById(R.id.tvTitle)
         tvSubjectName = findViewById(R.id.tvSubjectName)
@@ -80,18 +84,26 @@ class ClassDetailActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // 🔹 กดแท็บ “การเข้ารายงาน”
-        /*tabReport.setOnClickListener {
+
+        // 🔹 กดแท็บ “รายงานการเข้าเรียน” (ยังไม่เปิดใช้)
+        /*
+        tabReport.setOnClickListener {
             val intent = Intent(this, ReportListActivity::class.java)
             intent.putExtra("classId", classId)
             startActivity(intent)
-        }*/
+        }
+        */
 
         // โหลดข้อมูลคลาส
         loadClassData()
+
+        // 🔥 ปุ่มลบคลาส
+        btnDeleteClass.setOnClickListener {
+            confirmDeleteClass()
+        }
     }
 
-    // ✅ ฟังก์ชันโหลดข้อมูลจาก Firebase
+    // ✅ โหลดข้อมูลคลาสจาก Firebase
     private fun loadClassData() {
         dbRef.child(classId!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -111,7 +123,6 @@ class ClassDetailActivity : AppCompatActivity() {
                 val lateTime = snapshot.child("lateTime").getValue(String::class.java) ?: "-"
                 val endTime = snapshot.child("endTime").getValue(String::class.java) ?: "-"
 
-                // แสดงข้อมูลใน UI
                 tvTitle.text = className
                 tvSubjectName.text = className
                 tvSubjectCode.text = subjectCode
@@ -121,7 +132,7 @@ class ClassDetailActivity : AppCompatActivity() {
                 tvYear.text = year
                 tvSemester.text = semester
 
-                // ✅ แสดงเวลาเช็กชื่อ (ตรง/สาย/ขาด)
+                // ✅ สีของเวลาเช็กชื่อ
                 val text = SpannableStringBuilder()
 
                 val green = "ตรง "
@@ -157,7 +168,37 @@ class ClassDetailActivity : AppCompatActivity() {
         })
     }
 
-    // ✅ เปลี่ยนสีแท็บที่ active
+    // ✅ ฟังก์ชันยืนยันก่อนลบ
+    private fun confirmDeleteClass() {
+        AlertDialog.Builder(this)
+            .setTitle("ยืนยันการลบคลาส")
+            .setMessage("คุณแน่ใจหรือไม่ว่าต้องการลบคลาสนี้?\nข้อมูลทั้งหมดจะหายไปถาวร")
+            .setPositiveButton("ตกลง") { _, _ ->
+                deleteClassFromFirebase()
+            }
+            .setNegativeButton("ยกเลิก", null)
+            .show()
+    }
+
+    // ✅ ลบคลาสออกจาก Firebase
+    private fun deleteClassFromFirebase() {
+        val updates = hashMapOf<String, Any?>(
+            "/classes/$classId" to null,
+            "/students/$classId" to null
+        )
+
+        FirebaseDatabase.getInstance().reference.updateChildren(updates)
+            .addOnSuccessListener {
+                Toast.makeText(this, "ลบคลาสเรียบร้อย ✅", Toast.LENGTH_SHORT).show()
+                finish() // กลับหน้าเดิม
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "❌ ลบคลาสไม่สำเร็จ: ${e.message}", Toast.LENGTH_SHORT).show()
+                Log.e("ClassDetailActivity", "Delete error: ${e.message}")
+            }
+    }
+
+    // ✅ เปลี่ยนสีแท็บ active
     private fun setActiveTab(activeTab: TextView) {
         val allTabs = listOf(tabInfo, tabStudent, tabReport)
         allTabs.forEach {
