@@ -7,45 +7,45 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class SubjectAdapter(
-    private val items: ArrayList<ClassModel>,
-    private val onSelected: (ClassModel) -> Unit
-) : RecyclerView.Adapter<SubjectAdapter.ViewHolder>() {
+    private val items: List<ClassModel>,
+    private val onClick: (ClassModel) -> Unit
+) : RecyclerView.Adapter<SubjectAdapter.SubjectViewHolder>() {
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val tvSubjectTitle: TextView = view.findViewById(R.id.tvSubjectTitle)
+    class SubjectViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val tvTitle: TextView = view.findViewById(R.id.tvSubjectTitle)
         val tvLocation: TextView = view.findViewById(R.id.tvLocation)
         val tvTime: TextView = view.findViewById(R.id.tvTime)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubjectViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_subject, parent, false)
-        return ViewHolder(view)
+        return SubjectViewHolder(view)
     }
 
-    override fun getItemCount() = items.size
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: SubjectViewHolder, position: Int) {
         val item = items[position]
 
-        // Title
-        holder.tvSubjectTitle.text =
-            "${item.subjectCode} ${item.className}"
+        val code = item.subjectCode ?: ""
+        val name = item.className ?: ""
+        val room = item.classRoom ?: ""
 
-        // Location
-        holder.tvLocation.text =
-            "อาคาร ${item.classRoom}"
+        val start = item.startTime ?: ""
+        val end = item.endTime ?: ""
+        val classTime = item.classTime ?: ""
 
-        // Time
-        val time = if (!item.classTime.isNullOrEmpty())
-            item.classTime
-        else
-            "${item.startTime} - ${item.endTime}"
-
-        holder.tvTime.text = time
-
-        holder.itemView.setOnClickListener {
-            onSelected(item)
+        val timeLine = when {
+            start.isNotEmpty() && end.isNotEmpty() -> "$start - $end น."
+            classTime.isNotEmpty() -> classTime
+            else -> "-"
         }
+
+        holder.tvTitle.text = "$code $name"
+        holder.tvLocation.text = "อาคาร $room ห้อง $room"
+        holder.tvTime.text = timeLine
+
+        holder.itemView.setOnClickListener { onClick(item) }
     }
+
+    override fun getItemCount(): Int = items.size
 }

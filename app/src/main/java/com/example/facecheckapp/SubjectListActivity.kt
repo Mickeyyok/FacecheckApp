@@ -1,6 +1,5 @@
 package com.example.facecheckapp
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -28,14 +27,24 @@ class SubjectListActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         adapter = SubjectAdapter(subjectList) { selected ->
+            val start = selected.startTime ?: ""
+            val end = selected.endTime ?: ""
+            val classTime = selected.classTime ?: ""
+
+            val timeLine = when {
+                start.isNotEmpty() && end.isNotEmpty() -> "$start - $end น."
+                classTime.isNotEmpty() -> classTime
+                else -> "-"
+            }
+
             val intent = Intent()
             intent.putExtra("selectedClassId", selected.classId)
             intent.putExtra("selectedSubjectCode", selected.subjectCode)
             intent.putExtra("selectedClassName", selected.className)
             intent.putExtra("selectedClassRoom", selected.classRoom)
-            intent.putExtra("selectedClassTime", selected.classTime)
+            intent.putExtra("selectedClassTime", timeLine)
 
-            setResult(Activity.RESULT_OK, intent)
+            setResult(RESULT_OK, intent)
             finish()
         }
 
@@ -46,23 +55,24 @@ class SubjectListActivity : AppCompatActivity() {
     private fun loadSubjects() {
         userSubjectsRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-
                 subjectList.clear()
 
                 for (child in snapshot.children) {
                     val classId = child.key ?: continue
 
-                    classesRef.child(classId).get()
-                        .addOnSuccessListener { classSnap ->
-
+                    classesRef.child(classId).get().addOnSuccessListener { classSnap ->
+                        if (classSnap.exists()) {
                             val model = classSnap.getValue(ClassModel::class.java)
+                            model?.classId = classId
 
-                            if (model != null) {
-                                model.classId = classId
-                                subjectList.add(model)
+                            model?.let {
+                                subjectList.add(it)
                                 adapter.notifyDataSetChanged()
                             }
+                        } else {
+                            userSubjectsRef.child(classId).removeValue()
                         }
+                    }
                 }
             }
 
