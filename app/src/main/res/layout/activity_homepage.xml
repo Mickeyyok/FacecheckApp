@@ -50,24 +50,28 @@
             android:orientation="vertical"
             android:gravity="center_horizontal">
 
-            <!-- 🧾 ช่องเพิ่มรหัสวิชา -->
-            <EditText
-                android:id="@+id/inputSubjectCode"
+            <TextView
+                android:id="@+id/tvSelectedSubject"
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_marginTop="30dp"
-                android:hint="*กรุณาเพิ่มรหัสวิชา"
+                android:layout_height="70dp"
+                android:layout_marginTop="20dp"
                 android:background="@drawable/input_box"
-                android:paddingStart="15dp"
+                android:padding="15dp"
+                android:text="กรุณาเลือกวิชา"
                 android:textSize="16sp"
-                android:inputType="text" />
+                android:textColor="@color/black"
+                android:gravity="center_vertical"
+                android:drawableRight="@drawable/ic_arrow_down"
+                android:clickable="true"
+                android:focusable="true" />
+
 
             <!-- ✅ ปุ่มเช็กชื่อ -->
             <Button
                 android:id="@+id/btnCheckin"
                 android:layout_width="250dp"
                 android:layout_height="55dp"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="30dp"
                 android:text="เช็กชื่อ"
                 android:textSize="18sp"
                 android:textStyle="bold"

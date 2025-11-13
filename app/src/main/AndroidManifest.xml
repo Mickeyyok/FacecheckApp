@@ -46,7 +46,7 @@
 
         <activity android:name=".RegScanActivity" />
 
-        <activity android:name=".HomepageActivity" />
+        <activity android:name=".HomeActivity" />
 
         <activity android:name=".AddSubjectActivity" />
 
@@ -65,6 +65,9 @@
         <activity android:name=".EditClassActivity" />
 
         <activity android:name=".EditTimeActivity" />
+
+        <activity android:name=".SubjectListActivity" />
+
 
 
 

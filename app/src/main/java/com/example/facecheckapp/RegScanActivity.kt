@@ -185,7 +185,7 @@ class RegScanActivity : AppCompatActivity() {
                 loadingBar.visibility = View.GONE
 
                 // 👉 ไปหน้า HomepageActivity
-                val intent = Intent(this, HomepageActivity::class.java)
+                val intent = Intent(this, HomeActivity::class.java)
                 startActivity(intent)
                 finish()
             }

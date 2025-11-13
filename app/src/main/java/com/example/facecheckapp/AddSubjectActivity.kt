@@ -6,36 +6,54 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 class AddSubjectActivity : AppCompatActivity() {
 
     private lateinit var edtSubjectCode: EditText
-    private lateinit var edtSubjectName: EditText
     private lateinit var btnJoinSubject: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_subject)
 
-        // เชื่อม View
         edtSubjectCode = findViewById(R.id.edtSubjectCode)
         btnJoinSubject = findViewById(R.id.btnJoinSubject)
 
-        // ปุ่ม "เข้าร่วมวิชา"
+        val uid = FirebaseAuth.getInstance().uid!!
+        val db = FirebaseDatabase.getInstance()
+        val userSubjectsRef = db.getReference("students").child(uid).child("subjects")
+        val classesRef = db.getReference("classes")
+
         btnJoinSubject.setOnClickListener {
             val code = edtSubjectCode.text.toString().trim()
-            val name = edtSubjectName.text.toString().trim()
 
-            if (code.isEmpty() || name.isEmpty()) {
-                Toast.makeText(this, "กรุณากรอกรหัสและชื่อวิชาให้ครบ", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "เพิ่มวิชาเรียบร้อย ✅", Toast.LENGTH_SHORT).show()
-
-                // กลับไปหน้า MainActivity
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                finish()
+            if (code.isEmpty()) {
+                Toast.makeText(this, "กรุณากรอกรหัสวิชา", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
+            // 👉 ค้นหาคลาสจาก subjectCode
+            classesRef.orderByChild("subjectCode").equalTo(code)
+                .get().addOnSuccessListener { snap ->
+
+                    if (!snap.exists()) {
+                        Toast.makeText(this, "ไม่พบวิชานี้ในระบบ", Toast.LENGTH_SHORT).show()
+                        return@addOnSuccessListener
+                    }
+
+                    // ดึง classId ตัวแรก
+                    val classId = snap.children.first().key!!
+
+                    // เพิ่มคลาสให้ user
+                    userSubjectsRef.child(classId).setValue(true)
+
+                    Toast.makeText(this, "เพิ่มวิชาเรียบร้อย", Toast.LENGTH_SHORT).show()
+
+                    startActivity(Intent(this, HomeActivity::class.java))
+                    finish()
+                }
         }
     }
 }

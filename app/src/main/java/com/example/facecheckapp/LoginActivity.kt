@@ -50,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
                                 startActivity(Intent(this, TeacherHomeActivity::class.java))
                             } else {
                                 Toast.makeText(this, "เข้าสู่ระบบ (นักศึกษา)", Toast.LENGTH_SHORT).show()
-                                startActivity(Intent(this, HomepageActivity::class.java))
+                                startActivity(Intent(this, HomeActivity::class.java))
                             }
                             finish()
                         } else {
