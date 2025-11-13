@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <!-- HEADER -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:background="@drawable/bg_gradient">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="แก้ไขเวลา"
+            android:textColor="@android:color/white"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="50dp"/>
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_white_rounded"
+        android:layout_marginTop="120dp"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:background="@drawable/bg_white_rounded"
+            android:layout_height="wrap_content">
+
+            <!-- กล่องขาว -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:elevation="4dp">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="วัน/เวลา ที่เรียน"
+                        android:textSize="15sp"
+                        android:textColor="#444444"
+                        android:layout_marginBottom="6dp" />
+
+
+                    <EditText
+                        android:id="@+id/tvClassTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/input_box"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="12dp"
+                        android:textColor="#000000"
+                        android:textSize="15sp"
+                        android:hint="วัน/เวลา"
+                        android:inputType="text" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ตั้งเวลาเช็กชื่อ"
+                        android:textSize="15sp"
+                        android:textColor="#444444"
+                        android:layout_marginTop="14dp"
+                        android:layout_marginBottom="6dp" />
+
+
+                    <EditText
+                        android:id="@+id/edtStartTime"
+                        android:background="@drawable/input_box"
+                        android:hint="เวลาเริ่ม (10:00)"
+                        style="@style/EditBoxStyle"/>
+
+                    <EditText
+                        android:id="@+id/edtLateTime"
+                        android:hint="เวลาสาย (10:30)"
+                        android:background="@drawable/input_box"
+                        style="@style/EditBoxStyle"/>
+
+                    <EditText
+                        android:id="@+id/edtEndTime"
+                        android:background="@drawable/input_box"
+                        android:hint="เวลาปิดเช็กชื่อ (12:00)"
+                        style="@style/EditBoxStyle"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- ปุ่ม -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="20dp">
+
+                <Button
+                    android:id="@+id/btnBack"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="50dp"
+                    android:text="ย้อนกลับ"
+                    android:textColor="#2196F3"
+                    android:background="@drawable/outline_button"/>
+
+                <View
+                    android:layout_width="12dp"
+                    android:layout_height="1dp"/>
+
+                <Button
+                    android:id="@+id/btnSave"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="50dp"
+                    android:text="บันทึก"
+                    android:textColor="@android:color/white"
+                    android:backgroundTint="#2196F3" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+    <include
+        android:id="@+id/bottomBar"
+        layout="@layout/bottom_navbar"
+        android:layout_alignParentBottom="true" />
+
+</RelativeLayout>

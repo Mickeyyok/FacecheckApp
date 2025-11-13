@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <!-- 🔹 HEADER -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:background="@drawable/bg_gradient">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="แก้ไขข้อมูลวิชา"
+            android:textColor="@android:color/white"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="50dp"/>
+    </RelativeLayout>
+
+    <!-- 🔹 CONTENT -->
+    <ScrollView
+        android:id="@+id/contentScroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="120dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:orientation="vertical"
+            android:background="@drawable/bg_white_rounded">
+
+            <!-- กล่องขาว -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:padding="20dp"
+                android:elevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/edtClassName"
+                        android:hint="ชื่อวิชา"
+                        android:background="@drawable/input_box"
+                        style="@style/EditBoxStyle"/>
+
+                    <EditText
+                        android:id="@+id/edtSubjectCode"
+                        android:hint="รหัสวิชา"
+                        android:background="@drawable/input_box"
+                        style="@style/EditBoxStyle"/>
+
+                    <EditText
+                        android:id="@+id/edtTeacherName"
+                        android:hint="ชื่อผู้สอน"
+                        android:background="@drawable/input_box"
+                        style="@style/EditBoxStyle"/>
+
+                    <EditText
+                        android:id="@+id/edtYear"
+                        android:hint="ปีการศึกษา"
+                        android:background="@drawable/input_box"
+                        android:inputType="number"
+                        style="@style/EditBoxStyle"/>
+
+                    <EditText
+                        android:id="@+id/edtSemester"
+                        android:hint="ภาคเรียน"
+                        android:background="@drawable/input_box"
+                        android:inputType="number"
+                        style="@style/EditBoxStyle"/>
+
+                    <EditText
+                        android:id="@+id/edtClassRoom"
+                        android:background="@drawable/input_box"
+                        android:hint="ห้องเรียน"
+                        style="@style/EditBoxStyle"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- ปุ่ม -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="20dp">
+
+                <Button
+                    android:id="@+id/btnCancel"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="50dp"
+                    android:text="ยกเลิก"
+                    android:textColor="#2196F3"
+                    android:background="@drawable/outline_button"/>
+
+                <View
+                    android:layout_width="12dp"
+                    android:layout_height="1dp"/>
+
+                <Button
+                    android:id="@+id/btnNext"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="50dp"
+                    android:text="ถัดไป"
+                    android:textColor="@android:color/white"
+                    android:backgroundTint="#2196F3" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+    <!-- ⚙️ Bottom Navigation -->
+    <include
+        android:id="@+id/bottomBar"
+        layout="@layout/bottom_navbar"
+        android:layout_alignParentBottom="true" />
+
+</RelativeLayout>
