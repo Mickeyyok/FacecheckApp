@@ -12,7 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import java.util.*
 
-class CreaetimeActivity : AppCompatActivity() {
+class CreatetimeActivity : AppCompatActivity() {
 
     private val auth = FirebaseAuth.getInstance()
     private val database = FirebaseDatabase.getInstance().getReference("classes")
@@ -91,34 +91,29 @@ class CreaetimeActivity : AppCompatActivity() {
         }
 
         // 🔹 ส่วนของ Date/Time Picker
-        edtDateTime.setOnClickListener { showDateTimePicker(edtDateTime) }
+        // 🔹 เลือกวันอย่างเดียว
+        edtDateTime.setOnClickListener { showDatePicker(edtDateTime) }
         etStartTime.setOnClickListener { showTimePicker(etStartTime) }
         etLateTime.setOnClickListener { showTimePicker(etLateTime) }
         etEndTime.setOnClickListener { showTimePicker(etEndTime) }
     }
 
-    // 🗓️ ฟังก์ชันเลือกวัน + เวลา
-    private fun showDateTimePicker(target: EditText) {
+    //
+    // 🗓️ ฟังก์ชันเลือก "วันที่"
+    private fun showDatePicker(target: EditText) {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-        val datePicker = DatePickerDialog(this, { _, selectedYear, selectedMonth, selectedDay ->
-            val hour = calendar.get(Calendar.HOUR_OF_DAY)
-            val minute = calendar.get(Calendar.MINUTE)
-
-            val timePicker = TimePickerDialog(this, { _, selectedHour, selectedMinute ->
-                val formattedDate = String.format("%02d/%02d/%04d", selectedDay, selectedMonth + 1, selectedYear)
-                val formattedTime = String.format("%02d:%02d", selectedHour, selectedMinute)
-                target.setText("$formattedDate $formattedTime น.")
-            }, hour, minute, true)
-
-            timePicker.show()
+        val datePicker = DatePickerDialog(this, { _, y, m, d ->
+            val formattedDate = String.format("%02d/%02d/%04d", d, m + 1, y)
+            target.setText(formattedDate)
         }, year, month, day)
 
         datePicker.show()
     }
+
 
     // ⏰ ฟังก์ชันเลือกเวลาอย่างเดียว
     private fun showTimePicker(target: EditText) {

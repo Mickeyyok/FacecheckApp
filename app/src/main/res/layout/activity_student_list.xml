@@ -13,34 +13,34 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:background="@drawable/bg_gradient"
-        android:paddingTop="35dp"
-        android:paddingHorizontal="16dp">
+        android:paddingHorizontal="16dp"
+        android:paddingTop="35dp">
 
         <!-- ปุ่มย้อนกลับ -->
         <ImageButton
             android:id="@+id/btnBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_arrow_back_white"
-            android:tint="@android:color/white"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true" />
+            android:tint="@android:color/white" />
 
         <!-- ชื่อหัวข้อ -->
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="นักศึกษา"
-            android:textColor="@android:color/white"
-            android:textStyle="bold"
-            android:textSize="22sp"
             android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true" />
+            android:layout_centerVertical="true"
+            android:text="รายละเอียดวิชา"
+            android:textColor="@android:color/white"
+            android:textSize="22sp"
+            android:textStyle="bold" />
     </RelativeLayout>
 
-    <!-- 🔸 พื้นหลังขาวโค้ง -->
+    <!-- 🔸 พื้นหลังขาวโค้งด้านล่าง -->
     <LinearLayout
         android:id="@+id/contentContainer"
         android:layout_width="match_parent"
@@ -52,12 +52,13 @@
         android:layout_above="@id/bottomBar"
         android:elevation="6dp">
 
-        <!-- 🔹 แท็บด้านบน -->
+        <!-- 🔹 Tab Layout (ทำให้กดได้) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:layout_marginBottom="8dp">
 
             <TextView
                 android:id="@+id/tabInfo"
@@ -66,9 +67,12 @@
                 android:layout_height="wrap_content"
                 android:text="ข้อมูล"
                 android:gravity="center"
-                android:textColor="#888888"
+                android:textColor="#2196F3"
+                android:textStyle="bold"
                 android:paddingVertical="10dp"
-                android:background="@drawable/tab_unselected_bg" />
+                android:background="@drawable/tab_selected_bg"
+                android:clickable="true"
+                android:focusable="true" />
 
             <TextView
                 android:id="@+id/tabStudent"
@@ -77,23 +81,37 @@
                 android:layout_height="wrap_content"
                 android:text="นักศึกษา"
                 android:gravity="center"
-                android:textColor="#2196F3"
-                android:textStyle="bold"
+                android:textColor="#888888"
                 android:paddingVertical="10dp"
-                android:background="@drawable/tab_selected_bg" />
+                android:background="@drawable/tab_unselected_bg"
+                android:clickable="true"
+                android:focusable="true" />
 
             <TextView
-                android:id="@+id/tabReport"
+                android:id="@+id/tabReportDay"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="การเข้ารายงาน"
+                android:text="รายต่อวัน"
                 android:gravity="center"
                 android:textColor="#888888"
                 android:paddingVertical="10dp"
-                android:background="@drawable/tab_unselected_bg" />
+                android:background="@drawable/tab_unselected_bg"
+                android:clickable="true"
+                android:focusable="true" />
+            <TextView
+                android:id="@+id/tabReportTerm"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="รายงานต่อเทอม"
+                android:gravity="center"
+                android:textColor="#888888"
+                android:paddingVertical="10dp"
+                android:background="@drawable/tab_unselected_bg"
+                android:clickable="true"
+                android:focusable="true" />
         </LinearLayout>
-
         <!-- 🔹 เนื้อหา (RecyclerView รายชื่อนักศึกษา) -->
         <LinearLayout
             android:layout_width="match_parent"

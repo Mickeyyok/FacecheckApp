@@ -20,7 +20,7 @@
         android:shadowDx="0"
         android:shadowDy="2"
         android:shadowRadius="4"
-        android:layout_marginTop="90dp"
+        android:layout_marginTop="100dp"
         android:layout_marginBottom="90dp" />
 
     <!-- ช่องชื่อผู้ใช้ -->
@@ -28,7 +28,7 @@
         android:id="@+id/etUsername"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="20dp"
         android:textSize="15dp"
         android:hint="ชื่อผู้ใช้/รหัสนักศึกษา"
         android:background="@drawable/edittext_bg"
@@ -41,12 +41,13 @@
         android:id="@+id/etPassword"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="40dp"
         android:textSize="15dp"
         android:hint="รหัสผ่าน"
         android:inputType="textPassword"
         android:background="@drawable/edittext_bg"
         android:gravity="center"
+
         android:textColor="@android:color/black"
         android:textColorHint="#777" />
 
@@ -70,6 +71,7 @@
         android:layout_height="50dp"
         android:text="เข้าสู่ระบบ"
         android:textStyle="bold"
+
         android:backgroundTint="#000080"
         android:textColor="@color/white"
 

@@ -8,11 +8,9 @@ import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.util.Log
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.google.firebase.database.*
 
 class ClassDetailActivity : AppCompatActivity() {
@@ -21,7 +19,8 @@ class ClassDetailActivity : AppCompatActivity() {
 
     private lateinit var tabInfo: TextView
     private lateinit var tabStudent: TextView
-    private lateinit var tabReport: TextView
+    private lateinit var tabReportTerm: TextView
+    private lateinit var tabReportDay: TextView
     private lateinit var btnBack: ImageButton
     private lateinit var btnDeleteClass: Button
     private lateinit var btnEditClass: Button
@@ -38,7 +37,6 @@ class ClassDetailActivity : AppCompatActivity() {
 
     private var classId: String? = null
 
-    // เก็บเวลาเพื่อนำไปส่งให้หน้าแก้ไข
     private var snapshotStartTime: String = "-"
     private var snapshotLateTime: String = "-"
     private var snapshotEndTime: String = "-"
@@ -47,7 +45,7 @@ class ClassDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_class_detail)
 
-        dbRef = FirebaseDatabase.getInstance().getReference("classes")
+        dbRef = FirebaseDatabase.getInstance().reference.child("classes")
         classId = intent.getStringExtra("classId")
 
         if (classId.isNullOrEmpty()) {
@@ -56,13 +54,12 @@ class ClassDetailActivity : AppCompatActivity() {
             return
         }
 
-        Log.d("ClassDetailActivity", "✅ Received classId = $classId")
-
         // เชื่อม View
         btnBack = findViewById(R.id.btnBack)
         tabInfo = findViewById(R.id.tabInfo)
         tabStudent = findViewById(R.id.tabStudent)
-        tabReport = findViewById(R.id.tabReport)
+        tabReportTerm = findViewById(R.id.tabReportTerm)
+        tabReportDay = findViewById(R.id.tabReportDay)
         btnDeleteClass = findViewById(R.id.btnDeleteClass)
         btnEditClass = findViewById(R.id.btnEditClass)
 
@@ -78,10 +75,14 @@ class ClassDetailActivity : AppCompatActivity() {
 
         // ย้อนกลับ
         btnBack.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+            val intent = Intent(this, TeacherHomeActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+            finish()
         }
 
-        // แท็บ "ข้อมูล"
+
+        // ตั้งแท็บเริ่มต้น
         setActiveTab(tabInfo)
 
         // ไปหน้า รายชื่อนักศึกษา
@@ -91,17 +92,25 @@ class ClassDetailActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        // แท็บ Report (ยังไม่เปิดใช้งาน)
+        tabReportDay.setOnClickListener {
+            Toast.makeText(this, "หน้านี้ยังไม่เปิดใช้งาน", Toast.LENGTH_SHORT).show()
+        }
+
+        tabReportTerm.setOnClickListener {
+            Toast.makeText(this, "หน้านี้ยังไม่เปิดใช้งาน", Toast.LENGTH_SHORT).show()
+        }
+
         // โหลดข้อมูล
         loadClassData()
 
         // ลบคลาส
-        btnDeleteClass.setOnClickListener {
-            confirmDeleteClass()
-        }
+        btnDeleteClass.setOnClickListener { confirmDeleteClass() }
 
-        // ⭐ เปิดหน้าแก้ไขคลาส
+        // เปิดหน้าแก้ไข
         btnEditClass.setOnClickListener {
             val intent = Intent(this, EditClassActivity::class.java)
+
             intent.putExtra("classId", classId)
             intent.putExtra("className", tvSubjectName.text.toString())
             intent.putExtra("subjectCode", tvSubjectCode.text.toString())
@@ -111,7 +120,6 @@ class ClassDetailActivity : AppCompatActivity() {
             intent.putExtra("semester", tvSemester.text.toString())
             intent.putExtra("classTime", tvDayTime.text.toString())
 
-            // เวลาเช็กชื่อจาก Firebase
             intent.putExtra("startTime", snapshotStartTime)
             intent.putExtra("lateTime", snapshotLateTime)
             intent.putExtra("endTime", snapshotEndTime)
@@ -120,14 +128,11 @@ class ClassDetailActivity : AppCompatActivity() {
         }
     }
 
-    // โหลดข้อมูลจาก Firebase
     private fun loadClassData() {
         dbRef.child(classId!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                if (!snapshot.exists()) {
-                    Toast.makeText(this@ClassDetailActivity, "ไม่พบข้อมูลในฐานข้อมูล", Toast.LENGTH_SHORT).show()
-                    return
-                }
+
+                if (!snapshot.exists()) return
 
                 val className = snapshot.child("className").getValue(String::class.java) ?: "-"
                 val subjectCode = snapshot.child("subjectCode").getValue(String::class.java) ?: "-"
@@ -140,7 +145,6 @@ class ClassDetailActivity : AppCompatActivity() {
                 val lateTime = snapshot.child("lateTime").getValue(String::class.java) ?: "-"
                 val endTime = snapshot.child("endTime").getValue(String::class.java) ?: "-"
 
-                // เก็บค่าไว้สำหรับส่งไปหน้าแก้ไข
                 snapshotStartTime = startTime
                 snapshotLateTime = lateTime
                 snapshotEndTime = endTime
@@ -154,42 +158,29 @@ class ClassDetailActivity : AppCompatActivity() {
                 tvYear.text = year
                 tvSemester.text = semester
 
-                // ระบบสีของเวลา
+                // เวลา 3 สี
                 val text = SpannableStringBuilder()
 
                 val green = "ตรง "
                 text.append(green)
-                text.setSpan(
-                    ForegroundColorSpan(Color.parseColor("#00C853")),
-                    0, green.length,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
+                text.setSpan(ForegroundColorSpan(Color.parseColor("#00C853")), 0, green.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 text.append(startTime).append("  ")
 
                 val orange = "สาย "
                 text.append(orange)
-                text.setSpan(
-                    ForegroundColorSpan(Color.parseColor("#FF8C00")),
-                    text.length - orange.length, text.length,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
+                text.setSpan(ForegroundColorSpan(Color.parseColor("#FF8C00")), text.length - orange.length, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 text.append(lateTime).append("  ")
 
                 val red = "ขาด "
                 text.append(red)
-                text.setSpan(
-                    ForegroundColorSpan(Color.parseColor("#E53935")),
-                    text.length - red.length, text.length,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
+                text.setSpan(ForegroundColorSpan(Color.parseColor("#E53935")), text.length - red.length, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 text.append(endTime)
 
                 tvCheckTime.text = text
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@ClassDetailActivity, "เกิดข้อผิดพลาด: ${error.message}", Toast.LENGTH_SHORT).show()
-                Log.e("ClassDetailActivity", "❌ Database error: ${error.message}")
+                Toast.makeText(this@ClassDetailActivity, "โหลดข้อมูลล้มเหลว", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -223,12 +214,16 @@ class ClassDetailActivity : AppCompatActivity() {
     }
 
     private fun setActiveTab(activeTab: TextView) {
-        val allTabs = listOf(tabInfo, tabStudent, tabReport)
+
+        val allTabs = listOf(tabInfo, tabStudent, tabReportDay, tabReportTerm)
+
         allTabs.forEach {
-            it.setTextColor(Color.parseColor("#888888"))
+            it.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray))
             it.setBackgroundResource(R.drawable.tab_unselected_bg)
         }
-        activeTab.setTextColor(Color.parseColor("#2196F3"))
+
+        activeTab.setTextColor(ContextCompat.getColor(this, android.R.color.holo_blue_dark))
         activeTab.setBackgroundResource(R.drawable.tab_selected_bg)
     }
+
 }

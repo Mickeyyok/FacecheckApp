@@ -1,5 +1,6 @@
 package com.example.facecheckapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -40,7 +41,11 @@ class AddStudentActivity : AppCompatActivity() {
         btnAddStudent.setOnClickListener {
             val studentId = etStudentId.text.toString().trim()
             if (studentId.length != 13) {
-                Toast.makeText(this, "กรุณากรอกรหัสนักศึกษาให้ถูกต้อง (13 หลัก)", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "กรุณากรอกรหัสนักศึกษาให้ถูกต้อง (13 หลัก)",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return@setOnClickListener
             }
 
@@ -71,7 +76,6 @@ class AddStudentActivity : AppCompatActivity() {
     private fun checkAndAddStudent(studentId: String) {
         val usersRef = database.getReference("users")
 
-        // 🔍 ตรวจว่ารหัสนี้มีอยู่ใน users หรือไม่ (แก้จาก student_id → id)
         usersRef.orderByChild("id").equalTo(studentId)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -79,25 +83,42 @@ class AddStudentActivity : AppCompatActivity() {
                         for (userSnap in snapshot.children) {
                             val firstName = userSnap.child("first_name").value?.toString() ?: "-"
                             val lastName = userSnap.child("last_name").value?.toString() ?: "-"
+
                             val studentData = mapOf(
                                 "first_name" to firstName,
                                 "last_name" to lastName,
                                 "status" to "ปกติ"
                             )
 
-                            val studentRef = database.getReference("classes/$teacherUid/$classId/students/$studentId")
+                            val studentRef =
+                                database.getReference("classes/$teacherUid/$classId/students/$studentId")
                             studentRef.setValue(studentData)
 
-                            Toast.makeText(this@AddStudentActivity, "เพิ่มนักศึกษาสำเร็จ", Toast.LENGTH_SHORT).show()
-                            etStudentId.text.clear()
+                            Toast.makeText(
+                                this@AddStudentActivity,
+                                "เพิ่มนักศึกษาสำเร็จ",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            // 🔙 กลับไป StudentListActivity
+                            val intent =
+                                Intent(this@AddStudentActivity, StudentListActivity::class.java)
+                            intent.putExtra("classId", classId)
+                            intent.flags =
+                                Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                            startActivity(intent)
+                            finish()
                         }
                     } else {
-                        Toast.makeText(this@AddStudentActivity, "ไม่พบนักศึกษารหัสนี้ในระบบ", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@AddStudentActivity,
+                            "ไม่พบนักศึกษารหัสนี้ในระบบ",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {}
             })
     }
-
 }

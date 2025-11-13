@@ -4,24 +4,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    tools:context=".CreaetimeActivity">
+    tools:context=".CreatetimeActivity">
 
     <!-- 🔹 ส่วนหัว -->
     <RelativeLayout
+        android:id="@+id/headerLayout"
         android:layout_width="match_parent"
-        android:layout_height="130dp"
-        android:background="@drawable/bg_gradient">
+        android:layout_height="100dp"
+        android:background="@drawable/bg_gradient"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="35dp">
 
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ตั้งเวลา"
-            android:textColor="@android:color/white"
-            android:textSize="26sp"
-            android:textStyle="bold"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="50dp" />
+            android:layout_centerVertical="true"
+            android:text="ตั้งเวลาเช็กชื่อ"
+            android:textColor="@android:color/white"
+            android:textSize="22sp"
+            android:textStyle="bold" />
     </RelativeLayout>
 
     <!-- 🔸 เนื้อหา -->
@@ -41,7 +44,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="วัน/เวลา เช็กชื่อ"
+                android:text="วันที่ เช็กชื่อ"
                 android:textStyle="bold"
                 android:textColor="#000"
                 android:textSize="16sp"
@@ -69,13 +72,13 @@
                     android:id="@+id/edtDateTime"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:hint="วัน/เวลา"
+                    android:hint="วัน"
                     android:background="@android:color/transparent"
                     android:focusable="false"
                     android:clickable="true"
                     android:textSize="16sp"
                     android:inputType="none"
-                    android:padding="0dp" />
+                     />
             </LinearLayout>
 
             <!-- 🔸 เวลาเริ่ม / สาย / ปิด -->
@@ -83,32 +86,32 @@
                 android:id="@+id/etStartTime"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:hint="เวลาเริ่มเรียน (10:00)"
+                android:hint="เวลาเริ่มเรียน "
                 android:background="@drawable/input_box"
                 android:gravity="center"
                 android:focusable="false"
                 android:layout_marginTop="50dp"
-                android:layout_marginBottom="10dp" />
+                android:layout_marginBottom="20dp" />
 
             <EditText
                 android:id="@+id/etLateTime"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:hint="เวลาสาย (10:30)"
+                android:hint="เวลาสาย "
                 android:background="@drawable/input_box"
                 android:gravity="center"
                 android:focusable="false"
-                android:layout_marginBottom="10dp" />
+                android:layout_marginBottom="20dp" />
 
             <EditText
                 android:id="@+id/etEndTime"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:hint="เวลาปิดเช็กชื่อ (12:00)"
+                android:hint="เวลาปิดเช็กชื่อ "
                 android:background="@drawable/input_box"
                 android:gravity="center"
                 android:focusable="false"
-                android:layout_marginBottom="20dp" />
+                android:layout_marginBottom="40dp" />
 
             <!-- 🔹 ปุ่ม -->
             <LinearLayout
