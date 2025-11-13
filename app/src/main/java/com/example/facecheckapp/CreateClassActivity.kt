@@ -56,7 +56,7 @@ class CreateClassActivity : AppCompatActivity() {
             }
 
             // ✅ ส่งข้อมูลไปหน้า CreaetimeActivity
-            val intent = Intent(this, CreaetimeActivity::class.java).apply {
+            val intent = Intent(this, CreatetimeActivity::class.java).apply {
                 putExtra("className", className)
                 putExtra("classRoom", classRoom)
                 putExtra("subjectCode", subjectCode)
