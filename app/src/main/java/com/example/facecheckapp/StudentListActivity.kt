@@ -19,7 +19,8 @@ class StudentListActivity : AppCompatActivity() {
 
     private lateinit var tabInfo: TextView
     private lateinit var tabStudent: TextView
-    private lateinit var tabReport: TextView
+    private lateinit var tabReportTerm: TextView
+    private lateinit var tabReportDay: TextView
 
     private val studentList = mutableListOf<StudentData>()
     private lateinit var adapter: StudentAdapter
@@ -40,7 +41,8 @@ class StudentListActivity : AppCompatActivity() {
         // ✅ แท็บ
         tabInfo = findViewById(R.id.tabInfo)
         tabStudent = findViewById(R.id.tabStudent)
-        tabReport = findViewById(R.id.tabReport)
+        tabReportTerm = findViewById(R.id.tabReportTerm)
+        tabReportDay = findViewById(R.id.tabReportDay)
 
         teacherUid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         classId = intent.getStringExtra("classId")
@@ -63,7 +65,13 @@ class StudentListActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        btnBack.setOnClickListener { finish() }
+        // ย้อนกลับ
+        btnBack.setOnClickListener {
+            val intent = Intent(this, TeacherHomeActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+            finish()
+        }
 
         // ✅ ตั้งสีแท็บ active
         setActiveTab(tabStudent)
@@ -76,8 +84,12 @@ class StudentListActivity : AppCompatActivity() {
             finish()
         }
 
-        // ✅ (ถ้ามีหน้า Report ในอนาคต)
-        tabReport.setOnClickListener {
+        // แท็บ Report (ยังไม่เปิดใช้งาน)
+        tabReportDay.setOnClickListener {
+            Toast.makeText(this, "หน้านี้ยังไม่เปิดใช้งาน", Toast.LENGTH_SHORT).show()
+        }
+
+        tabReportTerm.setOnClickListener {
             Toast.makeText(this, "หน้านี้ยังไม่เปิดใช้งาน", Toast.LENGTH_SHORT).show()
         }
     }
@@ -85,7 +97,7 @@ class StudentListActivity : AppCompatActivity() {
     private fun loadStudents() {
         val classRef = database.getReference("classes/$teacherUid/$classId/students")
 
-        classRef.addValueEventListener(object : ValueEventListener {
+        classRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 studentList.clear()
                 for (child in snapshot.children) {
@@ -109,13 +121,16 @@ class StudentListActivity : AppCompatActivity() {
 
     // ✅ ใช้ ContextCompat เพื่อป้องกัน Deprecated Warning
     private fun setActiveTab(activeTab: TextView) {
-        val allTabs = listOf(tabInfo, tabStudent, tabReport)
+
+        val allTabs = listOf(tabInfo, tabStudent, tabReportDay, tabReportTerm)
 
         allTabs.forEach {
             it.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray))
             it.setBackgroundResource(R.drawable.tab_unselected_bg)
         }
+
         activeTab.setTextColor(ContextCompat.getColor(this, android.R.color.holo_blue_dark))
         activeTab.setBackgroundResource(R.drawable.tab_selected_bg)
     }
+
 }
