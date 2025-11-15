@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -40,7 +41,35 @@ class HomeActivity : AppCompatActivity() {
             val intent = Intent(this, SubjectListActivity::class.java)
             startActivityForResult(intent, PICK_SUBJECT)
         }
+
+        // ⬇⬇⬇ เรียก Bottom Navigation
+        setupBottomNav()
     }
+
+
+    /** 🔽 โค้ด Bottom Navigation แยกเป็นฟังก์ชัน 🔽 */
+    private fun setupBottomNav() {
+        val navHome = findViewById<LinearLayout>(R.id.navHome)
+        val navHistory = findViewById<LinearLayout>(R.id.navHistory)
+        val navSetting = findViewById<LinearLayout>(R.id.navSetting)
+
+        navHome.setOnClickListener {
+            startActivity(Intent(this, HomeActivity::class.java))
+            overridePendingTransition(0, 0)
+        }
+
+        navHistory.setOnClickListener {
+            startActivity(Intent(this, HistoryActivity::class.java))
+            overridePendingTransition(0, 0)
+        }
+
+        navSetting.setOnClickListener {
+            startActivity(Intent(this, SettingActivity::class.java))
+            overridePendingTransition(0, 0)
+        }
+    }
+
+
 
     /** โหลดวิชาแรกของนักศึกษา */
     private fun loadSelectedSubject() {
@@ -67,20 +96,17 @@ class HomeActivity : AppCompatActivity() {
                     val end = data.child("endTime").getValue(String::class.java) ?: ""
                     val classTime = data.child("classTime").getValue(String::class.java) ?: ""
 
-                    // ถ้ามี start/end ให้ใช้รูปแบบ 10:00 - 12:00u. ถ้าไม่มีใช้ classTime แทน
                     val timeLine = when {
-                        start.isNotEmpty() && end.isNotEmpty() ->
-                            "$start - $end น."
-                        classTime.isNotEmpty() ->
-                            classTime
+                        start.isNotEmpty() && end.isNotEmpty() -> "$start - $end น."
+                        classTime.isNotEmpty() -> classTime
                         else -> "-"
                     }
 
-                    // แสดง 3 บรรทัดเหมือนดีไซน์
                     tvSelectedSubject.text = "$code $name\nอาคาร $room ห้อง $room\n$timeLine"
                 }
         }
     }
+
 
     /** รับค่าจากหน้า SubjectList เมื่อเลือกวิชาใหม่ */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <!-- ✅ สิทธิ์ที่จำเป็น -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
-
-    <!-- ✅ ระบุว่าอุปกรณ์นี้ต้องมีกล้อง -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- ✅ ระบุว่าอุปกรณ์นี้ต้องมีกล้อง -->
     <uses-feature android:name="android.hardware.camera.any" />
-    <uses-feature android:name="android.hardware.camera.front" android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -22,58 +20,38 @@
         android:roundIcon="@mipmap/ic_utcc_logo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FacecheckApp">
-
-        <!-- ✅ หน้าเริ่มต้นของแอป -->
+        <activity
+            android:name=".PersonalActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SettingActivity"
+            android:exported="false" /> <!-- ✅ หน้าเริ่มต้นของแอป -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- ✅ หน้าล็อกอิน -->
-        <activity android:name=".LoginActivity" />
-
-        <!-- ✅ หน้าลงทะเบียนใบหน้า (ถ่ายรูป/บันทึกข้อมูลใบหน้า) -->
-        <activity android:name=".RegisterActivity" />
-
-        <!-- ✅ หน้ายินยอมการใช้งาน / นโยบาย -->
+        </activity> <!-- ✅ หน้าล็อกอิน -->
+        <activity android:name=".LoginActivity" /> <!-- ✅ หน้าลงทะเบียนใบหน้า (ถ่ายรูป/บันทึกข้อมูลใบหน้า) -->
+        <activity android:name=".RegisterActivity" /> <!-- ✅ หน้ายินยอมการใช้งาน / นโยบาย -->
         <activity android:name=".ConsentActivity" />
-
         <activity android:name=".SuccessActivity" />
-
         <activity android:name=".RegScanActivity" />
-
         <activity android:name=".HomeActivity" />
-
         <activity android:name=".AddSubjectActivity" />
-
         <activity android:name=".TeacherHomeActivity" />
-
         <activity android:name=".CreateClassActivity" />
-
         <activity android:name=".CreatetimeActivity" />
-
         <activity android:name=".ClassDetailActivity" />
-
         <activity android:name=".AddStudentActivity" />
-
         <activity android:name=".StudentListActivity" />
-
         <activity android:name=".EditClassActivity" />
-
         <activity android:name=".EditTimeActivity" />
-
         <activity android:name=".SubjectListActivity" />
-
-
-
-
-
-
-
+        <activity android:name=".HistoryActivity" />
     </application>
 
 </manifest>

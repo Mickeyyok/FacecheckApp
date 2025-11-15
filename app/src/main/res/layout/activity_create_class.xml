@@ -175,9 +175,12 @@
 
 
     <!-- ⚙️ Bottom Navigation -->
+    <!-- ⭐ Bottom Navigation (อยู่ล่างสุดจริงๆ) -->
     <include
         android:id="@+id/bottomBar"
         layout="@layout/bottom_navbar"
-        android:layout_alignParentBottom="true" />
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

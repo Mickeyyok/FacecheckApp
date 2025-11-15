@@ -3,46 +3,63 @@
     android:layout_width="match_parent"
     android:layout_height="70dp"
     android:background="@android:color/white"
-    android:layout_alignParentBottom="true"
     android:gravity="center">
 
+    <!-- 🏠 หน้าแรก -->
     <LinearLayout
+        android:id="@+id/navHome"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:orientation="vertical"
         android:gravity="center">
-        <ImageView android:src="@drawable/ic_home" android:tint="@color/black" android:layout_width="25dp" android:layout_height="25dp"/>
 
+        <ImageButton
+            android:id="@+id/iconHome"
+            android:src="@drawable/ic_home"
+            android:tint="@color/black"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@android:color/transparent"
+            android:clickable="false" />
     </LinearLayout>
 
+    <!-- 📘 ประวัติ -->
     <LinearLayout
+        android:id="@+id/navHistory"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:orientation="vertical"
         android:gravity="center">
-        <ImageView android:src="@drawable/ic_result" android:tint="@color/black" android:layout_width="25dp" android:layout_height="25dp"/>
 
+        <ImageButton
+            android:id="@+id/iconHistory"
+            android:src="@drawable/ic_history"
+            android:tint="@color/black"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@android:color/transparent"
+            android:clickable="false" />
     </LinearLayout>
 
+    <!-- ⚙️ ตั้งค่า -->
     <LinearLayout
+        android:id="@+id/navSetting"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:orientation="vertical"
         android:gravity="center">
-        <ImageView android:src="@drawable/ic_history" android:tint="@color/black" android:layout_width="25dp" android:layout_height="25dp"/>
 
+        <ImageButton
+            android:id="@+id/iconSetting"
+            android:src="@drawable/ic_setting"
+            android:tint="@color/black"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@android:color/transparent"
+            android:clickable="false" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center">
-        <ImageView android:src="@drawable/ic_setting" android:tint="@color/black" android:layout_width="25dp" android:layout_height="25dp"/>
-
-    </LinearLayout>
 </LinearLayout>

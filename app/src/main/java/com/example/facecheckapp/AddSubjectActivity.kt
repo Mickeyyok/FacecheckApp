@@ -1,8 +1,10 @@
 package com.example.facecheckapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -73,5 +75,27 @@ class AddSubjectActivity : AppCompatActivity() {
             .addOnFailureListener {
                 Toast.makeText(this, "เชื่อมต่อฐานข้อมูลผิดพลาด", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    /** 🔽 โค้ด Bottom Navigation แยกเป็นฟังก์ชัน 🔽 */
+    private fun setupBottomNav() {
+        val navHome = findViewById<LinearLayout>(R.id.navHome)
+        val navHistory = findViewById<LinearLayout>(R.id.navHistory)
+        val navSetting = findViewById<LinearLayout>(R.id.navSetting)
+
+        navHome.setOnClickListener {
+            startActivity(Intent(this, HomeActivity::class.java))
+            overridePendingTransition(0, 0)
+        }
+
+        navHistory.setOnClickListener {
+            startActivity(Intent(this, HistoryActivity::class.java))
+            overridePendingTransition(0, 0)
+        }
+
+        navSetting.setOnClickListener {
+            startActivity(Intent(this, SettingActivity::class.java))
+            overridePendingTransition(0, 0)
+        }
     }
 }

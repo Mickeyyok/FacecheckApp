@@ -3,10 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
+    android:layout_gravity="center"
     >
 
     <!-- 🔹 ส่วนหัว (Gradient ฟ้า→น้ำเงิน) -->
     <RelativeLayout
+        android:id="@+id/headerLayout"
         android:layout_width="match_parent"
         android:layout_height="85dp"
         android:background="@drawable/bg_gradient">
@@ -15,6 +17,7 @@
             android:id="@+id/titleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:text="เพิ่มวิชา"
             android:textColor="@android:color/white"
             android:textSize="24sp"
@@ -22,25 +25,18 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="35dp" />
 
-        <ImageView
-            android:id="@+id/btnNotification"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="25dp"
-            android:layout_marginTop="35dp"
-            android:src="@drawable/ic_notifications"
-            android:tint="@android:color/white" />
+
     </RelativeLayout>
 
     <!-- 🔸 เนื้อหาหลัก -->
+
+    <!-- ⚙️ Bottom Navigation -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="30dp"
         android:layout_marginTop="100dp"
-        >
+        android:orientation="vertical"
+        android:padding="30dp">
 
         <!-- ปุ่มเข้าร่วมวิชา -->
 
@@ -60,15 +56,19 @@
             android:layout_height="55dp"
             android:layout_gravity="center"
             android:layout_marginTop="60dp"
-            android:text="เข้าร่วมวิชา"
-            android:textSize="18sp"
-            android:textStyle="bold"
             android:backgroundTint="#000080"
-            android:textColor="@android:color/white" />
+            android:text="เข้าร่วมวิชา"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
-    <!-- ⚙️ Bottom Navigation -->
-    <include layout="@layout/bottom_navbar" />
+    <include
+        android:id="@+id/bottomBar"
+        layout="@layout/bottom_navbar"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

@@ -23,14 +23,17 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="35dp" />
 
-        <ImageView
+        <ImageButton
             android:id="@+id/btnNotification"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="25dp"
             android:layout_marginTop="35dp"
             android:src="@drawable/ic_notifications"
+            android:background="@android:color/transparent"
             android:tint="@android:color/white" />
     </RelativeLayout>
 
@@ -207,11 +210,14 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
-    <!-- ⚙️ Bottom Navigation -->
+    <!-- ⭐ Bottom Navigation (อยู่ล่างสุดจริงๆ) -->
     <include
         android:id="@+id/bottomBar"
         layout="@layout/bottom_navbar"
-        android:layout_alignParentBottom="true" />
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"/>
+    <!-- ⚙️ Bottom Navigation -->
+
 
 </RelativeLayout>
