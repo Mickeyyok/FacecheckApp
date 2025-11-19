@@ -2,6 +2,7 @@ package com.example.facecheckapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -34,12 +35,16 @@ class HistoryActivity : AppCompatActivity() {
 
         loadHistory()
         setupBottomNav()
+
+        // ⭐ ปุ่มกระดิ่งไปหน้าแจ้งเตือน
+        val btnNotification = findViewById<ImageButton>(R.id.btnNotification)
+        btnNotification.setOnClickListener {
+            startActivity(Intent(this, NotificationActivity::class.java))
+        }
     }
 
 
-    /** โหลดประวัติเข้าเรียน */
     private fun loadHistory() {
-
         val ref = db.getReference("attendance")
             .child(uid)
             .child(currentYear)

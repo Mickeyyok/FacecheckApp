@@ -21,6 +21,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FacecheckApp">
         <activity
+            android:name=".NontificationActivity"
+            android:exported="false" />
+        <activity
             android:name=".PersonalActivity"
             android:exported="false" />
         <activity
@@ -52,6 +55,8 @@
         <activity android:name=".EditTimeActivity" />
         <activity android:name=".SubjectListActivity" />
         <activity android:name=".HistoryActivity" />
+        <activity android:name=".NotificationActivity" />
+
     </application>
 
 </manifest>
