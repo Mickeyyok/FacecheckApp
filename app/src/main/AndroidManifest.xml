@@ -52,6 +52,8 @@
         <activity android:name=".EditTimeActivity" />
         <activity android:name=".SubjectListActivity" />
         <activity android:name=".HistoryActivity" />
+        <activity android:name=".RealTimeActivity" />
+        <activity android:name=".TermActivity" />
     </application>
 
 </manifest>

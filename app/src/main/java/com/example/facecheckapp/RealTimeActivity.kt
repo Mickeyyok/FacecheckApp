@@ -1,5 +1,6 @@
 package com.example.facecheckapp
 
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.widget.ImageButton
@@ -14,7 +15,15 @@ class RealTimeActivity : AppCompatActivity() {
     private lateinit var tvDate: TextView
     private lateinit var btnBack: ImageButton
 
+    private lateinit var tvOnTimeCount: TextView
+    private lateinit var tvLateCount: TextView
+    private lateinit var tvAbsentCount: TextView
+    private lateinit var tvTerm: TextView
+    private lateinit var tvTermLayout: LinearLayout
+
     private val calendar = Calendar.getInstance()
+    private var selectedTerm = 1
+    private val year = Calendar.getInstance().get(Calendar.YEAR) + 543
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,14 +34,22 @@ class RealTimeActivity : AppCompatActivity() {
         tvDate = findViewById(R.id.tvDate)
         btnBack = findViewById(R.id.btnBack)
 
+        tvOnTimeCount = findViewById(R.id.tvOnTimeCount)
+        tvLateCount = findViewById(R.id.tvLateCount)
+        tvAbsentCount = findViewById(R.id.tvAbsentCount)
+        tvTerm = findViewById(R.id.tvTerm)
+        tvTermLayout = findViewById(R.id.tvTermLayout)
 
         updateDateDisplay()
-
+        updateTermDisplay()
 
         datePickerLayout.setOnClickListener {
             showDatePicker()
         }
 
+        tvTermLayout.setOnClickListener {
+            showTermSelectorDialog()
+        }
 
         btnBack.setOnClickListener {
             finish()
@@ -77,6 +94,25 @@ class RealTimeActivity : AppCompatActivity() {
         val year = cal.get(Calendar.YEAR) + 543
 
         return "$day $month $year"
+    }
+
+    private fun showTermSelectorDialog() {
+        val terms = arrayOf("เทอม 1", "เทอม 2")
+        val currentIndex = selectedTerm - 1
+
+        AlertDialog.Builder(this)
+            .setTitle("เลือกเทอม")
+            .setSingleChoiceItems(terms, currentIndex) { dialog, which ->
+                selectedTerm = which + 1
+                updateTermDisplay()
+                dialog.dismiss()
+            }
+            .setNegativeButton("ยกเลิก", null)
+            .show()
+    }
+
+    private fun updateTermDisplay() {
+        tvTerm.text = "$selectedTerm / $year"
     }
 }
 
