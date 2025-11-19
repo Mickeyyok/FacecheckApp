@@ -94,13 +94,13 @@ class ClassDetailActivity : AppCompatActivity() {
 
         // แท็บ Report (ยังไม่เปิดใช้งาน)
         tabReportDay.setOnClickListener {
-            val intent = Intent(this, TermActivity::class.java)
+            val intent = Intent(this, RealTimeActivity::class.java)
             intent.putExtra("classId", classId)
             startActivity(intent)
         }
 
         tabReportTerm.setOnClickListener {
-            val intent = Intent(this, RealTimeActivity::class.java)
+            val intent = Intent(this, TermActivity::class.java)
             intent.putExtra("classId", classId)
             startActivity(intent)
         }

@@ -54,6 +54,7 @@
         <activity android:name=".HistoryActivity" />
         <activity android:name=".RealTimeActivity" />
         <activity android:name=".TermActivity" />
+        <activity android:name=".NotificationActivity" />
     </application>
 
 </manifest>
