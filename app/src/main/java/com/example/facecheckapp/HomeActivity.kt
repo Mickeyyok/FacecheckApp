@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -40,9 +42,14 @@ class HomeActivity : AppCompatActivity() {
         tvSelectedSubject.setOnClickListener {
             val intent = Intent(this, SubjectListActivity::class.java)
             startActivityForResult(intent, PICK_SUBJECT)
-        }
 
-        // ⬇⬇⬇ เรียก Bottom Navigation
+
+        }
+        // ปุ่มกระดิ่งไปหน้า NotificationActivity
+        val btnNotification = findViewById<ImageButton>(R.id.btnNotification)
+        btnNotification.setOnClickListener {
+            startActivity(Intent(this, NotificationActivity::class.java))
+        }
         setupBottomNav()
     }
 
@@ -121,4 +128,6 @@ class HomeActivity : AppCompatActivity() {
             tvSelectedSubject.text = "$code $name\nอาคาร $room ห้อง $room\n$time"
         }
     }
+
+
 }
