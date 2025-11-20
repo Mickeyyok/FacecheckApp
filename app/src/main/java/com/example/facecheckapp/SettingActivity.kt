@@ -2,6 +2,7 @@ package com.example.facecheckapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -18,7 +19,7 @@ class SettingActivity : AppCompatActivity() {
         }
 
 
-        /** 🔽 Bottom Navigation 🔽 */
+        /** 🔽 B ottom Navigation 🔽 */
         val navHome = findViewById<LinearLayout>(R.id.navHome)
         val navHistory = findViewById<LinearLayout>(R.id.navHistory)
         val navSetting = findViewById<LinearLayout>(R.id.navSetting)
@@ -37,5 +38,20 @@ class SettingActivity : AppCompatActivity() {
             startActivity(Intent(this, SettingActivity::class.java))
             overridePendingTransition(0, 0)
         }
+
+        val btnLogout = findViewById<Button>(R.id.btnLogout)
+        btnLogout.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+        }
+
+        val lnProfile = findViewById<LinearLayout>(R.id.lnProfile)
+        lnProfile.setOnClickListener {
+            startActivity(Intent(this, PersonalActivity::class.java))
+        }
+
+
     }
 }

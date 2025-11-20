@@ -3,6 +3,7 @@ package com.example.facecheckapp
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 
 class NotificationActivity : AppCompatActivity() {
@@ -11,9 +12,27 @@ class NotificationActivity : AppCompatActivity() {
         setContentView(R.layout.activity_notification)
 
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
-
         btnBack.setOnClickListener {
-            finish()   // กลับหน้าก่อนหน้า
+            finish()
+        }
+
+        val navHome = findViewById<LinearLayout>(R.id.navHome)
+        val navHistory = findViewById<LinearLayout>(R.id.navHistory)
+        val navSetting = findViewById<LinearLayout>(R.id.navSetting)
+
+        navHome.setOnClickListener {
+            startActivity(Intent(this, HomeActivity::class.java))
+            overridePendingTransition(0, 0)
+        }
+
+        navHistory.setOnClickListener {
+            startActivity(Intent(this, HistoryActivity::class.java))
+            overridePendingTransition(0, 0)
+        }
+
+        navSetting.setOnClickListener {
+            startActivity(Intent(this, SettingActivity::class.java))
+            overridePendingTransition(0, 0)
         }
     }
 }
