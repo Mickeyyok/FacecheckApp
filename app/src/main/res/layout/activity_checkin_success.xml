@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <!-- HEADER -->
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="0dp"
+        android:layout_height="95dp"
+        android:background="@drawable/bg_gradient"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="40dp"
+            android:src="@drawable/ic_arrow_back_white"
+            android:tint="@android:color/white" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="38dp"
+            android:text="เช็คชื่อสำเร็จ"
+            android:textColor="@android:color/white"
+            android:textSize="23sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+
+    <!-- 📜 SCROLLABLE CONTENT -->
+    <ScrollView
+        android:id="@+id/scrollArea"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="20dp"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- STATUS BOX -->
+            <LinearLayout
+                android:id="@+id/statusBox"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:orientation="vertical"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:background="@drawable/bg_success_box">
+
+                <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ตรงเวลา"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black" />
+            </LinearLayout>
+
+            <!-- DETAIL PANEL -->
+            <LinearLayout
+                android:id="@+id/detailPanel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="20dp">
+
+                <TextView android:text="ชื่อวิชา" style="@style/DetailLabel" />
+                <TextView android:id="@+id/tvName" style="@style/DetailValue" />
+
+                <TextView android:text="รหัสวิชา" style="@style/DetailLabel" />
+                <TextView android:id="@+id/tvCode" style="@style/DetailValue" />
+
+                <TextView android:text="ห้อง" style="@style/DetailLabel" />
+                <TextView android:id="@+id/tvRoom" style="@style/DetailValue" />
+
+                <TextView android:text="วันที่/เวลา" style="@style/DetailLabel" />
+                <TextView android:id="@+id/tvDateTime" style="@style/DetailValue" />
+
+                <TextView android:text="เวลาที่เช็คชื่อ" style="@style/DetailLabel" />
+                <TextView android:id="@+id/tvCheckinTime" style="@style/DetailValue" />
+
+            </LinearLayout>
+
+            <!-- BUTTONS -->
+            <Button
+                android:id="@+id/btnHome"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="30dp"
+                android:backgroundTint="#1976FF"
+                android:text="กลับหน้าหลัก"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btnHistory"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="#E8ECF5"
+                android:text="ดูประวัติ"
+                android:textColor="#333333"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+    <!-- 🔻 FIXED BOTTOM NAVBAR -->
+    <include
+        android:id="@+id/bottomBar"
+        layout="@layout/bottom_navbar"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

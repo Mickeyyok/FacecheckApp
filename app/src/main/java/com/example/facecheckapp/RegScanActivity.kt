@@ -4,16 +4,9 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.Color
+import android.graphics.Rect
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import android.view.View
-import android.widget.Button
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -21,194 +14,128 @@ import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
-import java.io.ByteArrayOutputStream
 
 class RegScanActivity : AppCompatActivity() {
 
     private lateinit var previewView: PreviewView
-    private lateinit var faceStatusText: TextView
-    private lateinit var borderCircle: View
+    private lateinit var txtStatus: TextView
     private lateinit var btnRegister: Button
-    private lateinit var loadingBar: ProgressBar
+    private lateinit var loading: ProgressBar
 
-    private var isFaceDetected = false
+    private var faceNet: FaceNetModel? = null
+    private var lastBox: Rect? = null
 
-    // ✅ Firebase references
-    private lateinit var storageRef: StorageReference
-    private lateinit var auth: FirebaseAuth
+    private val auth = FirebaseAuth.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_regscan)
 
-        // ✅ Initialize Firebase
-        storageRef = FirebaseStorage.getInstance().reference
-        auth = FirebaseAuth.getInstance()
-
-        // ✅ Bind UI elements
         previewView = findViewById(R.id.previewView)
-        faceStatusText = findViewById(R.id.faceStatusText)
-        borderCircle = findViewById(R.id.borderCircle)
+        txtStatus = findViewById(R.id.faceStatusText)
+        loading = findViewById(R.id.loadingBar)
         btnRegister = findViewById(R.id.btnRegister)
-        loadingBar = findViewById(R.id.loadingBar)
 
-        // 🔒 ขอสิทธิ์กล้อง
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-            == PackageManager.PERMISSION_GRANTED
-        ) {
-            startCamera()
-        } else {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), 100)
-        }
+        faceNet = FaceNetModel(this)
 
-        // 🚀 ปุ่มลงทะเบียน
+        requestPermission()
+
         btnRegister.setOnClickListener {
-            if (isFaceDetected) {
-                faceStatusText.text = "✅ ตรวจพบใบหน้าแล้ว กำลังบันทึก..."
-                faceStatusText.setBackgroundColor(Color.parseColor("#4CAF50"))
-                loadingBar.visibility = View.VISIBLE
-
-                Handler(Looper.getMainLooper()).postDelayed({
-                    captureAndUploadFace()
-                }, 1500)
-            } else {
-                faceStatusText.text = "❌ โปรดให้กล้องตรวจจับใบหน้าก่อนลงทะเบียน"
-                faceStatusText.setBackgroundColor(Color.parseColor("#F44336"))
+            if (lastBox == null) {
+                txtStatus.text = "❌ ไม่พบใบหน้า"
+                return@setOnClickListener
             }
+            saveFace()
         }
     }
 
-    // 🎥 เริ่มกล้อง
+    private fun requestPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), 110)
+        } else startCamera()
+    }
+
+    override fun onRequestPermissionsResult(req: Int, p: Array<out String>, result: IntArray) {
+        if (result.isNotEmpty() && result[0] == PackageManager.PERMISSION_GRANTED) {
+            startCamera()
+        }
+    }
+
     private fun startCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-        cameraProviderFuture.addListener({
-            val cameraProvider = cameraProviderFuture.get()
+        val detector = FaceDetection.getClient(
+            FaceDetectorOptions.Builder()
+                .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST).build()
+        )
 
-            val preview = Preview.Builder().build().also {
-                it.setSurfaceProvider(previewView.surfaceProvider)
-            }
+        val future = ProcessCameraProvider.getInstance(this)
+        future.addListener({
+            val provider = future.get()
 
-            val imageAnalyzer = ImageAnalysis.Builder()
+            val preview = Preview.Builder().build()
+            preview.setSurfaceProvider(previewView.surfaceProvider)
+
+            val analyzer = ImageAnalysis.Builder()
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
-                .also {
-                    it.setAnalyzer(ContextCompat.getMainExecutor(this)) { imageProxy ->
-                        analyzeImage(imageProxy)
+
+            analyzer.setAnalyzer(ContextCompat.getMainExecutor(this)) { proxy ->
+
+                val media = proxy.image ?: return@setAnalyzer proxy.close()
+                val img = InputImage.fromMediaImage(media, proxy.imageInfo.rotationDegrees)
+
+                detector.process(img)
+                    .addOnSuccessListener { faces ->
+                        if (faces.isNotEmpty()) {
+                            txtStatus.text = "พบใบหน้า ✔"
+                            lastBox = faces[0].boundingBox
+                        } else {
+                            txtStatus.text = "ไม่พบใบหน้า"
+                            lastBox = null
+                        }
                     }
-                }
-
-            val cameraSelector = CameraSelector.Builder()
-                .requireLensFacing(CameraSelector.LENS_FACING_FRONT)
-                .build()
-
-            try {
-                cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalyzer)
-            } catch (exc: Exception) {
-                Log.e("CameraX", "กล้องทำงานผิดพลาด: ${exc.message}")
+                    .addOnCompleteListener { proxy.close() }
             }
 
+            provider.unbindAll()
+            provider.bindToLifecycle(this, CameraSelector.DEFAULT_FRONT_CAMERA, preview, analyzer)
         }, ContextCompat.getMainExecutor(this))
     }
 
-    // 🎯 วิเคราะห์ใบหน้า
-    private fun analyzeImage(imageProxy: ImageProxy) {
-        val mediaImage = imageProxy.image ?: return imageProxy.close()
-        val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+    // ⭐ Crop + Padding
+    private fun cropFace(bitmap: Bitmap, box: Rect): Bitmap {
+        val pad = (box.width() * 0.2f).toInt()
 
-        val options = FaceDetectorOptions.Builder()
-            .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
-            .enableTracking()
-            .build()
+        val left = (box.left - pad).coerceAtLeast(0)
+        val top = (box.top - pad).coerceAtLeast(0)
+        val right = (box.right + pad).coerceAtMost(bitmap.width)
+        val bottom = (box.bottom + pad).coerceAtMost(bitmap.height)
 
-        val detector = FaceDetection.getClient(options)
-
-        detector.process(image)
-            .addOnSuccessListener { faces ->
-                if (faces.isNotEmpty()) {
-                    if (!isFaceDetected) {
-                        Log.d("FaceCheck", "✅ ตรวจพบใบหน้า")
-                        isFaceDetected = true
-                        faceStatusText.text = "✅ ตรวจพบใบหน้าแล้ว!"
-                        faceStatusText.setBackgroundColor(Color.parseColor("#4CAF50"))
-                        borderCircle.setBackgroundResource(R.drawable.circle_green)
-                    }
-                } else {
-                    if (isFaceDetected) {
-                        Log.d("FaceCheck", "❌ ไม่พบใบหน้า")
-                        isFaceDetected = false
-                        faceStatusText.text = "❌ โปรดหันหน้าเข้ากล้อง"
-                        faceStatusText.setBackgroundColor(Color.parseColor("#F44336"))
-                        borderCircle.setBackgroundResource(R.drawable.circle_red)
-                    }
-                }
-            }
-            .addOnFailureListener { e ->
-                Log.e("FaceCheck", "การตรวจจับล้มเหลว: ${e.message}")
-            }
-            .addOnCompleteListener {
-                imageProxy.close()
-            }
+        return Bitmap.createBitmap(bitmap, left, top, right - left, bottom - top)
     }
 
-    // 📸 ถ่ายภาพและอัปโหลดขึ้น Firebase Storage
-    private fun captureAndUploadFace() {
-        val bitmap = previewView.bitmap
-        if (bitmap == null) {
-            Toast.makeText(this, "ไม่สามารถจับภาพได้", Toast.LENGTH_SHORT).show()
-            loadingBar.visibility = View.GONE
-            return
-        }
+    private fun saveFace() {
+        val uid = auth.currentUser?.uid ?: return
+        val bmp = previewView.bitmap ?: return
+        val box = lastBox ?: return
 
-        val baos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos)
-        val data = baos.toByteArray()
+        loading.visibility = ProgressBar.VISIBLE
 
-        val userId = auth.currentUser?.uid
-        if (userId == null) {
-            Toast.makeText(this, "ไม่พบผู้ใช้ที่ล็อกอินอยู่", Toast.LENGTH_SHORT).show()
-            loadingBar.visibility = View.GONE
-            return
-        }
+        val cropped = cropFace(bmp, box)
+        val embedding = faceNet!!.getEmbedding(cropped)
 
-        val faceRef = storageRef.child("faces/$userId.jpg")
-
-        faceRef.putBytes(data)
+        FirebaseDatabase.getInstance().reference
+            .child("users/$uid/faceEmbedding")
+            .setValue(embedding.toList())
             .addOnSuccessListener {
-                Log.d("FaceCheck", "✅ บันทึกภาพใบหน้าสำเร็จ")
-                Toast.makeText(this, "บันทึกใบหน้าสำเร็จ!", Toast.LENGTH_SHORT).show()
-                loadingBar.visibility = View.GONE
-
-                // 👉 ไปหน้า HomepageActivity
-                val intent = Intent(this, HomeActivity::class.java)
-                startActivity(intent)
+                Toast.makeText(this, "ลงทะเบียนสำเร็จ!", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, HomeActivity::class.java))
                 finish()
             }
-            .addOnFailureListener { e ->
-                Log.e("FaceCheck", "❌ อัปโหลดภาพล้มเหลว: ${e.message}")
-                Toast.makeText(this, "เกิดข้อผิดพลาดในการอัปโหลดภาพ: ${e.message}", Toast.LENGTH_SHORT).show()
-                loadingBar.visibility = View.GONE
-            }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 100 && grantResults.isNotEmpty()
-            && grantResults[0] == PackageManager.PERMISSION_GRANTED
-        ) {
-            startCamera()
-        } else {
-            Log.e("Permission", "ไม่ได้รับอนุญาตให้ใช้กล้อง")
-            Toast.makeText(this, "ไม่ได้รับสิทธิ์ใช้กล้อง", Toast.LENGTH_SHORT).show()
-        }
     }
 }

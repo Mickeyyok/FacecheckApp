@@ -10,16 +10,21 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
+import java.text.SimpleDateFormat
+import java.util.*
+
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var tvSelectedSubject: TextView
     private lateinit var btnAddSubject: Button
+    private lateinit var btnCheckin: Button
 
     private val uid = FirebaseAuth.getInstance().uid!!
     private lateinit var db: FirebaseDatabase
     private lateinit var userSubjectsRef: DatabaseReference
 
     private val PICK_SUBJECT = 2000
+    private var selectedClassId: String? = null  // ⭐ เก็บวิชาที่เลือกปัจจุบัน
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +32,7 @@ class HomeActivity : AppCompatActivity() {
 
         tvSelectedSubject = findViewById(R.id.tvSelectedSubject)
         btnAddSubject = findViewById(R.id.btnAddSubject)
+        btnCheckin = findViewById(R.id.btnCheckin)
 
         db = FirebaseDatabase.getInstance()
         userSubjectsRef = db.getReference("students").child(uid).child("subjects")
@@ -37,17 +43,21 @@ class HomeActivity : AppCompatActivity() {
             startActivity(Intent(this, AddSubjectActivity::class.java))
         }
 
+        // 👉 เปิดหน้าเลือกวิชาใหม่
         tvSelectedSubject.setOnClickListener {
             val intent = Intent(this, SubjectListActivity::class.java)
             startActivityForResult(intent, PICK_SUBJECT)
         }
 
-        // ⬇⬇⬇ เรียก Bottom Navigation
+        // 👉 ปุ่มเช็คชื่อ
+        btnCheckin.setOnClickListener {
+            openLocationCheck()
+        }
+
         setupBottomNav()
     }
 
-
-    /** 🔽 โค้ด Bottom Navigation แยกเป็นฟังก์ชัน 🔽 */
+    /** 🔽 Bottom Navigation */
     private fun setupBottomNav() {
         val navHome = findViewById<LinearLayout>(R.id.navHome)
         val navHistory = findViewById<LinearLayout>(R.id.navHistory)
@@ -69,56 +79,140 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-
-
-    /** โหลดวิชาแรกของนักศึกษา */
+    /** โหลดวิชาที่เลือกไว้ล่าสุด */
     private fun loadSelectedSubject() {
+
+        // ถ้าเลือกวิชาไว้ก่อนแล้ว
+        selectedClassId?.let { id ->
+            loadSubjectById(id)
+            return
+        }
+
         userSubjectsRef.get().addOnSuccessListener { snap ->
             if (!snap.exists()) {
                 tvSelectedSubject.text = "กรุณาเลือกวิชา"
+                disableCheckin("ยังไม่ได้เลือกวิชา")
                 return@addOnSuccessListener
             }
 
             val classId = snap.children.first().key ?: return@addOnSuccessListener
-
-            db.getReference("classes").child(classId).get()
-                .addOnSuccessListener { data ->
-                    if (!data.exists()) {
-                        tvSelectedSubject.text = "คลาสถูกลบโดยอาจารย์"
-                        return@addOnSuccessListener
-                    }
-
-                    val code = data.child("subjectCode").getValue(String::class.java) ?: ""
-                    val name = data.child("className").getValue(String::class.java) ?: ""
-                    val room = data.child("classRoom").getValue(String::class.java) ?: ""
-
-                    val start = data.child("startTime").getValue(String::class.java) ?: ""
-                    val end = data.child("endTime").getValue(String::class.java) ?: ""
-                    val classTime = data.child("classTime").getValue(String::class.java) ?: ""
-
-                    val timeLine = when {
-                        start.isNotEmpty() && end.isNotEmpty() -> "$start - $end น."
-                        classTime.isNotEmpty() -> classTime
-                        else -> "-"
-                    }
-
-                    tvSelectedSubject.text = "$code $name\nอาคาร $room ห้อง $room\n$timeLine"
-                }
+            selectedClassId = classId
+            loadSubjectById(classId)
         }
     }
 
+    /** โหลดข้อมูลคลาสและตรวจสิทธิ์เวลา */
+    private fun loadSubjectById(classId: String) {
 
-    /** รับค่าจากหน้า SubjectList เมื่อเลือกวิชาใหม่ */
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+        val ref = db.getReference("classes").child(classId)
 
-        if (requestCode == PICK_SUBJECT && resultCode == Activity.RESULT_OK && data != null) {
-            val code = data.getStringExtra("selectedSubjectCode") ?: ""
-            val name = data.getStringExtra("selectedClassName") ?: ""
-            val room = data.getStringExtra("selectedClassRoom") ?: ""
-            val time = data.getStringExtra("selectedClassTime") ?: "-"
+        ref.get().addOnSuccessListener { data ->
 
-            tvSelectedSubject.text = "$code $name\nอาคาร $room ห้อง $room\n$time"
+            if (!data.exists()) {
+                tvSelectedSubject.text = "คลาสถูกลบโดยอาจารย์"
+                disableCheckin("คลาสถูกลบ")
+                return@addOnSuccessListener
+            }
+
+            val code = data.child("subjectCode").value.toString()
+            val name = data.child("className").value.toString()
+            val room = data.child("classRoom").value.toString()
+            val start = data.child("startTime").value.toString()
+            val end = data.child("endTime").value.toString()
+
+            val timeLine = "$start - $end น."
+
+            tvSelectedSubject.text =
+                "$code $name\nอาคาร $room ห้อง $room\n$timeLine"
+
+            // ⭐ ตรวจเวลาว่ากดเช็คชื่อได้หรือไม่
+            checkClassTime(start, end)
+        }
+    }
+
+    /** ⭐ เช็คเวลาเรียนว่าปุ่มเช็คชื่อควรเปิด/ปิด */
+    private fun checkClassTime(start: String, end: String) {
+
+        if (start.isEmpty() || end.isEmpty()) {
+            disableCheckin("ไม่มีข้อมูลเวลาเรียน")
+            return
+        }
+
+        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+
+        val now = sdf.parse(getCurrentTime())
+        val startTime = sdf.parse(start)
+        val endTime = sdf.parse(end)
+
+        when {
+            now.before(startTime) -> {
+                disableCheckin("ยังไม่ถึงเวลาเรียน")
+            }
+            now.after(endTime) -> {
+                disableCheckin("หมดเวลาเช็คชื่อแล้ว")
+            }
+            else -> {
+                enableCheckin()
+            }
+        }
+    }
+
+    /** ปิดปุ่มเช็คชื่อ */
+    private fun disableCheckin(text: String) {
+        btnCheckin.isEnabled = false
+        btnCheckin.alpha = 0.45f
+        btnCheckin.text = text
+    }
+
+    /** เปิดปุ่มเช็คชื่อ */
+    private fun enableCheckin() {
+        btnCheckin.isEnabled = true
+        btnCheckin.alpha = 1f
+        btnCheckin.text = "เช็คชื่อ"
+    }
+
+    /** เวลา ณ ปัจจุบัน */
+    private fun getCurrentTime(): String {
+        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+        return sdf.format(Date())
+    }
+
+    /** ไปหน้าเช็คชื่อ LocationCheckActivity */
+    private fun openLocationCheck() {
+
+        val classId = selectedClassId ?: return
+
+        db.getReference("classes").child(classId).get()
+            .addOnSuccessListener { data ->
+
+                val subjectCode = data.child("subjectCode").value.toString()
+                val className = data.child("className").value.toString()
+                val classRoom = data.child("classRoom").value.toString()
+                val start = data.child("startTime").value.toString()
+                val end = data.child("endTime").value.toString()
+
+                val timeLine = "$start - $end น."
+
+                val intent = Intent(this, LocationCheckActivity::class.java)
+                intent.putExtra("subjectCode", subjectCode)
+                intent.putExtra("className", className)
+                intent.putExtra("classRoom", classRoom)
+                intent.putExtra("classTime", timeLine)
+                intent.putExtra("classId", classId)
+                startActivity(intent)
+            }
+    }
+
+    /** เมื่อผู้ใช้เลือกวิชาใหม่ */
+    override fun onActivityResult(req: Int, result: Int, data: Intent?) {
+        super.onActivityResult(req, result, data)
+
+        if (req == PICK_SUBJECT && result == Activity.RESULT_OK && data != null) {
+
+            val classId = data.getStringExtra("selectedClassId") ?: return
+            selectedClassId = classId
+
+            loadSubjectById(classId)
         }
     }
 }

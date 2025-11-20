@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <!-- HEADER -->
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:background="@drawable/bg_gradient"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="สแกนใบหน้า"
+            android:textSize="22sp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="22dp"/>
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/ic_arrow_back_white"
+            android:tint="@android:color/white" />
+    </RelativeLayout>
+
+
+    <!-- CAMERA PREVIEW -->
+    <FrameLayout
+        android:id="@+id/cameraFrame"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#000000"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomPanel">
+
+        <!-- CameraX Preview -->
+        <androidx.camera.view.PreviewView
+            android:id="@+id/previewView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+
+        <!-- Face Guide Frame -->
+        <ImageView
+            android:id="@+id/faceFrame"
+            android:layout_width="260dp"
+            android:layout_height="330dp"
+            android:layout_gravity="center"
+            android:src="@drawable/face_frame_guide"
+            android:alpha="0.8"/>
+    </FrameLayout>
+
+
+    <!-- BOTTOM PANEL -->
+    <LinearLayout
+        android:id="@+id/bottomPanel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:gravity="center"
+        android:background="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/faceStatusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="กดปุ่มเพื่อเริ่มสแกน"
+            android:textSize="17sp"
+            android:textColor="#333333"
+            android:padding="8dp"
+            android:textStyle="bold"/>
+
+        <Button
+            android:id="@+id/btnStartScan"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="เริ่มสแกนใบหน้า"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#1976FF"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
