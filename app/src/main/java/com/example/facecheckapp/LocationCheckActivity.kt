@@ -2,10 +2,14 @@ package com.example.facecheckapp
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -36,10 +40,15 @@ class LocationCheckActivity : AppCompatActivity(), OnMapReadyCallback {
     private var dayTime = ""
     private var classId = ""
 
+    // ✅ พิกัดอัปเดตใหม่
     private val UTCC = LatLng(37.4219980, -122.0840000)
+
+
     private val RANGE_METERS = 200.0
 
     private var selfMarker: Marker? = null
+
+    private val PERMISSION_REQUEST = 1000
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,15 +107,26 @@ class LocationCheckActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(UTCC, 16f))
     }
 
+    /** ---------------------------------------------------
+     *   ✅ 1) ตรวจ Permission
+     * --------------------------------------------------- */
     private fun checkLocationPermission() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED
+
+        if (ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                1000
+                PERMISSION_REQUEST
             )
+            return
+        }
+
+        // ⬇ ถ้า GPS ปิด → ให้เปิดก่อน
+        if (!isGPSEnabled()) {
+            showGPSDialog()
             return
         }
 
@@ -114,6 +134,54 @@ class LocationCheckActivity : AppCompatActivity(), OnMapReadyCallback {
         startLocationUpdates()
     }
 
+    /** ---------------------------------------------------
+     *   ✅ 2) ตรวจว่า GPS เปิดไหม
+     * --------------------------------------------------- */
+    private fun isGPSEnabled(): Boolean {
+        val lm = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    }
+
+    /** ---------------------------------------------------
+     *   ✅ 3) Popup บังคับเปิด GPS
+     * --------------------------------------------------- */
+    private fun showGPSDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("ต้องเปิด GPS")
+            .setMessage("กรุณาเปิด GPS เพื่อเช็คชื่อ")
+            .setCancelable(false)
+            .setPositiveButton("เปิด GPS") { _, _ ->
+                startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+            }
+            .setNegativeButton("ยกเลิก") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    /** ---------------------------------------------------
+     *   ✅ 4) เมื่อผู้ใช้ตอบ Permission Dialog
+     * --------------------------------------------------- */
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == PERMISSION_REQUEST) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                checkLocationPermission()
+            } else {
+                tvOutRange.text = "❌ กรุณาอนุญาตตำแหน่งเพื่อใช้งาน"
+                tvOutRange.setTextColor(getColor(R.color.red))
+            }
+        }
+    }
+
+    /** ---------------------------------------------------
+     *   🚗 Location Update
+     * --------------------------------------------------- */
     @SuppressLint("MissingPermission")
     private fun startLocationUpdates() {
 
@@ -177,14 +245,17 @@ class LocationCheckActivity : AppCompatActivity(), OnMapReadyCallback {
 
         btnScan.setOnClickListener {
             val intent = Intent(this, FaceScanActivity::class.java)
+
             intent.putExtra("classId", classId)
             intent.putExtra("subjectCode", subjectCode)
             intent.putExtra("className", className)
             intent.putExtra("classRoom", classRoom)
             intent.putExtra("classTime", classTime)
             intent.putExtra("dayTime", dayTime)
+
             startActivity(intent)
         }
+
     }
 
     override fun onDestroy() {

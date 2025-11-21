@@ -7,34 +7,40 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class HistoryAdapter(private val items: List<HistoryModel>) :
-    RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
+class HistoryAdapter(
+    private val items: List<HistoryModel>
+) : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val dateText: TextView = itemView.findViewById(R.id.txtDate)
-        val subjectText: TextView = itemView.findViewById(R.id.txtSubject)
-        val statusText: TextView = itemView.findViewById(R.id.txtStatus)
+    class HistoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val tvDate: TextView = itemView.findViewById(R.id.txtDate)
+        val tvSubject: TextView = itemView.findViewById(R.id.txtSubject)
+        val tvStatus: TextView = itemView.findViewById(R.id.txtStatus)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_history, parent, false)
-        return ViewHolder(view)
+        return HistoryViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
         val item = items[position]
 
-        holder.dateText.text = item.date
-        holder.subjectText.text = item.subject
-        holder.statusText.text = item.status
+        // บรรทัดที่ 1 : วันที่
+        holder.tvDate.text = item.date
 
-        // 🎨 ใส่สีตามสถานะ
+        // บรรทัดที่ 2 : รหัสวิชา + ชื่อวิชา
+        holder.tvSubject.text = item.subject
+
+        // บรรทัดที่ 3 : สถานะ
+        holder.tvStatus.text = item.status
+
+        // สีสถานะ
         when (item.status) {
-            "ตรงเวลา" -> holder.statusText.setTextColor(Color.parseColor("#2E7D32")) // เขียว
-            "มาสาย" -> holder.statusText.setTextColor(Color.parseColor("#F9A825")) // เหลือง
-            "ขาด" -> holder.statusText.setTextColor(Color.parseColor("#C62828")) // แดง
-            else -> holder.statusText.setTextColor(Color.BLACK)
+            "ตรงเวลา" -> holder.tvStatus.setTextColor(Color.parseColor("#2E7D32")) // เขียว
+            "มาสาย"   -> holder.tvStatus.setTextColor(Color.parseColor("#F57C00")) // ส้ม
+            "ขาด"     -> holder.tvStatus.setTextColor(Color.parseColor("#C62828")) // แดง
+            else       -> holder.tvStatus.setTextColor(Color.BLACK)
         }
     }
 

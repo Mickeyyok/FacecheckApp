@@ -18,13 +18,15 @@ import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.pow
-import kotlin.math.sqrt
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import kotlin.math.*
 
 class FaceScanActivity : AppCompatActivity() {
 
@@ -35,14 +37,28 @@ class FaceScanActivity : AppCompatActivity() {
     private lateinit var faceNet: FaceNetModel
     private var registeredEmbed: FloatArray? = null
 
-    private val auth = FirebaseAuth.getInstance()
     private var cameraProvider: ProcessCameraProvider? = null
+    private val auth = FirebaseAuth.getInstance()
 
-    private var classId: String? = null
-    private var endTime: String? = null
+    private var classId = ""
+    private var className = ""
+    private var subjectCode = ""
+    private var classRoom = ""
+    private var classTime = ""
+    private var dayTime = ""
+    private var endTime = ""
+    private var lateTime = ""
 
-    private var lastProcessTime = 0L
-    private var isProcessing = false  // ป้องกันสแกนซ้ำ
+    private var lastProcess = 0L
+    @Volatile private var isProcessing = false
+
+    // ⭐ Executor สำหรับงานกล้อง
+    private lateinit var cameraExecutor: ExecutorService
+
+    // นับจำนวนเฟรมที่ "หน้าเหมือน" เพื่อลด false positive
+    private var successCount = 0
+    private val REQUIRED_SUCCESS_FRAME = 3   // ต้องตรงกันกี่เฟรมติดกันค่อยให้ผ่าน
+    private val PROCESS_INTERVAL_MS = 700L   // หน่วงการประมวลผลแต่ละเฟรม (ช่วยลดกระตุก)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,40 +69,79 @@ class FaceScanActivity : AppCompatActivity() {
         btnStartScan = findViewById(R.id.btnStartScan)
 
         faceNet = FaceNetModel(this)
+        cameraExecutor = Executors.newSingleThreadExecutor()
 
-        classId = intent.getStringExtra("classId")
+        classId = intent.getStringExtra("classId") ?: ""
+        className = intent.getStringExtra("className") ?: "-"
+        subjectCode = intent.getStringExtra("subjectCode") ?: "-"
+        classRoom = intent.getStringExtra("classRoom") ?: "-"
+        classTime = intent.getStringExtra("classTime") ?: "-"
+        dayTime = intent.getStringExtra("dayTime") ?: "-"
 
-        if (classId == null) {
-            Toast.makeText(this, "เกิดข้อผิดพลาด: classId = null", Toast.LENGTH_LONG).show()
-            finish()
-            return
-        }
-
-        loadClassEndTime()
-        loadRegisteredEmbedding()
+        loadClassTimes()
+        loadFaceEmbedding()
 
         btnStartScan.setOnClickListener { requestCamera() }
     }
 
-    private fun loadClassEndTime() {
+    // -------------------------- LOAD DATA -----------------------------
+
+    private fun loadClassTimes() {
         val ref = FirebaseDatabase.getInstance().reference.child("classes/$classId")
+
         ref.get().addOnSuccessListener {
-            endTime = it.child("endTime").value?.toString()
+            endTime = it.child("endTime").value?.toString() ?: ""
+            lateTime = it.child("lateTime").value?.toString() ?: ""
         }
     }
 
-    private fun loadRegisteredEmbedding() {
-        val uid = auth.currentUser?.uid ?: return
-        val ref = FirebaseDatabase.getInstance().reference.child("users/$uid/faceEmbedding")
+    private fun loadFaceEmbedding() {
+        val user = auth.currentUser
+        if (user == null) {
+            txtStatus.text = "ยังไม่ได้ล็อกอิน"
+            return
+        }
+
+        val uid = user.uid
+        val ref = FirebaseDatabase.getInstance()
+            .reference.child("users/$uid/faceEmbedding")
 
         txtStatus.text = "กำลังโหลดข้อมูลใบหน้า..."
 
-        ref.get().addOnSuccessListener {
-            val list = it.value as? List<Double> ?: return@addOnSuccessListener
-            registeredEmbed = list.map { v -> v.toFloat() }.toFloatArray()
-            txtStatus.text = "พร้อมเริ่มสแกน"
+        ref.get().addOnSuccessListener { snap ->
+            val value = snap.value ?: run {
+                registeredEmbed = null
+                txtStatus.text = "ยังไม่มีข้อมูลใบหน้า"
+                return@addOnSuccessListener
+            }
+
+            val list = value as? List<*> ?: run {
+                registeredEmbed = null
+                txtStatus.text = "ข้อมูลใบหน้าไม่ถูกต้อง"
+                return@addOnSuccessListener
+            }
+
+            val floats = FloatArray(list.size)
+            for (i in list.indices) {
+                val v = list[i]
+                floats[i] = when (v) {
+                    is Double -> v.toFloat()
+                    is Long -> v.toFloat()
+                    is Int -> v.toFloat()
+                    is Float -> v
+                    else -> 0f
+                }
+            }
+
+            registeredEmbed = normalize(floats)
+            txtStatus.text = "พร้อมสแกน"
+        }.addOnFailureListener {
+            registeredEmbed = null
+            txtStatus.text = "โหลดข้อมูลผิดพลาด"
         }
     }
+
+    // -------------------------- CAMERA -----------------------------
 
     private fun requestCamera() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
@@ -96,15 +151,21 @@ class FaceScanActivity : AppCompatActivity() {
         } else startCamera()
     }
 
+
     private fun startCamera() {
 
-        if (!checkTimeAllowed()) return
+        if (registeredEmbed == null) {
+            Toast.makeText(this, "ยังไม่มีข้อมูลใบหน้าที่ลงทะเบียน", Toast.LENGTH_SHORT).show()
+            txtStatus.text = "กรุณาลงทะเบียนใบหน้าก่อน"
+            return
+        }
 
         txtStatus.text = "กำลังเปิดกล้อง..."
 
         val detector = FaceDetection.getClient(
             FaceDetectorOptions.Builder()
                 .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
+                .setContourMode(FaceDetectorOptions.CONTOUR_MODE_NONE)
                 .build()
         )
 
@@ -114,78 +175,170 @@ class FaceScanActivity : AppCompatActivity() {
             cameraProvider = future.get()
             val provider = cameraProvider!!
 
-            val preview = Preview.Builder().build()
+            val preview = Preview.Builder()
+                .build()
             preview.setSurfaceProvider(previewView.surfaceProvider)
 
-            val analyzer = ImageAnalysis.Builder()
+            val analysis = ImageAnalysis.Builder()
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
                 .build()
 
-            analyzer.setAnalyzer(ContextCompat.getMainExecutor(this)) { proxy ->
+            analysis.setAnalyzer(cameraExecutor) { proxy ->
 
-                if (isProcessing) { proxy.close(); return@setAnalyzer }
+                if (isProcessing) {
+                    proxy.close(); return@setAnalyzer
+                }
 
                 val now = System.currentTimeMillis()
-                if (now - lastProcessTime < 600) {
-                    proxy.close()
-                    return@setAnalyzer
+                if (now - lastProcess < PROCESS_INTERVAL_MS) {
+                    proxy.close(); return@setAnalyzer
                 }
-                lastProcessTime = now
+                lastProcess = now
 
-                val reg = registeredEmbed ?: return@setAnalyzer
-                val mediaImage = proxy.image ?: return@setAnalyzer proxy.close()
+                val mediaImage = proxy.image
+                if (mediaImage == null) {
+                    proxy.close(); return@setAnalyzer
+                }
 
-                val bitmap = mediaImageToBitmap(mediaImage, proxy.imageInfo.rotationDegrees)
-                val inputImage = InputImage.fromBitmap(bitmap, 0)
+                val bmp = try {
+                    mediaImageToBitmap(mediaImage, proxy.imageInfo.rotationDegrees)
+                } catch (e: Exception) {
+                    proxy.close(); return@setAnalyzer
+                }
 
-                detector.process(inputImage)
+                val input = InputImage.fromBitmap(bmp, 0)
+                detector.process(input)
                     .addOnSuccessListener { faces ->
-                        if (faces.isNotEmpty()) {
-                            txtStatus.text = "กำลังตรวจสอบใบหน้า..."
 
-                            val box = faces[0].boundingBox
-                            val faceBmp = cropFace(bitmap, box)
+                        if (faces.isEmpty()) {
+                            txtStatus.post { txtStatus.text = "ไม่พบใบหน้า" }
+                            successCount = 0
+                            proxy.close()
+                            return@addOnSuccessListener
+                        }
 
-                            val emb = faceNet.getEmbedding(faceBmp)
-                            val dist = l2(emb, reg)
+                        val face = chooseLargestFace(faces)
+                        val bbox = face.boundingBox
 
-                            if (dist < 1.35f) {
+                        val faceArea = bbox.width().toFloat() * bbox.height().toFloat()
+                        val frameArea = bmp.width.toFloat() * bmp.height.toFloat()
+                        if (faceArea / frameArea < 0.008f) { // ปรับเป็น 0.8% ของภาพ
+                            txtStatus.post { txtStatus.text = "ใบหน้าเล็กไป ใกล้กล้องอีกนิด" }
+                            successCount = 0
+                            proxy.close()
+                            return@addOnSuccessListener
+                        }
+
+                        val crop = cropFace(bmp, bbox)
+                        val emb = faceNet.getEmbedding(crop)
+
+                        val reg = registeredEmbed
+                        if (reg == null) {
+                            txtStatus.post { txtStatus.text = "ไม่มีข้อมูลลงทะเบียน" }
+                            successCount = 0
+                            proxy.close()
+                            return@addOnSuccessListener
+                        }
+
+                        val same = isSamePerson(emb, reg)
+
+                        if (same) {
+                            successCount++
+                            txtStatus.post {
+                                txtStatus.text = "ใบหน้าตรงกับที่ลงทะเบียน ($successCount/$REQUIRED_SUCCESS_FRAME)"
+                            }
+
+                            if (successCount >= REQUIRED_SUCCESS_FRAME && !isProcessing) {
                                 isProcessing = true
-                                goSuccess()
+                                proxy.close()
+                                finishScan()
+                                return@addOnSuccessListener
                             }
                         } else {
-                            txtStatus.text = "ไม่พบใบหน้า"
+                            successCount = 0
+                            txtStatus.post {
+                                txtStatus.text = "ใบหน้าไม่ตรง ลองจัดหน้าใหม่"
+                            }
                         }
+
+                        proxy.close()
                     }
-                    .addOnCompleteListener { proxy.close() }
+                    .addOnFailureListener {
+                        proxy.close()
+                    }
             }
 
             provider.unbindAll()
-            provider.bindToLifecycle(this, CameraSelector.DEFAULT_FRONT_CAMERA, preview, analyzer)
+            provider.bindToLifecycle(this, CameraSelector.DEFAULT_FRONT_CAMERA, preview, analysis)
 
         }, ContextCompat.getMainExecutor(this))
     }
 
-    private fun mediaImageToBitmap(img: Image, rotation: Int): Bitmap {
-        val y = img.planes[0].buffer
-        val u = img.planes[1].buffer
-        val v = img.planes[2].buffer
+    // ------------------------- CHECK-IN LOGIC ---------------------------
 
-        val ySize = y.remaining()
-        val uSize = u.remaining()
-        val vSize = v.remaining()
+    private fun finishScan() {
+        releaseCamera()
+
+        val checkin = getTime()
+
+        val status = when {
+            toMinutes(checkin) > toMinutes(endTime) -> "ขาด"
+            toMinutes(checkin) > toMinutes(lateTime) -> "มาสาย"
+            else -> "ตรงเวลา"
+        }
+
+        val i = Intent(this, CheckinSuccessActivity::class.java)
+        i.putExtra("classId", classId)
+        i.putExtra("className", className)
+        i.putExtra("subjectCode", subjectCode)
+        i.putExtra("classRoom", classRoom)
+        i.putExtra("classTime", classTime)
+        i.putExtra("dayTime", dayTime)
+        i.putExtra("endTime", endTime)
+        i.putExtra("lateTime", lateTime)
+        i.putExtra("status", status)
+        i.putExtra("checkinTime", checkin)
+
+        startActivity(i)
+        finish()
+    }
+
+    private fun getTime(): String =
+        SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
+
+    private fun toMinutes(hhmm: String): Int {
+        return try {
+            val parts = hhmm.split(":")
+            val h = parts[0].toInt()
+            val m = parts[1].toInt()
+            h * 60 + m
+        } catch (e: Exception) {
+            0
+        }
+    }
+
+    // --------------------------- IMAGE UTILS ----------------------------
+
+    private fun mediaImageToBitmap(img: Image, rotation: Int): Bitmap {
+        val yBuffer = img.planes[0].buffer
+        val uBuffer = img.planes[1].buffer
+        val vBuffer = img.planes[2].buffer
+
+        val ySize = yBuffer.remaining()
+        val uSize = uBuffer.remaining()
+        val vSize = vBuffer.remaining()
 
         val nv21 = ByteArray(ySize + uSize + vSize)
-        y.get(nv21, 0, ySize)
-        v.get(nv21, ySize, vSize)
-        u.get(nv21, ySize + vSize, uSize)
+
+        yBuffer.get(nv21, 0, ySize)
+        vBuffer.get(nv21, ySize, vSize)
+        uBuffer.get(nv21, ySize + vSize, uSize)
 
         val yuv = YuvImage(nv21, ImageFormat.NV21, img.width, img.height, null)
         val out = ByteArrayOutputStream()
         yuv.compressToJpeg(Rect(0, 0, img.width, img.height), 80, out)
-
-        val bytes = out.toByteArray()
-        var bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+        var bmp = BitmapFactory.decodeByteArray(out.toByteArray(), 0, out.size())
 
         val matrix = Matrix()
         matrix.postRotate(rotation.toFloat())
@@ -195,53 +348,82 @@ class FaceScanActivity : AppCompatActivity() {
     }
 
     private fun cropFace(bmp: Bitmap, box: Rect): Bitmap {
-        val pad = (box.width() * 0.2f).toInt()
+        val pad = (box.width() * 0.2).toInt()
+
         val left = (box.left - pad).coerceAtLeast(0)
         val top = (box.top - pad).coerceAtLeast(0)
         val right = (box.right + pad).coerceAtMost(bmp.width)
         val bottom = (box.bottom + pad).coerceAtMost(bmp.height)
+
         return Bitmap.createBitmap(bmp, left, top, right - left, bottom - top)
     }
 
-    private fun checkTimeAllowed(): Boolean {
-        return try {
-            val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-            val now = sdf.parse(getCurrentTime())
-            val end = sdf.parse(endTime ?: return true)
-            if (now.after(end)) {
-                txtStatus.text = "หมดเวลาเช็คชื่อ"
-                Toast.makeText(this, "เกินเวลาเช็คชื่อแล้ว!", Toast.LENGTH_LONG).show()
-                false
-            } else true
-        } catch (_: Exception) {
-            true
+    private fun chooseLargestFace(faces: List<Face>): Face {
+        var best = faces[0]
+        var bestArea = 0
+        for (f in faces) {
+            val b = f.boundingBox
+            val area = b.width() * b.height()
+            if (area > bestArea) {
+                bestArea = area
+                best = f
+            }
         }
+        return best
     }
 
-    private fun getCurrentTime(): String {
-        return SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
-    }
+    // --------------------------- EMBED UTILS ----------------------------
 
-    private fun l2(a: FloatArray, b: FloatArray): Float {
+    // normalize ให้เป็นเวกเตอร์หน่วย
+    private fun normalize(arr: FloatArray): FloatArray {
         var sum = 0f
-        for (i in a.indices) sum += (a[i] - b[i]).pow(2)
+        for (v in arr) sum += v * v
+        val norm = sqrt(sum)
+        if (norm == 0f) return arr
+        val out = FloatArray(arr.size)
+        for (i in arr.indices) out[i] = arr[i] / norm
+        return out
+    }
+
+    private fun l2Distance(a: FloatArray, b: FloatArray): Float {
+        val n = min(a.size, b.size)
+        var sum = 0f
+        for (i in 0 until n) {
+            val d = a[i] - b[i]
+            sum += d * d
+        }
         return sqrt(sum)
     }
 
-    private fun goSuccess() {
-        releaseCamera()
-
-        val intent = Intent(this, CheckinSuccessActivity::class.java)
-        intent.putExtra("classId", classId)
-        intent.putExtra("checkinTime", getCurrentTime())
-
-        startActivity(intent)
-        finish()
+    private fun cosineSimilarity(a: FloatArray, b: FloatArray): Float {
+        val n = min(a.size, b.size)
+        var s = 0f
+        for (i in 0 until n) {
+            s += a[i] * b[i]
+        }
+        return s
     }
+
+    /** ฟังก์ชันตัดสินว่าเป็นคนเดียวกันหรือไม่ */
+    private fun isSamePerson(currentEmb: FloatArray, registeredEmb: FloatArray): Boolean {
+        val a = normalize(currentEmb)
+        val b = normalize(registeredEmb)
+
+        val cos = cosineSimilarity(a, b)
+        val l2  = l2Distance(a, b)
+
+        // ถ้าแสงเปลี่ยนแล้วไม่ผ่าน ลองลด cos ลงมานิดหน่อย / เพิ่ม L2 ขึ้นหน่อยก็ได้
+        val COS_THRESHOLD = 0.75f   // เดิมอาจตั้งไว้ 0.8
+        val L2_THRESHOLD  = 1.05f   // เดิมอาจตั้งไว้ 0.9
+
+        return (cos >= COS_THRESHOLD) && (l2 <= L2_THRESHOLD)
+    }
+
+
+    // --------------------------- LIFECYCLE ----------------------------
 
     private fun releaseCamera() {
         try { cameraProvider?.unbindAll() } catch (_: Exception) {}
-        cameraProvider = null
     }
 
     override fun onPause() {
@@ -252,5 +434,6 @@ class FaceScanActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         releaseCamera()
+        cameraExecutor.shutdown()
     }
 }

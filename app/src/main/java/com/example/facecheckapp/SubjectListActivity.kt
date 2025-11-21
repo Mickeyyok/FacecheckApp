@@ -57,22 +57,51 @@ class SubjectListActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 subjectList.clear()
 
+                if (!snapshot.exists()) {
+                    adapter.notifyDataSetChanged()
+                    return
+                }
+
                 for (child in snapshot.children) {
                     val classId = child.key ?: continue
 
-                    classesRef.child(classId).get().addOnSuccessListener { classSnap ->
-                        if (classSnap.exists()) {
-                            val model = classSnap.getValue(ClassModel::class.java)
-                            model?.classId = classId
-
-                            model?.let {
-                                subjectList.add(it)
-                                adapter.notifyDataSetChanged()
+                    classesRef.child(classId).get()
+                        .addOnSuccessListener { classSnap ->
+                            if (!classSnap.exists()) {
+                                // ถ้า class ถูกลบที่ฝั่งอาจารย์ → ลบออกจาก subjects ของนักเรียนด้วย
+                                userSubjectsRef.child(classId).removeValue()
+                                return@addOnSuccessListener
                             }
-                        } else {
-                            userSubjectsRef.child(classId).removeValue()
+
+                            // 🧩 ดึงค่าจาก Firebase แล้วแปลงเป็น String ปลอดภัย
+                            val subjectCode = classSnap.child("subjectCode").value?.toString()
+                            val className = classSnap.child("className").value?.toString()
+                            val classRoom = classSnap.child("classRoom").value?.toString()
+                            val dayTime = classSnap.child("dayTime").value?.toString()
+                            val startTime = classSnap.child("startTime").value?.toString()
+                            val endTime = classSnap.child("endTime").value?.toString()
+                            val lateTime = classSnap.child("lateTime").value?.toString()
+                            val year = classSnap.child("year").value?.toString()
+                            val term = classSnap.child("term").value?.toString()
+                            // ถ้ามี field อื่นใน DB ก็เติมแบบนี้ได้เลย
+
+                            // ✅ สร้าง ClassModel ด้วยมือ แทน getValue()
+                            val model = ClassModel().apply {
+                                this.classId = classId
+                                this.subjectCode = subjectCode
+                                this.className = className
+                                this.classRoom = classRoom
+                                this.dayTime = dayTime
+                                this.startTime = startTime
+                                this.endTime = endTime
+                                this.lateTime = lateTime
+                                this.year = year
+                                this.term = term
+                            }
+
+                            subjectList.add(model)
+                            adapter.notifyDataSetChanged()
                         }
-                    }
                 }
             }
 

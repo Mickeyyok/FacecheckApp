@@ -13,5 +13,6 @@ data class ClassModel(
     var semester: String? = "",
     var year: String? = "",
     var createdBy: String? = "",
-    var dayTime: String? = ""
+    var dayTime: String? = "",
+    var term: String? = ""
 )

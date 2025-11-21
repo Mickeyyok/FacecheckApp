@@ -18,7 +18,9 @@ class TeacherHomeActivity : AppCompatActivity() {
     private lateinit var tvMyClassTitle: TextView
 
     private val auth = FirebaseAuth.getInstance()
-    private val database = FirebaseDatabase.getInstance().getReference("classes")
+    private val classesRef = FirebaseDatabase.getInstance().getReference("classes")
+
+    // ลิสต์เก็บข้อมูลคลาส
     private val classList = mutableListOf<ClassData>()
     private lateinit var adapter: ClassAdapter
 
@@ -36,32 +38,65 @@ class TeacherHomeActivity : AppCompatActivity() {
 
         val userId = auth.currentUser?.uid ?: return
 
-        // โหลดคลาสจาก Firebase
+        // โหลดคลาสที่อาจารย์คนนี้สร้าง
         loadClasses(userId)
 
-        // ปุ่มสร้างคลาส
+        // ไปหน้า CreateClass
         btnCreateClass.setOnClickListener {
-            val intent = Intent(this, CreateClassActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, CreateClassActivity::class.java))
         }
     }
 
     private fun loadClasses(userId: String) {
-        database.orderByChild("createdBy").equalTo(userId)
+        classesRef
+            .orderByChild("createdBy")
+            .equalTo(userId)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
+
                     classList.clear()
+
                     for (classSnap in snapshot.children) {
-                        val classData = classSnap.getValue(ClassData::class.java)
-                        if (classData != null) {
-                            classList.add(classData)
-                        }
+
+                        // key ของ node นี้คือ classId
+                        val classId = classSnap.key ?: continue
+
+                        // ดึงค่าแต่ละ field แล้ว .toString() เอง
+                        val subjectCode = classSnap.child("subjectCode").value?.toString() ?: ""
+                        val className  = classSnap.child("className").value?.toString()  ?: ""
+                        val classRoom  = classSnap.child("classRoom").value?.toString()  ?: ""
+                        val dayTime    = classSnap.child("dayTime").value?.toString()    ?: ""
+                        val startTime  = classSnap.child("startTime").value?.toString()  ?: ""
+                        val endTime    = classSnap.child("endTime").value?.toString()    ?: ""
+                        val lateTime   = classSnap.child("lateTime").value?.toString()   ?: ""
+
+                        // ถ้ามี field อื่น ๆ ที่เก็บเป็น Long เช่น createdAt, year, term
+                        // เราจะไม่ map มันเข้าคลาส เพื่อเลี่ยง error แปลง Long -> String
+
+                        val classData = ClassData(
+                            classId     = classId,
+                            subjectCode = subjectCode,
+                            className   = className,
+                            classRoom   = classRoom,
+                            dayTime     = dayTime,
+                            startTime   = startTime,
+                            endTime     = endTime,
+                            lateTime    = lateTime,
+                            createdBy   = userId
+                        )
+
+                        classList.add(classData)
                     }
+
                     adapter.notifyDataSetChanged()
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Toast.makeText(this@TeacherHomeActivity, "โหลดข้อมูลล้มเหลว", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@TeacherHomeActivity,
+                        "โหลดข้อมูลล้มเหลว: ${error.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             })
     }

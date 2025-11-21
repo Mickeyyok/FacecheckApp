@@ -1,94 +1,97 @@
 package com.example.facecheckapp
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class HistoryActivity : AppCompatActivity() {
 
-    private lateinit var recyclerHistory: RecyclerView
+    private lateinit var recycler: RecyclerView
     private lateinit var adapter: HistoryAdapter
-    private val historyList = mutableListOf<HistoryModel>()
+    private val list = mutableListOf<HistoryModel>()
 
     private val uid = FirebaseAuth.getInstance().uid!!
-    private val db = FirebaseDatabase.getInstance()
+    private val db = FirebaseDatabase.getInstance().reference
 
-    private val currentYear = "2025"
-    private val currentSemester = "2"
+    private var classId: String = ""   // ถ้ามี = filter เฉพาะวิชานั้น
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_history)
 
-        recyclerHistory = findViewById(R.id.recyclerHistory)
-        recyclerHistory.layoutManager = LinearLayoutManager(this)
+        // ถ้ามาจากหน้าหลังเช็คชื่อจะมี classId ส่งมา
+        classId = intent.getStringExtra("classId") ?: ""
 
-        adapter = HistoryAdapter(historyList)
-        recyclerHistory.adapter = adapter
+        recycler = findViewById(R.id.recyclerHistory)
+        recycler.layoutManager = LinearLayoutManager(this)
+
+        adapter = HistoryAdapter(list)
+        recycler.adapter = adapter
 
         loadHistory()
-        setupBottomNav()
     }
 
-
-    /** โหลดประวัติเข้าเรียน */
     private fun loadHistory() {
 
-        val ref = db.getReference("attendance")
-            .child(uid)
-            .child(currentYear)
-            .child(currentSemester)
+        // มี classId -> ดูเฉพาะวิชานั้น, ถ้าไม่มี -> ดูทุกวิชา
+        val query: Query = if (classId.isNotEmpty()) {
+            db.child("history").child(uid)
+                .orderByChild("classId")
+                .equalTo(classId)
+        } else {
+            db.child("history").child(uid)
+        }
 
-        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+        query.addValueEventListener(object : ValueEventListener {
 
             override fun onDataChange(snapshot: DataSnapshot) {
-
-                historyList.clear()
-
-                if (!snapshot.exists()) {
-                    Toast.makeText(this@HistoryActivity, "ไม่พบบันทึกการเข้าเรียน", Toast.LENGTH_SHORT).show()
-                    adapter.notifyDataSetChanged()
-                    return
-                }
+                list.clear()
 
                 for (data in snapshot.children) {
-                    val date = data.child("date").getValue(String::class.java) ?: "-"
-                    val subject = data.child("subjectName").getValue(String::class.java) ?: "-"
-                    val status = data.child("status").getValue(String::class.java) ?: "-"
 
-                    historyList.add(HistoryModel(date, subject, status))
+                    // ✅ ใช้ timestamp จริงจาก Firebase
+                    val ts = data.child("timestamp").value
+                        ?.toString()
+                        ?.toLongOrNull() ?: 0L
+
+                    val className   = data.child("className").value?.toString() ?: "ไม่พบชื่อวิชา"
+                    val subjectCode = data.child("subjectCode").value?.toString() ?: ""
+                    val status      = data.child("status").value?.toString() ?: "-"
+
+                    // แปลงเป็นวันที่แบบ "3 ต.ค. 2568"
+                    val formattedDate = formatDate(ts)
+
+                    // บรรทัดกลาง: "SP 999-1 วิชาการตลาด"
+                    val subjectLine = "$subjectCode $className".trim()
+
+                    list.add(
+                        HistoryModel(
+                            date = formattedDate,
+                            subject = subjectLine,
+                            status = status,
+                            timestamp = ts
+                        )
+                    )
                 }
+
+                // 🔥 เรียงจากล่าสุด → เก่าสุด
+                list.sortByDescending { it.timestamp }
 
                 adapter.notifyDataSetChanged()
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@HistoryActivity, "โหลดข้อมูลล้มเหลว", Toast.LENGTH_SHORT).show()
-            }
+            override fun onCancelled(error: DatabaseError) { }
         })
     }
 
-
-    /** Bottom Navigation */
-    private fun setupBottomNav() {
-        val navHome = findViewById<LinearLayout>(R.id.navHome)
-        val navHistory = findViewById<LinearLayout>(R.id.navHistory)
-        val navSetting = findViewById<LinearLayout>(R.id.navSetting)
-
-        navHome.setOnClickListener {
-            startActivity(Intent(this, HomeActivity::class.java))
-            overridePendingTransition(0, 0)
-        }
-
-        navSetting.setOnClickListener {
-            startActivity(Intent(this, SettingActivity::class.java))
-            overridePendingTransition(0, 0)
-        }
+    private fun formatDate(timestamp: Long): String {
+        if (timestamp <= 0L) return "-"
+        val sdf = SimpleDateFormat("d MMM yyyy", Locale("th", "TH"))
+        return sdf.format(Date(timestamp))
     }
 }

@@ -19,12 +19,16 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var btnAddSubject: Button
     private lateinit var btnCheckin: Button
 
+    private lateinit var tvOnTime: TextView
+    private lateinit var tvLate: TextView
+    private lateinit var tvAbsent: TextView
+
     private val uid = FirebaseAuth.getInstance().uid!!
     private lateinit var db: FirebaseDatabase
     private lateinit var userSubjectsRef: DatabaseReference
 
     private val PICK_SUBJECT = 2000
-    private var selectedClassId: String? = null  // ⭐ เก็บวิชาที่เลือกปัจจุบัน
+    private var selectedClassId: String? = null  // เก็บวิชาปัจจุบัน
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,22 +38,27 @@ class HomeActivity : AppCompatActivity() {
         btnAddSubject = findViewById(R.id.btnAddSubject)
         btnCheckin = findViewById(R.id.btnCheckin)
 
+        tvOnTime = findViewById(R.id.tvOnTime)
+        tvLate = findViewById(R.id.tvLate)
+        tvAbsent = findViewById(R.id.tvAbsent)
+
         db = FirebaseDatabase.getInstance()
         userSubjectsRef = db.getReference("students").child(uid).child("subjects")
 
         loadSelectedSubject()
+        loadSummary()   // ⭐ โหลดสรุปการเข้าเรียน
 
         btnAddSubject.setOnClickListener {
             startActivity(Intent(this, AddSubjectActivity::class.java))
         }
 
-        // 👉 เปิดหน้าเลือกวิชาใหม่
+        // คลิกเลือกวิชา
         tvSelectedSubject.setOnClickListener {
             val intent = Intent(this, SubjectListActivity::class.java)
             startActivityForResult(intent, PICK_SUBJECT)
         }
 
-        // 👉 ปุ่มเช็คชื่อ
+        // ปุ่มเช็คชื่อ
         btnCheckin.setOnClickListener {
             openLocationCheck()
         }
@@ -57,7 +66,7 @@ class HomeActivity : AppCompatActivity() {
         setupBottomNav()
     }
 
-    /** 🔽 Bottom Navigation */
+    /** Bottom Navigation */
     private fun setupBottomNav() {
         val navHome = findViewById<LinearLayout>(R.id.navHome)
         val navHistory = findViewById<LinearLayout>(R.id.navHistory)
@@ -82,7 +91,6 @@ class HomeActivity : AppCompatActivity() {
     /** โหลดวิชาที่เลือกไว้ล่าสุด */
     private fun loadSelectedSubject() {
 
-        // ถ้าเลือกวิชาไว้ก่อนแล้ว
         selectedClassId?.let { id ->
             loadSubjectById(id)
             return
@@ -101,7 +109,7 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    /** โหลดข้อมูลคลาสและตรวจสิทธิ์เวลา */
+    /** โหลดข้อมูลคลาส */
     private fun loadSubjectById(classId: String) {
 
         val ref = db.getReference("classes").child(classId)
@@ -125,12 +133,11 @@ class HomeActivity : AppCompatActivity() {
             tvSelectedSubject.text =
                 "$code $name\nอาคาร $room ห้อง $room\n$timeLine"
 
-            // ⭐ ตรวจเวลาว่ากดเช็คชื่อได้หรือไม่
             checkClassTime(start, end)
         }
     }
 
-    /** ⭐ เช็คเวลาเรียนว่าปุ่มเช็คชื่อควรเปิด/ปิด */
+    /** เช็คเวลาเรียน */
     private fun checkClassTime(start: String, end: String) {
 
         if (start.isEmpty() || end.isEmpty()) {
@@ -157,27 +164,24 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    /** ปิดปุ่มเช็คชื่อ */
     private fun disableCheckin(text: String) {
         btnCheckin.isEnabled = false
         btnCheckin.alpha = 0.45f
         btnCheckin.text = text
     }
 
-    /** เปิดปุ่มเช็คชื่อ */
     private fun enableCheckin() {
         btnCheckin.isEnabled = true
         btnCheckin.alpha = 1f
-        btnCheckin.text = "เช็คชื่อ"
+        btnCheckin.text = "เช็กชื่อ"
     }
 
-    /** เวลา ณ ปัจจุบัน */
     private fun getCurrentTime(): String {
         val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
         return sdf.format(Date())
     }
 
-    /** ไปหน้าเช็คชื่อ LocationCheckActivity */
+    /** ไปหน้าเช็คชื่อ */
     private fun openLocationCheck() {
 
         val classId = selectedClassId ?: return
@@ -214,5 +218,39 @@ class HomeActivity : AppCompatActivity() {
 
             loadSubjectById(classId)
         }
+    }
+
+    /** ⭐ โหลดสรุปการเข้าเรียนจาก Firebase */
+    private fun loadSummary() {
+
+        val historyRef = FirebaseDatabase.getInstance()
+            .getReference("history")
+            .child(uid)
+
+        historyRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                var onTime = 0
+                var late = 0
+                var absent = 0
+
+                for (h in snapshot.children) {
+
+                    val status = h.child("status").value.toString()
+
+                    when (status) {
+                        "ตรงเวลา" -> onTime++
+                        "มาสาย" -> late++
+                        "ขาด" -> absent++
+                    }
+                }
+
+                tvOnTime.text = onTime.toString()
+                tvLate.text = late.toString()
+                tvAbsent.text = absent.toString()
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 }

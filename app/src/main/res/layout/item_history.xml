@@ -3,32 +3,46 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/card_bg"
-    android:padding="12dp"
-    android:layout_marginBottom="8dp">
+    android:padding="8dp">
 
-    <TextView
-        android:id="@+id/txtDate"
-        android:layout_width="wrap_content"
+    <!-- การ์ด 1 ใบ -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="วันที่"
-        android:textSize="14sp"
-        android:textColor="#777" />
+        android:orientation="vertical"
+        android:background="@drawable/box_outline"
+        android:padding="12dp">
 
-    <TextView
-        android:id="@+id/txtSubject"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="รายวิชา"
-        android:textSize="18sp"
-        android:textColor="#000"
-        android:textStyle="bold" />
+        <!-- บรรทัดที่ 1 : วันที่ -->
+        <TextView
+            android:id="@+id/txtDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3 ต.ค. 2568"
+            android:textSize="13sp"
+            android:textColor="#9E9E9E" />
 
-    <TextView
-        android:id="@+id/txtStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="สถานะ"
-        android:textSize="15sp"
-        android:textColor="#333" />
+        <!-- บรรทัดที่ 2 : รหัสวิชา + ชื่อวิชา -->
+        <TextView
+            android:id="@+id/txtSubject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="SP 999-1 วิชาการตลาด"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#000000" />
+
+        <!-- บรรทัดที่ 3 : สถานะ -->
+        <TextView
+            android:id="@+id/txtStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="ตรงเวลา"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
 </LinearLayout>
