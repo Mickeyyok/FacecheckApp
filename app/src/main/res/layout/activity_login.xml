@@ -30,7 +30,7 @@
         android:layout_height="40dp"
         android:layout_marginBottom="20dp"
         android:textSize="15dp"
-        android:hint="ชื่อผู้ใช้/รหัสนักศึกษา"
+        android:hint="รหัสผู้ใช้/รหัสนักศึกษา"
         android:background="@drawable/edittext_bg"
         android:gravity="center"
         android:textColor="@android:color/black"
