@@ -56,13 +56,15 @@
             android:layout_height="wrap_content"
             android:text="ฉันยินยอมให้มีการประมวลผลแม่แบบใบหน้าตามที่อธิบายข้างต้น"
             android:textColor="@android:color/black"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="12dp"
+            android:buttonTint="@color/black"/>
 
         <CheckBox
             android:id="@+id/checkUnderstand"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="ฉันยืนยันว่าอ่านและทำความเข้าใจข้อตกลง/ข้อมูลแล้ว"
+            android:buttonTint="@color/black"
             android:textColor="@android:color/black" />
 
         <!-- ปุ่ม -->

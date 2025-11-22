@@ -135,9 +135,6 @@
         </LinearLayout>
 
     </ScrollView>
-    <include
-        android:id="@+id/bottomBar"
-        layout="@layout/bottom_navbar"
-        android:layout_alignParentBottom="true" />
+
 
 </RelativeLayout>

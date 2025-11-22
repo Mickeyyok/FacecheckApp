@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/bg_gradient"
     android:fillViewport="true">
 
@@ -38,7 +39,8 @@
                 android:text="นักศึกษา"
                 android:checked="true"
                 android:textColor="@android:color/white"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                app:buttonTint="@color/white" />
 
             <RadioButton
                 android:id="@+id/rb_teacher"
@@ -47,7 +49,8 @@
                 android:text="อาจารย์"
                 android:textColor="@android:color/white"
                 android:textSize="16sp"
-                android:layout_marginStart="16dp" />
+                android:layout_marginStart="16dp"
+                app:buttonTint="@color/white"/>
         </RadioGroup>
 
         <!-- 🔹 รหัสนักศึกษา -->
