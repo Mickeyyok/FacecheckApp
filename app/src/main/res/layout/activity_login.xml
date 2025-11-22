@@ -72,7 +72,7 @@
         android:text="เข้าสู่ระบบ"
         android:textStyle="bold"
 
-        android:backgroundTint="#000080"
+        android:backgroundTint="#3F51B5"
         android:textColor="@color/white"
 
         />
@@ -84,7 +84,7 @@
         android:textStyle="bold"
         android:text="ย้อนกลับ"
         android:layout_marginTop="20dp"
-        android:backgroundTint="#000080"
+        android:backgroundTint="#3F51B5"
         android:textColor="@color/white" />
 
 </LinearLayout>

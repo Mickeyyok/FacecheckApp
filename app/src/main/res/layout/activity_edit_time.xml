@@ -128,7 +128,7 @@
                     android:layout_height="50dp"
                     android:text="บันทึก"
                     android:textColor="@android:color/white"
-                    android:backgroundTint="#2196F3" />
+                    android:backgroundTint="#247AAA" />
 
             </LinearLayout>
 

@@ -127,8 +127,8 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="ย้อนกลับ"
-                    android:textColor="#2196F3"
-                    android:background="@drawable/outline_button"
+                    android:textColor="@color/white"
+                    android:backgroundTint="#247AAA"
                     android:layout_marginEnd="8dp" />
 
                 <Button
@@ -138,7 +138,7 @@
                     android:layout_height="wrap_content"
                     android:text="สำเร็จ"
                     android:textColor="@android:color/white"
-                    android:backgroundTint="#2196F3" />
+                    android:backgroundTint="#247AAA" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
