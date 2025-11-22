@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -62,7 +63,11 @@ class HomeActivity : AppCompatActivity() {
         btnCheckin.setOnClickListener {
             openLocationCheck()
         }
-
+// ปุ่มกระดิ่งไปหน้า NotificationActivity
+        val btnNotification = findViewById<ImageButton>(R.id.btnNotification)
+        btnNotification.setOnClickListener {
+            startActivity(Intent(this, NotificationActivity::class.java))
+        }
         setupBottomNav()
     }
 
@@ -110,6 +115,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     /** โหลดข้อมูลคลาส */
+    /** โหลดข้อมูลคลาส */
     private fun loadSubjectById(classId: String) {
 
         val ref = db.getReference("classes").child(classId)
@@ -122,20 +128,36 @@ class HomeActivity : AppCompatActivity() {
                 return@addOnSuccessListener
             }
 
-            val code = data.child("subjectCode").value.toString()
-            val name = data.child("className").value.toString()
-            val room = data.child("classRoom").value.toString()
-            val start = data.child("startTime").value.toString()
-            val end = data.child("endTime").value.toString()
+            val code = data.child("subjectCode").value?.toString().orEmpty()
+            val name = data.child("className").value?.toString().orEmpty()
+            val room = data.child("classRoom").value?.toString().orEmpty()
 
-            val timeLine = "$start - $end น."
+            // เวลาตามจริง
+            val start = data.child("startTime").value?.toString().orEmpty()
+            val end = data.child("endTime").value?.toString().orEmpty()
+            val classTime = data.child("classTime").value?.toString().orEmpty()
+            val dayTime = data.child("dayTime").value?.toString().orEmpty()
 
+            // ✔ ประกอบเวลาตามรูปแบบที่ต้องการ
+            val timeText = when {
+                start.isNotEmpty() && end.isNotEmpty() -> "$start - $end น."
+                classTime.isNotEmpty() -> classTime
+                dayTime.isNotEmpty() -> dayTime
+                else -> "-"
+            }
+
+            // ✔ แสดงแบบใหม่ (เหมือน ClassAdapter)
             tvSelectedSubject.text =
-                "$code $name\nอาคาร $room ห้อง $room\n$timeLine"
+                "$code" +
+                        " $name\n" +
+                        "ห้องเรียน $room\n" +
+                        "$classTime"
 
+            // ตรวจสอบเวลาเรียนเพื่อเปิดปิดปุ่มเช็กชื่อ
             checkClassTime(start, end)
         }
     }
+
 
     /** เช็คเวลาเรียน */
     private fun checkClassTime(start: String, end: String) {

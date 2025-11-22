@@ -67,6 +67,7 @@
         <activity android:name=".FaceScanActivity" />
         <activity android:name=".LocationCheckActivity" />
         <activity android:name=".CheckinSuccessActivity" />
+        <activity android:name=".NotificationActivity" />
 
     </application>
 

@@ -60,30 +60,7 @@
         android:background="@drawable/bg_card">
 
         <!-- ✨ รายละเอียดวิชาที่ Kotlin ใช้ -->
-        <TextView
-            android:id="@+id/tvSubjectDetail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="SP999-1 วิชาการตลาด"
-            android:textColor="#000000"
-            android:textSize="16sp"
-            android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tvRoom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="อาคาร 21 ห้อง 21509"
-            android:layout_marginTop="4dp"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/tvTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="10:00 - 12:00 น."
-            android:layout_marginTop="4dp"
-            android:textSize="14sp" />
     </LinearLayout>
 
 

@@ -28,29 +28,45 @@ class ClassAdapter(private val classList: List<ClassData>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = classList[position]
 
-        holder.tvClassCode.text = "${item.subjectCode ?: "-"} ${item.className ?: ""}"
-        holder.tvClassInfo.text = "ห้อง ${item.classRoom ?: "-"}"
-        holder.tvClassTime.text = item.classTime ?: "-"
+        // บรรทัด 1 — รหัสวิชา
+        val line1 = "รหัสวิชา: ${item.subjectCode.orEmpty()}"
 
-        // ➤ เปิดหน้า ClassDetailActivity
+        // บรรทัด 2 — ชื่อวิชา
+        val line2 = "ชื่อวิชา: ${item.className.orEmpty()}"
+
+        // บรรทัด 3 — ห้องเรียน
+        val line3 = "ห้องเรียน: ${item.classRoom.orEmpty()}"
+
+        // บรรทัด 4 — วันที่เรียน
+        // ถ้ามี classTime ให้ใช้ classTime
+        // ถ้ามี dayTime ก็ใช้แทนได้เช่น "22/11/2025"
+        val dayText = when {
+            !item.classTime.isNullOrEmpty() -> item.classTime   // Monday 12.00–13.00
+            !item.dayTime.isNullOrEmpty() -> item.dayTime       // หรือ 22/11/2025
+            else -> "-"
+        }
+
+        val line4 = "วันที่เรียน: $dayText"
+
+        // ใส่ลง TextView
+        holder.tvClassCode.text = line1
+        holder.tvClassInfo.text = line2
+        holder.tvClassTime.text = "$line3\n$line4"
+
+        // ปุ่มดูรายละเอียด
         holder.btnDetail.setOnClickListener {
             val context = holder.itemView.context
             val intent = Intent(context, ClassDetailActivity::class.java)
             intent.putExtra("classId", item.classId)
             intent.putExtra("className", item.className)
-            intent.putExtra("subjectCode", item.subjectCode)
             intent.putExtra("classRoom", item.classRoom)
-            intent.putExtra("classTime", item.classTime)
-            Log.d("ClassAdapter", "Opening detail for classId = ${item.classId}")
-            Log.d("ClassDetailActivity", "Received classId = ${intent.getStringExtra("classId")}")
-
-
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-
+            intent.putExtra("classTime", dayText)
             context.startActivity(intent)
         }
-
     }
 
     override fun getItemCount(): Int = classList.size
 }
+
+
+

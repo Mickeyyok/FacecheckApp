@@ -62,7 +62,7 @@ class LocationCheckActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun initViews() {
-        tvSubjectDetail = findViewById(R.id.tvSubjectDetail)
+
         btnScan = findViewById(R.id.btnStartScan)
         tvOutRange = findViewById(R.id.tvOutRange)
         btnBack = findViewById(R.id.btnBack)

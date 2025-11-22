@@ -86,6 +86,9 @@ dependencies {
     implementation("org.tensorflow:tensorflow-lite:2.12.0")
     implementation("org.tensorflow:tensorflow-lite-select-tf-ops:2.12.0")
     implementation("org.tensorflow:tensorflow-lite-support:0.4.3")
+
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 }
 
 // ปลั๊กอิน Google Services ต้องอยู่ล่างสุด
