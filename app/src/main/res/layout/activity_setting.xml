@@ -94,8 +94,8 @@
                 android:layout_height="55dp"
                 android:text="ออกจากระบบ"
                 android:textStyle="bold"
-                android:textColor="@android:color/black"
-                android:background="@drawable/btn_addsj"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#247AAA"
                 android:stateListAnimator="@null" />
 
                     </LinearLayout>

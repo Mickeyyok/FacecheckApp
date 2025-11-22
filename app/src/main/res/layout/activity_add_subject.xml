@@ -56,7 +56,7 @@
             android:layout_height="55dp"
             android:layout_gravity="center"
             android:layout_marginTop="60dp"
-            android:backgroundTint="#000080"
+            android:backgroundTint="#247AAA"
             android:text="เข้าร่วมวิชา"
             android:textColor="@android:color/white"
             android:textSize="18sp"

@@ -32,10 +32,14 @@ class PersonalActivity : AppCompatActivity() {
     }
 
     /** ⭐ โหลดชื่อ + รหัสนักศึกษา จาก Firebase */
+    /** ⭐ โหลดชื่อ + รหัสนักศึกษา จาก Firebase */
     private fun loadUserInfo() {
         val uid = auth.uid ?: return
 
-        val userRef = db.child("users").child(uid).child("faceEmbedding")
+        // 🌟🌟🌟 แก้ไข Reference ให้ชี้ไปที่โหนดหลักของผู้ใช้ (users/{uid}) 🌟🌟🌟
+        // สมมติว่าข้อมูล ชื่อ, สกุล, id อยู่ในโหนดหลักของ UID
+        val userRef = db.child("users").child(uid)
+        // ❌ โค้ดเดิม: val userRef = db.child("users").child(uid).child("faceEmbedding")
 
         userRef.get().addOnSuccessListener { snap ->
             if (!snap.exists()) {
@@ -44,6 +48,8 @@ class PersonalActivity : AppCompatActivity() {
                 return@addOnSuccessListener
             }
 
+            // ตรวจสอบว่า key first_name, last_name, id อยู่ตรงนี้จริงหรือไม่
+            // ถ้าข้อมูลอยู่ในโหนดหลัก userRef
             val first = snap.child("first_name").value?.toString() ?: ""
             val last = snap.child("last_name").value?.toString() ?: ""
             val sid = snap.child("id").value?.toString() ?: ""

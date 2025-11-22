@@ -8,9 +8,9 @@
     <!-- ขอบสีม่วง -->
     <stroke
         android:width="2dp"
-        android:color="#6B4FBF" />
+        android:color="#9C27B0" />
 
     <!-- มุมโค้งมน -->
     <corners android:radius="25dp" />
 
-</shape>
+    </shape>

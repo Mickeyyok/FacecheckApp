@@ -37,6 +37,9 @@ class ClassDetailActivity : AppCompatActivity() {
 
     private var classId: String? = null
 
+    // ตัวแปร Snapshot เพื่อเก็บข้อมูลเวลาเดิมที่ละเอียดก่อนส่งไปหน้าแก้ไข
+    private var snapshotClassTime: String = "-"
+    private var snapshotDayTime: String = "-" // เพิ่ม DayTime สำหรับส่งไปแก้ไขวันที่
     private var snapshotStartTime: String = "-"
     private var snapshotLateTime: String = "-"
     private var snapshotEndTime: String = "-"
@@ -105,9 +108,6 @@ class ClassDetailActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // โหลดข้อมูล
-        loadClassData()
-
         // ลบคลาส
         btnDeleteClass.setOnClickListener { confirmDeleteClass() }
 
@@ -116,14 +116,22 @@ class ClassDetailActivity : AppCompatActivity() {
             val intent = Intent(this, EditClassActivity::class.java)
 
             intent.putExtra("classId", classId)
+
+            // 1. ดึงค่าจาก TextViews (ต้องระวังการใช้ Label เช่น "ผู้สอน: ")
             intent.putExtra("className", tvSubjectName.text.toString())
             intent.putExtra("subjectCode", tvSubjectCode.text.toString())
-            intent.putExtra("teacherName", tvTeacherName.text.toString())
+
+            // 💡 ตัดคำนำหน้า "ผู้สอน: " ออกก่อนส่ง
+            val teacherText = tvTeacherName.text.toString().replace("ผู้สอน: ", "")
+            intent.putExtra("teacherName", teacherText)
+
             intent.putExtra("classRoom", tvClassRoom.text.toString())
             intent.putExtra("year", tvYear.text.toString())
             intent.putExtra("semester", tvSemester.text.toString())
-            intent.putExtra("classTime", tvDayTime.text.toString())
 
+            // 2. ข้อมูลเวลาเดิม (จาก Snapshot)
+            intent.putExtra("classTime", snapshotClassTime)
+            intent.putExtra("dayTime", snapshotDayTime) // ส่ง DayTime
             intent.putExtra("startTime", snapshotStartTime)
             intent.putExtra("lateTime", snapshotLateTime)
             intent.putExtra("endTime", snapshotEndTime)
@@ -131,6 +139,14 @@ class ClassDetailActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
+    // 🌟🌟🌟 เพิ่ม onResume() เพื่อโหลดข้อมูลใหม่ทุกครั้งที่กลับมา 🌟🌟🌟
+    override fun onResume() {
+        super.onResume()
+        loadClassData()
+    }
+    // 🌟🌟🌟 --------------------------------------------- 🌟🌟🌟
+
 
     private fun loadClassData() {
         dbRef.child(classId!!).addListenerForSingleValueEvent(object : ValueEventListener {
@@ -144,11 +160,18 @@ class ClassDetailActivity : AppCompatActivity() {
                 val classRoom = snapshot.child("classRoom").getValue(String::class.java) ?: "-"
                 val year = snapshot.child("year").getValue(String::class.java) ?: "-"
                 val semester = snapshot.child("semester").getValue(String::class.java) ?: "-"
+
+                // ดึงข้อมูลเวลาที่ละเอียดและข้อมูลรวม
                 val classTime = snapshot.child("classTime").getValue(String::class.java) ?: "-"
+                val dayTime = snapshot.child("dayTime").getValue(String::class.java) ?: "-" // ดึง DayTime
+
                 val startTime = snapshot.child("startTime").getValue(String::class.java) ?: "-"
                 val lateTime = snapshot.child("lateTime").getValue(String::class.java) ?: "-"
                 val endTime = snapshot.child("endTime").getValue(String::class.java) ?: "-"
 
+                // 💾 เก็บค่า snapshot สำหรับส่งไปหน้าแก้ไข
+                snapshotClassTime = classTime
+                snapshotDayTime = dayTime // เก็บ DayTime
                 snapshotStartTime = startTime
                 snapshotLateTime = lateTime
                 snapshotEndTime = endTime
@@ -156,8 +179,8 @@ class ClassDetailActivity : AppCompatActivity() {
                 tvTitle.text = className
                 tvSubjectName.text = className
                 tvSubjectCode.text = subjectCode
-                tvTeacherName.text = teacherName
-                tvDayTime.text = classTime
+                tvTeacherName.text = teacherName// แสดงผลพร้อม Label
+                tvDayTime.text = classTime // แสดงผล วัน-เวลาเรียนรวม
                 tvClassRoom.text = classRoom
                 tvYear.text = year
                 tvSemester.text = semester

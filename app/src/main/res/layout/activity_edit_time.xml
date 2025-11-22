@@ -50,7 +50,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="วัน/เวลา ที่เรียน"
+                        android:text="วันที่เรียน"
                         android:textSize="15sp"
                         android:textColor="#444444"
                         android:layout_marginBottom="6dp" />
@@ -65,7 +65,7 @@
                         android:paddingLeft="12dp"
                         android:textColor="#000000"
                         android:textSize="15sp"
-                        android:hint="วัน/เวลา"
+                        android:hint="วัน"
                         android:inputType="text" />
 
                     <TextView
@@ -114,8 +114,8 @@
                     android:layout_weight="1"
                     android:layout_height="50dp"
                     android:text="ย้อนกลับ"
-                    android:textColor="#2196F3"
-                    android:background="@drawable/outline_button"/>
+                    android:textColor="@color/white"
+                    android:backgroundTint="#247AAA"/>
 
                 <View
                     android:layout_width="12dp"

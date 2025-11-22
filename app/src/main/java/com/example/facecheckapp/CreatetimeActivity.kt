@@ -35,7 +35,7 @@ class CreatetimeActivity : AppCompatActivity() {
         val teacherName = intent.getStringExtra("teacherName")
         val year = intent.getStringExtra("year")
         val semester = intent.getStringExtra("semester")
-        val classTime = intent.getStringExtra("classTime")
+
 
         // 🔙 ปุ่มย้อนกลับ
         btnBack.setOnClickListener {
@@ -66,7 +66,7 @@ class CreatetimeActivity : AppCompatActivity() {
                 teacherName = teacherName,
                 year = year,
                 semester = semester,
-                classTime = classTime,
+
                 dayTime = dayTime,
                 startTime = startTime,
                 lateTime = lateTime,

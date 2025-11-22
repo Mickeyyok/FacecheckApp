@@ -79,23 +79,25 @@
                 android:text="เช็กชื่อ"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:backgroundTint="#000080"
+                android:backgroundTint="#247AAA"
                 android:textColor="@android:color/white" />
 
             <!-- ➕ ปุ่มเพิ่มรายวิชา -->
+
+            <!-- 📊 หัวข้อสรุป -->
+
             <Button
                 android:id="@+id/btnAddSubject"
                 android:layout_width="250dp"
                 android:layout_height="55dp"
                 android:layout_marginTop="15dp"
+                android:backgroundTint="#247AAA"
+                android:stateListAnimator="@null"
                 android:text="เพิ่มรายวิชา"
+                android:textColor="@android:color/white"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/black"
-                android:background="@drawable/btn_addsj"
-                android:stateListAnimator="@null" />
+                android:textStyle="bold" />
 
-            <!-- 📊 หัวข้อสรุป -->
             <TextView
                 android:id="@+id/summaryTitle"
                 android:layout_width="wrap_content"
@@ -128,6 +130,7 @@
                         android:gravity="center"
                         android:layout_margin="10dp"
                         android:background="@drawable/box_outline"
+
                         android:padding="0dp">
 
                         <TextView
@@ -142,6 +145,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
+                            android:textColor="@color/green"
                             android:text="0"
                             android:textSize="20sp"
                             android:textStyle="bold" />
@@ -168,6 +172,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
+                            android:textColor="#FFC107"
                             android:text="0"
                             android:textSize="20sp"
                             android:textStyle="bold" />
@@ -201,6 +206,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
+                            android:textColor="@color/red"
                             android:text="0"
                             android:textSize="20sp"
                             android:textStyle="bold" />

@@ -11,7 +11,7 @@
     <RelativeLayout
         android:id="@+id/headerLayout"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="130dp"
         android:background="@drawable/bg_gradient"
         android:paddingHorizontal="24dp"
         android:paddingTop="40dp">
@@ -30,7 +30,7 @@
             android:textColor="#000000"
             android:drawablePadding="8dp"
             android:elevation="4dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:layout_marginBottom="10dp" />
     </RelativeLayout>
 

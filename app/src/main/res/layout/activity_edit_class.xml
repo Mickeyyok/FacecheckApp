@@ -1,136 +1,189 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    tools:context=".EditClassActivity">
 
-    <!-- 🔹 HEADER -->
+    <!-- 🔹 ส่วนหัว -->
     <RelativeLayout
+        android:id="@+id/headerLayout"
         android:layout_width="match_parent"
-        android:layout_height="130dp"
-        android:background="@drawable/bg_gradient">
+        android:layout_height="100dp"
+        android:background="@drawable/bg_gradient"
+        android:paddingTop="35dp"
+        android:paddingHorizontal="16dp">
+
+        <ImageButton
+            android:id="@+id/btnBackHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_arrow_back_white"
+            android:tint="@android:color/white" />
+
 
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="แก้ไขข้อมูลวิชา"
+            android:text="เเก้ไขรายวิชา"
             android:textColor="@android:color/white"
-            android:textSize="26sp"
             android:textStyle="bold"
+            android:textSize="22sp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="50dp"/>
+            android:layout_centerVertical="true" />
+
+
+
     </RelativeLayout>
 
-    <!-- 🔹 CONTENT -->
-    <ScrollView
-        android:id="@+id/contentScroll"
+    <!-- 🔸 เนื้อหาหลัก -->
+
+    <LinearLayout
+        android:id="@+id/contentContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="120dp">
+        android:orientation="vertical"
+        android:background="@drawable/bg_white_rounded_top"
+        android:layout_below="@id/headerLayout"
+        android:padding="15dp"
+        android:layout_above="@id/bottomBar"
+        android:elevation="6dp">
 
+
+        <!-- ชื่อวิชา -->
+        <EditText
+            android:id="@+id/etClassName"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="ชื่อวิชา"
+            android:background="@drawable/input_box"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:textColorHint="#888888"
+            android:layout_marginBottom="15dp" />
+
+        <!-- รหัสวิชา -->
+        <EditText
+            android:id="@+id/etSubjectCode"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="รหัสวิชา"
+            android:background="@drawable/input_box"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:textColorHint="#888888"
+            android:layout_marginBottom="10dp" />
+
+        <!-- ห้องเรียน -->
+        <EditText
+            android:id="@+id/etClassRoom"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="ห้องเรียน (เช่น 2301)"
+            android:background="@drawable/input_box"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:textColorHint="#888888"
+            android:layout_marginBottom="10dp" />
+
+        <!-- ชื่ออาจารย์ -->
+        <EditText
+            android:id="@+id/etTeacherName"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="ชื่ออาจารย์ผู้สอน"
+            android:background="@drawable/input_box"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:textColorHint="#888888"
+            android:layout_marginBottom="10dp" />
+
+        <!-- ปีการศึกษา -->
+        <EditText
+            android:id="@+id/etYear"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="ปีการศึกษา"
+            android:inputType="number"
+            android:background="@drawable/input_box"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:textColorHint="#888888"
+            android:layout_marginBottom="10dp" />
+
+        <!-- ภาคเรียน -->
+        <EditText
+            android:id="@+id/etSemester"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="ภาคเรียน"
+            android:inputType="number"
+            android:background="@drawable/input_box"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:textColorHint="#888888"
+            android:layout_marginBottom="10dp" />
+
+        <!-- 🔹 วัน/เวลา ที่เรียน
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="วัน/เวลา ที่เรียน"
+            android:textStyle="bold"
+            android:textColor="#000"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/etClassTime"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="เช่น วันจันทร์ 10:00-12:00 น."
+            android:background="@drawable/input_box"
+            android:gravity="center"
+            android:inputType="text"
+            android:textColor="#000"
+            android:textColorHint="#888"
+            android:layout_marginBottom="20dp" />-->
+
+        <!-- ปุ่ม -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp"
-            android:orientation="vertical"
-            android:background="@drawable/bg_white_rounded">
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp"
+            android:gravity="center">
 
-            <!-- กล่องขาว -->
-            <LinearLayout
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/btnCancelBottom"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:text="ย้อนกลับ"
+                android:textColor="@color/white"
+                android:backgroundTint="#2196F3"
+                android:layout_marginEnd="8dp" />
 
-                android:padding="20dp"
-                android:elevation="4dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <EditText
-                        android:id="@+id/edtClassName"
-                        android:hint="ชื่อวิชา"
-                        android:background="@drawable/input_box"
-                        style="@style/EditBoxStyle"/>
-
-                    <EditText
-                        android:id="@+id/edtSubjectCode"
-                        android:hint="รหัสวิชา"
-                        android:background="@drawable/input_box"
-                        style="@style/EditBoxStyle"/>
-
-                    <EditText
-                        android:id="@+id/edtTeacherName"
-                        android:hint="ชื่อผู้สอน"
-                        android:background="@drawable/input_box"
-                        style="@style/EditBoxStyle"/>
-
-                    <EditText
-                        android:id="@+id/edtYear"
-                        android:hint="ปีการศึกษา"
-                        android:background="@drawable/input_box"
-                        android:inputType="number"
-                        style="@style/EditBoxStyle"/>
-
-                    <EditText
-                        android:id="@+id/edtSemester"
-                        android:hint="ภาคเรียน"
-                        android:background="@drawable/input_box"
-                        android:inputType="number"
-                        style="@style/EditBoxStyle"/>
-
-                    <EditText
-                        android:id="@+id/edtClassRoom"
-                        android:background="@drawable/input_box"
-                        android:hint="ห้องเรียน"
-                        style="@style/EditBoxStyle"/>
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <!-- ปุ่ม -->
-            <LinearLayout
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/btnNext"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_marginTop="20dp">
-
-                <Button
-                    android:id="@+id/btnCancel"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="50dp"
-                    android:text="ยกเลิก"
-                    android:textColor="#2196F3"
-                    android:background="@drawable/outline_button"/>
-
-                <View
-                    android:layout_width="12dp"
-                    android:layout_height="1dp"/>
-
-                <Button
-                    android:id="@+id/btnNext"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="50dp"
-                    android:text="ถัดไป"
-                    android:textColor="@android:color/white"
-                    android:backgroundTint="#2196F3" />
-
-            </LinearLayout>
-
+                android:text="ถัดไป"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#2196F3" />
         </LinearLayout>
-    </ScrollView>
+    </LinearLayout>
+
+
     <!-- ⚙️ Bottom Navigation -->
-    <include
-        android:id="@+id/bottomBar"
-        layout="@layout/bottom_navbar"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_alignParentBottom="true"/>
-    <!-- ⚙️ Bottom Navigation -->
+    <!-- ⭐ Bottom Navigation (อยู่ล่างสุดจริงๆ) -->
+
 
 </RelativeLayout>

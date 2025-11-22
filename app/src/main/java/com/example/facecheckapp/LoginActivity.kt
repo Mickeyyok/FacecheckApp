@@ -1,5 +1,6 @@
 package com.example.facecheckapp
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.*
@@ -11,6 +12,11 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
 
+    // 🌟 กำหนดชื่อไฟล์ SharedPreferences และ Keys 🌟
+    private val PREF_NAME = "LoginPrefs"
+    private val KEY_USERNAME = "username"
+    private val KEY_PASSWORD = "password"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -21,6 +27,9 @@ class LoginActivity : AppCompatActivity() {
         val etPassword = findViewById<EditText>(R.id.etPassword)
         val btnLogin = findViewById<Button>(R.id.btnLogin)
         val btnBack = findViewById<Button>(R.id.btnBack)
+
+        // 🚀 โหลดข้อมูลที่บันทึกไว้เมื่อ Activity ถูกสร้าง
+        loadSavedCredentials(etUsername, etPassword)
 
         // ✅ ปุ่มเข้าสู่ระบบ
         btnLogin.setOnClickListener {
@@ -37,6 +46,10 @@ class LoginActivity : AppCompatActivity() {
             // 🔐 เข้าสู่ระบบ Firebase
             auth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
+                    // 🌟🌟🌟 เมื่อเข้าสู่ระบบสำเร็จ: บันทึกข้อมูล 🌟🌟🌟
+                    saveCredentials(username, password)
+                    // 🌟🌟🌟 ------------------------------ 🌟🌟🌟
+
                     val userUid = auth.currentUser?.uid ?: return@addOnSuccessListener
 
                     // 🔍 ดึงข้อมูล role จาก Firebase
@@ -69,5 +82,30 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+    }
+
+    // ==========================================================
+    // 🌟 ฟังก์ชัน SharedPreferences
+    // ==========================================================
+
+    /** บันทึก Username และ Password ลงใน SharedPreferences */
+    private fun saveCredentials(username: String, password: String) {
+        val sharedPrefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        with(sharedPrefs.edit()) {
+            putString(KEY_USERNAME, username)
+            // ⚠️ คำเตือน: การบันทึกรหัสผ่านตรงๆ ไม่ปลอดภัย ควรใช้ Encryption ในแอปจริง
+            putString(KEY_PASSWORD, password)
+            apply()
+        }
+    }
+
+    /** โหลด Username และ Password กลับมาแสดงใน EditText */
+    private fun loadSavedCredentials(etUsername: EditText, etPassword: EditText) {
+        val sharedPrefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        val savedUsername = sharedPrefs.getString(KEY_USERNAME, "")
+        val savedPassword = sharedPrefs.getString(KEY_PASSWORD, "")
+
+        etUsername.setText(savedUsername)
+        etPassword.setText(savedPassword)
     }
 }

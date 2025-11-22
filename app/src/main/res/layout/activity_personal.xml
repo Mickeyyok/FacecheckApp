@@ -57,8 +57,9 @@
                 android:layout_height="200dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="30dp"
-
                 android:scaleType="centerCrop"
+                android:background="@drawable/ic_person"
+                android:backgroundTint="#247AAA"
                 android:contentDescription="รูปภาพโปรไฟล์" />
 
             <!-- ข้อมูลส่วนตัว -->
@@ -66,6 +67,7 @@
                 android:id="@+id/menuContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/input_box"
                 android:orientation="vertical"
                 android:padding="20dp">
 
@@ -100,6 +102,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+
                     android:orientation="vertical">
 
                     <TextView
@@ -132,8 +135,8 @@
                 android:layout_marginTop="30dp"
                 android:text="ออกจากระบบ"
                 android:textStyle="bold"
-                android:textColor="@android:color/black"
-                android:background="@drawable/btn_addsj"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#247AAA"
                 android:stateListAnimator="@null" />
 
 

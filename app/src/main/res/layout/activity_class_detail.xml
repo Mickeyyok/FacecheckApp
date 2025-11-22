@@ -153,19 +153,20 @@
             android:paddingHorizontal="20dp">
 
             <!-- ปุ่มแก้ไขข้อมูลวิชา -->
+
+            <!-- ปุ่มลบคลาส -->
             <Button
                 android:id="@+id/btnEditClass"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:layout_marginBottom="12dp"
+                android:backgroundTint="#247AAA"
+                android:elevation="4dp"
                 android:text="แก้ไขข้อมูลวิชา"
                 android:textColor="#FFFFFF"
-                android:textStyle="bold"
                 android:textSize="16sp"
-                android:backgroundTint="#000080"
-                android:layout_marginBottom="12dp"
-                android:elevation="4dp" />
+                android:textStyle="bold" />
 
-            <!-- ปุ่มลบคลาส -->
             <Button
                 android:id="@+id/btnDeleteClass"
                 android:layout_width="match_parent"
