@@ -94,11 +94,15 @@ class ClassDetailActivity : AppCompatActivity() {
 
         // แท็บ Report (ยังไม่เปิดใช้งาน)
         tabReportDay.setOnClickListener {
-            Toast.makeText(this, "หน้านี้ยังไม่เปิดใช้งาน", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, RealTimeActivity::class.java)
+            intent.putExtra("classId", classId)
+            startActivity(intent)
         }
 
         tabReportTerm.setOnClickListener {
-            Toast.makeText(this, "หน้านี้ยังไม่เปิดใช้งาน", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, TermActivity::class.java)
+            intent.putExtra("classId", classId)
+            startActivity(intent)
         }
 
         // โหลดข้อมูล

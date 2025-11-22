@@ -12,6 +12,17 @@
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:background="@drawable/bg_gradient">
+        <ImageButton
+            android:id="@+id/btnBack1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_back"
+            android:contentDescription="ย้อนกลับ" />
 
         <TextView
             android:id="@+id/titleText"
@@ -191,7 +202,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="รายชื่อนักศึกษา (ทั้งหมด 30 คน)"
+                android:text="รายชื่อนักศึกษา (ทั้งหมด  คน)"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -274,7 +285,6 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="ธนาดล แซ่ลิ้ม"
                             android:textColor="#000000"
                             android:textStyle="bold"
                             android:textSize="16sp"
@@ -283,7 +293,6 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="2310511101059"
                             android:textColor="#007AFF"
                             android:textSize="14sp" />
                     </LinearLayout>
@@ -292,7 +301,6 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="0"
                         android:gravity="center"
                         android:textColor="#000000"
                         android:textSize="16sp" />
@@ -301,7 +309,6 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="30"
                         android:gravity="center"
                         android:textColor="#000000"
                         android:textSize="16sp" />
@@ -310,7 +317,6 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="0"
                         android:gravity="center"
                         android:textColor="#000000"
                         android:textSize="16sp" />

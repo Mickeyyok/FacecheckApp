@@ -14,8 +14,8 @@
 
         <ImageButton
             android:id="@+id/btnBack"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:padding="8dp"
             android:scaleType="fitCenter"
             android:layout_alignParentStart="true"
@@ -92,6 +92,46 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="20 มกราคม 2568"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- 🔸 เลือกเทอม (Term Selector) -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="เทอม/ปี"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_centerVertical="true" />
+
+                <LinearLayout
+                    android:id="@+id/tvTermLayout"
+                    android:layout_width="200dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentEnd="true"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:background="@drawable/input_box"
+                    android:elevation="2dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:id="@+id/tvTerm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1 / 2568"
                         android:textColor="@color/black"
                         android:textStyle="bold"
                         android:textSize="14sp" />
