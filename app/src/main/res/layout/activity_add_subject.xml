@@ -6,7 +6,7 @@
     android:layout_gravity="center"
     >
 
-    <!-- 🔹 ส่วนหัว (Gradient ฟ้า→น้ำเงิน) -->
+    <!-- 🔹 ส่วนหัว (Gradient ฟ้า→dน้ำเงิน) -->
     <RelativeLayout
         android:id="@+id/headerLayout"
         android:layout_width="match_parent"
