@@ -39,7 +39,7 @@ class ClassDetailActivity : AppCompatActivity() {
 
     // ตัวแปร Snapshot เพื่อเก็บข้อมูลเวลาเดิมที่ละเอียดก่อนส่งไปหน้าแก้ไข
     private var snapshotClassTime: String = "-"
-    private var snapshotDayTime: String = "-" // เพิ่ม DayTime สำหรับส่งไปแก้ไขวันที่
+    private var snapshotDayTime: String = "-"
     private var snapshotStartTime: String = "-"
     private var snapshotLateTime: String = "-"
     private var snapshotEndTime: String = "-"
@@ -48,7 +48,9 @@ class ClassDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_class_detail)
 
-        dbRef = FirebaseDatabase.getInstance().reference.child("classes")
+        // โหนดหลักของ Firebase Realtime Database
+        dbRef = FirebaseDatabase.getInstance().reference
+
         classId = intent.getStringExtra("classId")
 
         if (classId.isNullOrEmpty()) {
@@ -84,7 +86,6 @@ class ClassDetailActivity : AppCompatActivity() {
             finish()
         }
 
-
         // ตั้งแท็บเริ่มต้น
         setActiveTab(tabInfo)
 
@@ -117,7 +118,7 @@ class ClassDetailActivity : AppCompatActivity() {
 
             intent.putExtra("classId", classId)
 
-            // 1. ดึงค่าจาก TextViews (ต้องระวังการใช้ Label เช่น "ผู้สอน: ")
+            // 1. ดึงค่าจาก TextViews
             intent.putExtra("className", tvSubjectName.text.toString())
             intent.putExtra("subjectCode", tvSubjectCode.text.toString())
 
@@ -131,7 +132,7 @@ class ClassDetailActivity : AppCompatActivity() {
 
             // 2. ข้อมูลเวลาเดิม (จาก Snapshot)
             intent.putExtra("classTime", snapshotClassTime)
-            intent.putExtra("dayTime", snapshotDayTime) // ส่ง DayTime
+            intent.putExtra("dayTime", snapshotDayTime)
             intent.putExtra("startTime", snapshotStartTime)
             intent.putExtra("lateTime", snapshotLateTime)
             intent.putExtra("endTime", snapshotEndTime)
@@ -147,9 +148,9 @@ class ClassDetailActivity : AppCompatActivity() {
     }
 
 
-
     private fun loadClassData() {
-        dbRef.child(classId!!).addListenerForSingleValueEvent(object : ValueEventListener {
+        // อ้างอิงถึงคลาสย่อย (classes/{classId})
+        dbRef.child("classes").child(classId!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 if (!snapshot.exists()) return
@@ -163,7 +164,7 @@ class ClassDetailActivity : AppCompatActivity() {
 
                 // ดึงข้อมูลเวลาที่ละเอียดและข้อมูลรวม
                 val classTime = snapshot.child("classTime").getValue(String::class.java) ?: "-"
-                val dayTime = snapshot.child("dayTime").getValue(String::class.java) ?: "-" // ดึง DayTime
+                val dayTime = snapshot.child("dayTime").getValue(String::class.java) ?: "-"
 
                 val startTime = snapshot.child("startTime").getValue(String::class.java) ?: "-"
                 val lateTime = snapshot.child("lateTime").getValue(String::class.java) ?: "-"
@@ -171,7 +172,7 @@ class ClassDetailActivity : AppCompatActivity() {
 
                 // 💾 เก็บค่า snapshot สำหรับส่งไปหน้าแก้ไข
                 snapshotClassTime = classTime
-                snapshotDayTime = dayTime // เก็บ DayTime
+                snapshotDayTime = dayTime
                 snapshotStartTime = startTime
                 snapshotLateTime = lateTime
                 snapshotEndTime = endTime
@@ -179,7 +180,7 @@ class ClassDetailActivity : AppCompatActivity() {
                 tvTitle.text = className
                 tvSubjectName.text = className
                 tvSubjectCode.text = subjectCode
-                tvTeacherName.text = teacherName// แสดงผลพร้อม Label
+                tvTeacherName.text = "ผู้สอน: $teacherName" // ⭐ แสดงผลพร้อม Label ที่ถูกต้อง
                 tvDayTime.text = classTime // แสดงผล วัน-เวลาเรียนรวม
                 tvClassRoom.text = classRoom
                 tvYear.text = year
@@ -215,7 +216,7 @@ class ClassDetailActivity : AppCompatActivity() {
     private fun confirmDeleteClass() {
         AlertDialog.Builder(this)
             .setTitle("ยืนยันการลบคลาส")
-            .setMessage("คุณแน่ใจหรือไม่ว่าต้องการลบคลาสนี้?\nข้อมูลทั้งหมดจะหายไปถาวร")
+            .setMessage("คุณแน่ใจหรือไม่ว่าต้องการลบคลาสนี้?\nข้อมูลหลักและข้อมูลการลงทะเบียนจะถูกลบ แต่ข้อมูลประวัติการเช็คชื่อจะถูกลบโดย Cloud Function ในภายหลัง")
             .setPositiveButton("ตกลง") { _, _ ->
                 deleteClassFromFirebase()
             }
@@ -223,54 +224,44 @@ class ClassDetailActivity : AppCompatActivity() {
             .show()
     }
 
+    /** * ⭐ ฟังก์ชันลบข้อมูลคลาสหลักและข้อมูลที่ผูกอยู่
+     * ใช้วิธี Multi-path update เพื่อความเร็วและถูกต้อง
+     */
     private fun deleteClassFromFirebase() {
         val classIdToDelete = classId ?: return
-        val dbRoot = FirebaseDatabase.getInstance().reference
 
-        // 1. ลบข้อมูลหลัก (Classes) และข้อมูล Students ที่ผูกกับ ClassId
-        val deletionTasks = mutableListOf<com.google.android.gms.tasks.Task<Void>>()
+        // dbRef คือ FirebaseDatabase.getInstance().reference (Root)
+        val dbRoot = dbRef
 
-        // Task 1: ลบโหนดหลักของคลาส (classes/{classId})
-        deletionTasks.add(dbRoot.child("classes").child(classIdToDelete).removeValue())
+        // ข้อมูลที่จะถูกลบ: กำหนดค่าเป็น null
+        val deletionUpdates = mutableMapOf<String, Any?>()
 
-        // Task 2: ลบข้อมูลนักศึกษาที่ผูกกับคลาส (สมมติว่าอยู่ใน students/{classId})
-        // (อิงตามโค้ดเดิมของคุณที่พยายามลบ /students/$classId)
-        deletionTasks.add(dbRoot.child("students").child(classIdToDelete).removeValue())
+        // 1. ลบโหนดหลักของคลาส (classes/{classId})
+        deletionUpdates["/classes/$classIdToDelete"] = null
 
+        // 2. ลบข้อมูลนักเรียนที่ผูกกับคลาส (สมมติว่าอยู่ใน enrollments/{classId})
+        //    *** ให้ตรวจสอบ Path นี้ว่าถูกต้องกับโครงสร้างของคุณหรือไม่ ***
+        deletionUpdates["/enrollments/$classIdToDelete"] = null
 
-        // Task 3: ลบรายการประวัติการเช็คชื่อทั้งหมดที่เกี่ยวข้องกับคลาสนี้
-        // (สมมติว่าแต่ละรายการใน 'history' มี field ชื่อ 'classId' เก็บอยู่)
+        // 3. ลบข้อมูลนักเรียนที่อาจารย์เพิ่มแบบเก่า (ถ้ายังใช้อยู่)
+        //    สมมติว่า Path คือ /students/$classId
+        deletionUpdates["/students/$classIdToDelete"] = null
 
-        val historyQuery = dbRoot.child("history").orderByChild("classId").equalTo(classIdToDelete)
+        // รันการลบโหนดหลักทั้งหมดพร้อมกัน
+        dbRoot.updateChildren(deletionUpdates)
+            .addOnSuccessListener {
+                Toast.makeText(this, "ลบคลาสและข้อมูลหลักเรียบร้อย ✅", Toast.LENGTH_LONG).show()
 
-        historyQuery.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-
-                // เก็บ Task การลบแต่ละรายการใน history
-                for (historySnap in snapshot.children) {
-                    deletionTasks.add(historySnap.ref.removeValue())
-                }
-
-                // รัน Task การลบทั้งหมดพร้อมกัน
-                com.google.android.gms.tasks.Tasks.whenAll(deletionTasks)
-                    .addOnSuccessListener {
-                        Toast.makeText(this@ClassDetailActivity, "ลบคลาสและข้อมูลที่เกี่ยวข้องทั้งหมดเรียบร้อย ✅", Toast.LENGTH_LONG).show()
-                        // กลับไปหน้า Home หลังจากลบสำเร็จ
-                        val intent = Intent(this@ClassDetailActivity, TeacherHomeActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-                        startActivity(intent)
-                        finish()
-                    }
-                    .addOnFailureListener { e ->
-                        Toast.makeText(this@ClassDetailActivity, "❌ ลบคลาสไม่สำเร็จ: ${e.message}", Toast.LENGTH_LONG).show()
-                        Log.e("ClassDetailActivity", "Bulk Delete error: ${e.message}")
-                    }
+                // กลับไปหน้า Home หลังจากลบสำเร็จ
+                val intent = Intent(this@ClassDetailActivity, TeacherHomeActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+                finish()
             }
-
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@ClassDetailActivity, "❌ การค้นหาข้อมูลล้มเหลว: ${error.message}", Toast.LENGTH_LONG).show()
+            .addOnFailureListener { e ->
+                Toast.makeText(this@ClassDetailActivity, "❌ ลบคลาสไม่สำเร็จ: ${e.message}", Toast.LENGTH_LONG).show()
+                Log.e("ClassDetailActivity", "Bulk Delete error: ${e.message}")
             }
-        })
     }
 
     private fun setActiveTab(activeTab: TextView) {

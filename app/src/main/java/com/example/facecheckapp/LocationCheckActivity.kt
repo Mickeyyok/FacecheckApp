@@ -37,7 +37,7 @@ class LocationCheckActivity : AppCompatActivity(), OnMapReadyCallback {
     private var dayTime = ""
     private var classId = ""
 
-    private val UTCC = LatLng(37.4219980, -122.0840000)
+    private val UTCC = LatLng(  37.4220541, -122.0853242)
     private val RANGE_METERS = 200.0
 
     private var selfMarker: Marker? = null

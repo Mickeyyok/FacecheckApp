@@ -22,12 +22,7 @@
         android:roundIcon="@mipmap/ic_utcc_logo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FacecheckApp">
-        <activity
-            android:name=".SettingTeacherActivity"
-            android:exported="false" />
-        <activity
-            android:name=".PersonalTeacherActivity"
-            android:exported="false" /> <!-- ⭐⭐⭐ ใส่ Google Maps API KEY ที่นี่ ⭐⭐⭐ -->
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDUWll66qkfmJPblkl9Sjx9bMWoLpsbPPU" /> <!-- ⭐⭐⭐ END ⭐⭐⭐ -->
