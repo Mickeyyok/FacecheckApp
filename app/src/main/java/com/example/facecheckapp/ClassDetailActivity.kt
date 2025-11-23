@@ -224,20 +224,53 @@ class ClassDetailActivity : AppCompatActivity() {
     }
 
     private fun deleteClassFromFirebase() {
-        val updates = hashMapOf<String, Any?>(
-            "/classes/$classId" to null,
-            "/students/$classId" to null
-        )
+        val classIdToDelete = classId ?: return
+        val dbRoot = FirebaseDatabase.getInstance().reference
 
-        FirebaseDatabase.getInstance().reference.updateChildren(updates)
-            .addOnSuccessListener {
-                Toast.makeText(this, "ลบคลาสเรียบร้อย ✅", Toast.LENGTH_SHORT).show()
-                finish()
+        // 1. ลบข้อมูลหลัก (Classes) และข้อมูล Students ที่ผูกกับ ClassId
+        val deletionTasks = mutableListOf<com.google.android.gms.tasks.Task<Void>>()
+
+        // Task 1: ลบโหนดหลักของคลาส (classes/{classId})
+        deletionTasks.add(dbRoot.child("classes").child(classIdToDelete).removeValue())
+
+        // Task 2: ลบข้อมูลนักศึกษาที่ผูกกับคลาส (สมมติว่าอยู่ใน students/{classId})
+        // (อิงตามโค้ดเดิมของคุณที่พยายามลบ /students/$classId)
+        deletionTasks.add(dbRoot.child("students").child(classIdToDelete).removeValue())
+
+
+        // Task 3: ลบรายการประวัติการเช็คชื่อทั้งหมดที่เกี่ยวข้องกับคลาสนี้
+        // (สมมติว่าแต่ละรายการใน 'history' มี field ชื่อ 'classId' เก็บอยู่)
+
+        val historyQuery = dbRoot.child("history").orderByChild("classId").equalTo(classIdToDelete)
+
+        historyQuery.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                // เก็บ Task การลบแต่ละรายการใน history
+                for (historySnap in snapshot.children) {
+                    deletionTasks.add(historySnap.ref.removeValue())
+                }
+
+                // รัน Task การลบทั้งหมดพร้อมกัน
+                com.google.android.gms.tasks.Tasks.whenAll(deletionTasks)
+                    .addOnSuccessListener {
+                        Toast.makeText(this@ClassDetailActivity, "ลบคลาสและข้อมูลที่เกี่ยวข้องทั้งหมดเรียบร้อย ✅", Toast.LENGTH_LONG).show()
+                        // กลับไปหน้า Home หลังจากลบสำเร็จ
+                        val intent = Intent(this@ClassDetailActivity, TeacherHomeActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                        startActivity(intent)
+                        finish()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(this@ClassDetailActivity, "❌ ลบคลาสไม่สำเร็จ: ${e.message}", Toast.LENGTH_LONG).show()
+                        Log.e("ClassDetailActivity", "Bulk Delete error: ${e.message}")
+                    }
             }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "❌ ลบคลาสไม่สำเร็จ: ${e.message}", Toast.LENGTH_SHORT).show()
-                Log.e("ClassDetailActivity", "Delete error: ${e.message}")
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@ClassDetailActivity, "❌ การค้นหาข้อมูลล้มเหลว: ${error.message}", Toast.LENGTH_LONG).show()
             }
+        })
     }
 
     private fun setActiveTab(activeTab: TextView) {

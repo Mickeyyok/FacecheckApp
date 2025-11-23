@@ -42,7 +42,7 @@ class TermActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_term)
 
-        btnBack = findViewById(R.id.btnBack1)
+        btnBack = findViewById(R.id.btnBack)
 
         tvOnTimeCount = findViewById(R.id.tvOnTimeCount)
         tvLateCount = findViewById(R.id.tvLateCount)

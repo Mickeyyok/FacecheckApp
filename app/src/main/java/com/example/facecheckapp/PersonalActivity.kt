@@ -32,11 +32,10 @@ class PersonalActivity : AppCompatActivity() {
 
         loadUserInfo()
         setupLogout()
-        setupNotification()
         setupBottomNav()
     }
 
-    /** ⭐ โหลดชื่อ + รหัสนักศึกษา จาก Firebase */
+
     /** ⭐ โหลดชื่อ + รหัสนักศึกษา จาก Firebase */
     private fun loadUserInfo() {
         val uid = auth.uid ?: return
@@ -78,13 +77,7 @@ class PersonalActivity : AppCompatActivity() {
         }
     }
 
-    /** ปุ่มแจ้งเตือน */
-    private fun setupNotification() {
-        val btnNotification = findViewById<ImageButton>(R.id.btnNotification)
-        btnNotification.setOnClickListener {
-            startActivity(Intent(this, NotificationActivity::class.java))
-        }
-    }
+
 
     /** Bottom Navigation */
     private fun setupBottomNav() {

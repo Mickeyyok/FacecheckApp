@@ -3,52 +3,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@drawable/bg_gradient"
     tools:context=".TermActivity">
 
-    <!-- 🔹 ส่วนหัว (Header) -->
     <RelativeLayout
         android:id="@+id/headerLayout"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:background="@drawable/bg_gradient">
+        android:layout_height="100dp"
+        android:background="@drawable/bg_gradient"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="35dp">
+
         <ImageButton
-            android:id="@+id/btnBack1"
+            android:id="@+id/btnBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:scaleType="fitCenter"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_back"
-            android:contentDescription="ย้อนกลับ" />
+            android:src="@drawable/ic_arrow_back_white"
+            android:tint="@android:color/white" />
 
         <TextView
-            android:id="@+id/titleText"
+            android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="สถิติรวมทั้งเทอม"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="รายงานสถิติรายเทอม"
             android:textColor="@android:color/white"
-            android:textSize="24sp"
+            android:textSize="22sp"
             android:textStyle="bold"
-            android:layout_centerInParent="true" />
+            />
     </RelativeLayout>
 
-    <!-- 🔸 ScrollView -->
     <ScrollView
+        android:id="@+id/scrollContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/headerLayout"
-        android:background="@android:color/white"
-        android:padding="16dp">
+        android:background="@drawable/bg_white_rounded_top"
+        android:elevation="6dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <!-- 🔸 กล่องสรุปผลรวมทั้งเทอม -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -67,7 +69,6 @@
                     android:textStyle="bold"
                     android:layout_marginBottom="12dp" />
 
-                <!-- แสดงเทอม/ปี (ตาม class) -->
                 <TextView
                     android:id="@+id/tvTerm"
                     android:layout_width="match_parent"
@@ -89,14 +90,12 @@
                     android:textSize="14sp"
                     android:layout_marginBottom="12dp" />
 
-                <!-- กล่องสรุป 3 ช่อง -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:weightSum="3">
 
-                    <!-- ตรงเวลา (เขียว) -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -126,7 +125,6 @@
                             android:layout_marginTop="4dp" />
                     </LinearLayout>
 
-                    <!-- มาสาย (เหลือง) -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -156,7 +154,6 @@
                             android:layout_marginTop="4dp" />
                     </LinearLayout>
 
-                    <!-- ขาด (แดง) -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -188,7 +185,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- 🔸 รายชื่อนักศึกษา -->
             <TextView
                 android:id="@+id/tvStudentCount"
                 android:layout_width="match_parent"
@@ -199,7 +195,6 @@
                 android:textStyle="bold"
                 android:layout_marginBottom="12dp" />
 
-            <!-- หัวตาราง -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -211,8 +206,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="5"
-                    android:text=""
-                    android:textColor="#000000" />
+                    android:text="ชื่อ นามสกุล"
+                    android:textColor="#000000"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -245,14 +241,12 @@
                     android:textSize="14sp" />
             </LinearLayout>
 
-            <!-- เส้นแบ่ง -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#9e9e9e"
                 android:layout_marginBottom="8dp" />
 
-            <!-- 🔹 รายชื่อนักศึกษา -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvStudents"
                 android:layout_width="match_parent"
