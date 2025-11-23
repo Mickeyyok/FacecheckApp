@@ -75,7 +75,7 @@ class HomeActivity : AppCompatActivity() {
         setupBottomNav()
     }
 
-    /** ดูว่ามี notification ที่ seen=false หรือไม่มี field seen ไหม */
+    /** ดูว่ามี notification ที่ sdeen=false หรือไม่มี field seen ไหม */
     private fun observeNotificationBadge() {
         val notifRef = FirebaseDatabase.getInstance()
             .getReference("notifications")
