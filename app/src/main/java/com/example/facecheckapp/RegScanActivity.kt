@@ -19,7 +19,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.storage.FirebaseStorage
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
@@ -44,18 +43,10 @@ class RegScanActivity : AppCompatActivity() {
     // embedding ใบหน้าล่าสุด (normalize แล้ว)
     private var lastEmbedding: FloatArray? = null
 
-    // bitmap ใบหน้าที่ crop แล้ว ใช้สำหรับอัปโหลดเป็นรูปโปรไฟล์
-    private var lastFaceBitmap: Bitmap? = null
-
-    // ข้อมูลผู้ใช้จากหน้าก่อนหน้า
-    private var firstName: String = ""
-    private var lastName: String = ""
-    private var studentId: String = ""
-
     private val auth = FirebaseAuth.getInstance()
     private var lastProcessTime = 0L
 
-    // background thread สำหรับงานกล้อง/AI
+    // ⭐ background thread สำหรับงานกล้อง/AI
     private lateinit var cameraExecutor: ExecutorService
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,11 +57,6 @@ class RegScanActivity : AppCompatActivity() {
         txtStatus = findViewById(R.id.faceStatusText)
         loading = findViewById(R.id.loadingBar)
         btnRegister = findViewById(R.id.btnRegister)
-
-        // รับข้อมูลจากหน้าสมัคร (ตั้ง key ให้ตรงกับหน้าที่เรียกใช้)
-        firstName = intent.getStringExtra("first_name") ?: ""
-        lastName = intent.getStringExtra("last_name") ?: ""
-        studentId = intent.getStringExtra("student_id") ?: ""
 
         faceNet = FaceNetModel(this)
         cameraExecutor = Executors.newSingleThreadExecutor()
@@ -87,9 +73,6 @@ class RegScanActivity : AppCompatActivity() {
         }
     }
 
-    // ----------------------------------------------------
-    // Permission กล้อง
-    // ----------------------------------------------------
     private fun requestPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
             != PackageManager.PERMISSION_GRANTED
@@ -117,9 +100,6 @@ class RegScanActivity : AppCompatActivity() {
         }
     }
 
-    // ----------------------------------------------------
-    // เริ่มกล้อง + Face Detection
-    // ----------------------------------------------------
     private fun startCamera() {
 
         val detectorOptions = FaceDetectorOptions.Builder()
@@ -138,7 +118,7 @@ class RegScanActivity : AppCompatActivity() {
                 .also { it.setSurfaceProvider(previewView.surfaceProvider) }
 
             val analysis = ImageAnalysis.Builder()
-                .setTargetResolution(Size(640, 480))
+                .setTargetResolution(Size(640, 480))                // ลดขนาดภาพ
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
                 .build()
@@ -180,7 +160,6 @@ class RegScanActivity : AppCompatActivity() {
             .addOnSuccessListener(cameraExecutor) { faces ->
                 if (faces.isEmpty()) {
                     lastEmbedding = null
-                    lastFaceBitmap = null
                     txtStatus.post { txtStatus.text = "ไม่พบใบหน้า" }
                     imageProxy.close()
                     return@addOnSuccessListener
@@ -194,15 +173,12 @@ class RegScanActivity : AppCompatActivity() {
                 val frameArea = bmp.width.toFloat() * bmp.height.toFloat()
                 if (faceArea / frameArea < 0.01f) {
                     lastEmbedding = null
-                    lastFaceBitmap = null
                     txtStatus.post { txtStatus.text = "เข้าใกล้กล้องอีกนิด" }
                     imageProxy.close()
                     return@addOnSuccessListener
                 }
 
                 val crop = cropFace(bmp, box)
-                lastFaceBitmap = crop   // ⭐ เก็บ Bitmap ใบหน้าไว้ใช้ตอนอัปโหลดรูป
-
                 val rawEmb = faceNet?.getEmbedding(crop)
                 if (rawEmb == null) {
                     lastEmbedding = null
@@ -216,76 +192,33 @@ class RegScanActivity : AppCompatActivity() {
             }
             .addOnFailureListener(cameraExecutor) {
                 lastEmbedding = null
-                lastFaceBitmap = null
                 imageProxy.close()
             }
     }
 
-    // ----------------------------------------------------
-    // บันทึกใบหน้า + ข้อมูลผู้ใช้ + รูปโปรไฟล์
-    // ----------------------------------------------------
     private fun saveFace(embedding: FloatArray) {
         val uid = auth.currentUser?.uid ?: run {
             Toast.makeText(this, "ยังไม่ได้ล็อกอิน", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val faceBitmap = lastFaceBitmap
-        if (faceBitmap == null) {
-            Toast.makeText(this, "ยังไม่มีรูปใบหน้าให้บันทึก", Toast.LENGTH_SHORT).show()
-            return
-        }
-
         loading.visibility = ProgressBar.VISIBLE
         txtStatus.text = "กำลังบันทึกใบหน้า..."
 
-        // 1) อัปโหลดรูปไป Firebase Storage: faces/<uid>.jpg
-        val storageRef = FirebaseStorage.getInstance()
-            .reference
-            .child("faces/$uid.jpg")
-
-        val baos = ByteArrayOutputStream()
-        faceBitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos)
-        val data = baos.toByteArray()
-
-        val uploadTask = storageRef.putBytes(data)
-
-        uploadTask
+        FirebaseDatabase.getInstance().reference
+            .child("users")
+            .child(uid)
+            .child("faceEmbedding")
+            .setValue(embedding.toList())
             .addOnSuccessListener {
-                // 2) ได้ URL รูป -> เซฟพร้อม embedding + ข้อมูลผู้ใช้
-                storageRef.downloadUrl.addOnSuccessListener { uri ->
-
-                    val imageUrl = uri.toString()
-
-                    val faceData = mapOf(
-                        "embedding" to embedding.toList(),
-                        "first_name" to firstName,
-                        "last_name" to lastName,
-                        "id" to studentId,
-                        "imageUrl" to imageUrl,
-                        "role" to "student"
-                    )
-
-                    FirebaseDatabase.getInstance().reference
-                        .child("users")
-                        .child(uid)
-                        .child("faceEmbedding")
-                        .setValue(faceData)
-                        .addOnSuccessListener {
-                            loading.visibility = ProgressBar.GONE
-                            Toast.makeText(this, "ลงทะเบียนใบหน้าสำเร็จ!", Toast.LENGTH_SHORT).show()
-                            startActivity(Intent(this, HomeActivity::class.java))
-                            finish()
-                        }
-                        .addOnFailureListener {
-                            loading.visibility = ProgressBar.GONE
-                            Toast.makeText(this, "บันทึกข้อมูลไม่สำเร็จ", Toast.LENGTH_SHORT).show()
-                        }
-                }
+                loading.visibility = ProgressBar.GONE
+                Toast.makeText(this, "ลงทะเบียนใบหน้าสำเร็จ!", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, HomeActivity::class.java))
+                finish()
             }
             .addOnFailureListener {
                 loading.visibility = ProgressBar.GONE
-                Toast.makeText(this, "อัปโหลดรูปไม่สำเร็จ", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "บันทึกไม่สำเร็จ", Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -364,16 +297,12 @@ class RegScanActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        try {
-            cameraProvider?.unbindAll()
-        } catch (_: Exception) {}
+        try { cameraProvider?.unbindAll() } catch (_: Exception) {}
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        try {
-            cameraProvider?.unbindAll()
-        } catch (_: Exception) {}
+        try { cameraProvider?.unbindAll() } catch (_: Exception) {}
         cameraExecutor.shutdown()
     }
 }
