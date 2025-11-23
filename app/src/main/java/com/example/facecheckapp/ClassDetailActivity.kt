@@ -95,7 +95,7 @@ class ClassDetailActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // แท็บ Report (ยังไม่เปิดใช้งาน)
+        // แท็บ Report
         tabReportDay.setOnClickListener {
             val intent = Intent(this, RealTimeActivity::class.java)
             intent.putExtra("classId", classId)
@@ -140,12 +140,12 @@ class ClassDetailActivity : AppCompatActivity() {
         }
     }
 
-    // 🌟🌟🌟 เพิ่ม onResume() เพื่อโหลดข้อมูลใหม่ทุกครั้งที่กลับมา 🌟🌟🌟
+    //  เพิ่ม onResume() เพื่อโหลดข้อมูลใหม่ทุกครั้งที่กลับมา
     override fun onResume() {
         super.onResume()
         loadClassData()
     }
-    // 🌟🌟🌟 --------------------------------------------- 🌟🌟🌟
+
 
 
     private fun loadClassData() {

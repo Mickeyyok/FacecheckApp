@@ -97,37 +97,95 @@ class CheckinSuccessActivity : AppCompatActivity() {
         status: String
     ) {
         val uid = auth.uid ?: return
-        val hisId = db.child("history").child(uid).push().key ?: return
-        val now = System.currentTimeMillis()
+        
+        // อ่าน year และ semester จาก class
+        db.child("classes").child(classId)
+            .addListenerForSingleValueEvent(object : com.google.firebase.database.ValueEventListener {
+                override fun onDataChange(snapshot: com.google.firebase.database.DataSnapshot) {
+                    // อ่าน year (พ.ศ.) และ semester จาก class
+                    val yearThaiStr = snapshot.child("year").getValue(String::class.java) ?: ""
+                    val semesterStr = snapshot.child("semester").getValue(String::class.java) ?: ""
+                    
+                    // แปลงปี พ.ศ. เป็น ค.ศ. (history เก็บเป็น ค.ศ.)
+                    val yearAd = if (yearThaiStr.isNotEmpty()) {
+                        val yearThaiInt = yearThaiStr.toIntOrNull() ?: 0
+                        if (yearThaiInt > 2500) yearThaiInt - 543 else yearThaiInt
+                    } else {
+                        Calendar.getInstance().get(Calendar.YEAR)
+                    }
+                    val yearAdStr = yearAd.toString()
+                    
+                    // ใช้ semester จาก class หรือ default เป็น "1"
+                    val semester = if (semesterStr.isNotEmpty()) semesterStr else "1"
+                    
+                    val hisId = db.child("history").child(uid).push().key ?: return
+                    val now = System.currentTimeMillis()
 
-        val data = mapOf(
-            "historyId" to hisId,
-            "classId" to classId,
-            "className" to className,
-            "subjectCode" to subjectCode,
-            "classRoom" to classRoom,
-            "dayTime" to dayTime,
-            "classTime" to classTime,
-            "checkinTime" to checkTime,
-            "status" to status,
-            "year" to "2025",
-            "semester" to "2",
-            "timestamp" to now
-        )
-
-        db.child("history").child(uid).child(hisId).setValue(data)
-            .addOnSuccessListener {
-                // ถ้า มาสาย หรือ ขาด → สร้าง notification
-                if (status == "มาสาย" || status == "ขาด") {
-                    createNotification(
-                        uid = uid,
-                        className = className,
-                        subjectCode = subjectCode,
-                        checkTime = checkTime,
-                        status = status
+                    val data = mapOf(
+                        "historyId" to hisId,
+                        "classId" to classId,
+                        "className" to className,
+                        "subjectCode" to subjectCode,
+                        "classRoom" to classRoom,
+                        "dayTime" to dayTime,
+                        "classTime" to classTime,
+                        "checkinTime" to checkTime,
+                        "status" to status,
+                        "year" to yearAdStr,
+                        "semester" to semester,
+                        "timestamp" to now
                     )
+
+                    db.child("history").child(uid).child(hisId).setValue(data)
+                        .addOnSuccessListener {
+                            // ถ้า มาสาย หรือ ขาด → สร้าง notification
+                            if (status == "มาสาย" || status == "ขาด") {
+                                createNotification(
+                                    uid = uid,
+                                    className = className,
+                                    subjectCode = subjectCode,
+                                    checkTime = checkTime,
+                                    status = status
+                                )
+                            }
+                        }
                 }
-            }
+
+                override fun onCancelled(error: com.google.firebase.database.DatabaseError) {
+                    // ถ้าโหลด class ไม่สำเร็จ ให้ใช้ค่า default
+                    val hisId = db.child("history").child(uid).push().key ?: return
+                    val now = System.currentTimeMillis()
+                    val yearAd = Calendar.getInstance().get(Calendar.YEAR)
+
+                    val data = mapOf(
+                        "historyId" to hisId,
+                        "classId" to classId,
+                        "className" to className,
+                        "subjectCode" to subjectCode,
+                        "classRoom" to classRoom,
+                        "dayTime" to dayTime,
+                        "classTime" to classTime,
+                        "checkinTime" to checkTime,
+                        "status" to status,
+                        "year" to yearAd.toString(),
+                        "semester" to "1",
+                        "timestamp" to now
+                    )
+
+                    db.child("history").child(uid).child(hisId).setValue(data)
+                        .addOnSuccessListener {
+                            if (status == "มาสาย" || status == "ขาด") {
+                                createNotification(
+                                    uid = uid,
+                                    className = className,
+                                    subjectCode = subjectCode,
+                                    checkTime = checkTime,
+                                    status = status
+                                )
+                            }
+                        }
+                }
+            })
     }
 
     /** สร้างข้อมูลแจ้งเตือนใน /notifications/{uid}/{notifId} */

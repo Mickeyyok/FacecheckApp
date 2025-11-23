@@ -68,6 +68,8 @@
         <activity android:name=".LocationCheckActivity" />
         <activity android:name=".CheckinSuccessActivity" />
         <activity android:name=".NotificationActivity" />
+        <activity android:name=".RealTimeActivity" />
+        <activity android:name=".TermActivity" />
 
     </application>
 

@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    tools:context=".RealTimeActivity">
 
     <!-- 🔹 ส่วนหัว (Header) -->
     <RelativeLayout
@@ -28,7 +29,7 @@
             android:id="@+id/titleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="รายงานสถิติต่อวัน"
+            android:text="รายงานสถิติรายวัน"
             android:textColor="@android:color/white"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -55,7 +56,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp">
-
 
                 <TextView
                     android:id="@+id/labelDateTime"
@@ -92,46 +92,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="20 มกราคม 2568"
-                        android:textColor="@color/black"
-                        android:textStyle="bold"
-                        android:textSize="14sp" />
-                </LinearLayout>
-            </RelativeLayout>
-
-            <!-- 🔸 เลือกเทอม (Term Selector) -->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="เทอม/ปี"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:layout_centerVertical="true" />
-
-                <LinearLayout
-                    android:id="@+id/tvTermLayout"
-                    android:layout_width="200dp"
-                    android:layout_height="48dp"
-                    android:layout_alignParentEnd="true"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:background="@drawable/input_box"
-                    android:elevation="2dp"
-                    android:clickable="true"
-                    android:focusable="true">
-
-                    <TextView
-                        android:id="@+id/tvTerm"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="1 / 2568"
                         android:textColor="@color/black"
                         android:textStyle="bold"
                         android:textSize="14sp" />
@@ -226,21 +186,21 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:background="@drawable/star_box_red"
+                        android:elevation="2dp"
+                        android:gravity="center"
                         android:maxWidth="200dp"
                         android:orientation="vertical"
-                        android:background="@drawable/star_box_red"
-                        android:padding="16dp"
-                        android:elevation="2dp"
-                        android:gravity="center">
+                        android:padding="16dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
                             android:text="ขาด"
                             android:textColor="#F44336"
                             android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="8dp" />
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tvAbsentCount"
@@ -254,7 +214,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- 🔸 รายชื่อนักศึกษา (Student List) -->
+            <!-- 🔸 หัวข้อรายชื่อนักศึกษา -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -268,7 +228,6 @@
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     android:textStyle="bold" />
-
                 <TextView
                     android:id="@+id/tvStudentCount"
                     android:layout_width="wrap_content"
@@ -278,6 +237,7 @@
                     android:textSize="14sp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true" />
+
             </RelativeLayout>
 
             <!-- เส้นแบ่ง -->
@@ -287,228 +247,14 @@
                 android:background="#9e9e9e"
                 android:layout_marginBottom="12dp" />
 
-            <!-- 🔸 รายชื่อนักศึกษา (Student List Items) -->
-            <LinearLayout
-                android:id="@+id/studentListLayout"
+            <!-- 🔸 รายชื่อนักศึกษา (รายการจาก RecyclerView) -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvStudents"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/item_student_status" />
 
-                <!-- ตัวอย่างรายชื่อที่ 1 - มาสาย -->
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingVertical="20dp">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="ธนาดล แซ่ลิ้ม"
-                            android:textColor="@color/black"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="4dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="2310511101059"
-                            android:textColor="#007AFF"
-                            android:textSize="14sp" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="มาสาย"
-                        android:textColor="#FFC107"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true" />
-                </RelativeLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#9e9e9e" />
-
-                <!-- ตัวอย่างรายชื่อที่ 2 - มาสาย -->
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingVertical="20dp">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-
-                            android:textColor="@color/black"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="4dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-
-                            android:textColor="#007AFF"
-                            android:textSize="14sp" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true" />
-                </RelativeLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#9e9e9e" />
-
-                <!-- ตัวอย่างรายชื่อที่ 3 - ขาด -->
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingVertical="20dp">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-
-                            android:textColor="@color/black"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="4dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-
-                            android:textColor="#007AFF"
-                            android:textSize="14sp" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true" />
-                </RelativeLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#9e9e9e" />
-
-                <!-- ตัวอย่างรายชื่อที่ 4 - ตรงเวลา -->
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingVertical="20dp">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-
-                            android:textColor="@color/black"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="4dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-
-                            android:textColor="#007AFF"
-                            android:textSize="14sp" />
-
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true" />
-
-                </RelativeLayout>
-                <!-- ตัวอย่างรายชื่อที่ 1 - มาสาย -->
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingVertical="20dp">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-
-                            android:textColor="@color/black"
-                            android:textSize="16sp"
-                            android:layout_marginBottom="4dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-
-                            android:textColor="#007AFF"
-                            android:textSize="14sp" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true" />
-                </RelativeLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#9e9e9e" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#9e9e9e" />
-
-            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
