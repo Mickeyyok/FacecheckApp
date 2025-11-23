@@ -25,10 +25,14 @@ class PersonalActivityTeacher : AppCompatActivity() { // ⭐ เปลี่ย�
         tvName = findViewById(R.id.tvName)
         tvStudentId = findViewById(R.id.tvStudentId) // ⭐ หรือตาม ID ของ TextView ที่ใช้แสดง ID อาจารย์
 
+        val btnBack = findViewById<ImageButton>(R.id.btnBack)
+        btnBack.setOnClickListener {
+            finish()
+        }
+
         loadUserInfo()
         setupLogout()
 
-        /**setupBottomNav() */// ⭐ อาจจะต้องพิจารณา Bottom Nav ใหม่ถ้าเมนูอาจารย์ต่างจากนักศึกษา
     }
 
     /** ⭐ โหลดชื่อ + รหัสอาจารย์ จาก Firebase */
@@ -58,6 +62,7 @@ class PersonalActivityTeacher : AppCompatActivity() { // ⭐ เปลี่ย�
         }.addOnFailureListener {
             tvName.text = "โหลดข้อมูลไม่สำเร็จ"
             tvStudentId.text = "-"
+
         }
     }
 

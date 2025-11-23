@@ -25,6 +25,11 @@ class PersonalActivity : AppCompatActivity() {
         tvName = findViewById(R.id.tvName)
         tvStudentId = findViewById(R.id.tvStudentId)
 
+        val btnBack = findViewById<ImageButton>(R.id.btnBack)
+        btnBack.setOnClickListener {
+            finish()
+        }
+
         loadUserInfo()
         setupLogout()
         setupNotification()
