@@ -36,7 +36,7 @@ class PersonalActivity : AppCompatActivity() {
     }
 
 
-    /** ⭐ โหลดชื่อ + รหัสนักศึกษา จาก Firebase */
+    /** ⭐ โหลดชื่อ + รหัสนักศึกษา จาก Firebased */
     private fun loadUserInfo() {
         val uid = auth.uid ?: return
 
