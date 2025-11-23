@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:text="เลขทะเบียน"
             android:textColor="#007AFF"
-            android:textSize="14sp" />
+            android:textSize="12sp" />
     </LinearLayout>
 
     <TextView

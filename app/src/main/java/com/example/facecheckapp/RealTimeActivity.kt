@@ -86,7 +86,7 @@ class RealTimeActivity : AppCompatActivity() {
         usersLoaded = false  // Reset เพื่อให้โหลด users cache ใหม่
         studentAdapter.notifyDataSetChanged()
 
-        // โหลด semester + year จาก classes ก่อน แล้วค่อยโหลดสถิติ
+
         loadClassTermAndStats()
 
         // เปลี่ยนวันที่
@@ -97,9 +97,9 @@ class RealTimeActivity : AppCompatActivity() {
         btnBack.setOnClickListener { finish() }
     }
 
-    // ----------------------------------------------------
+
     // เลือกวันที่
-    // ----------------------------------------------------
+
     private fun showDatePicker() {
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
@@ -143,11 +143,11 @@ class RealTimeActivity : AppCompatActivity() {
     }
 
 
-    // ----------------------------------------------------
+
     // โหลด semester + year จาก classes/{classId}
     //   semester: "1" / "2"
     //   year: "2568" (ปี พ.ศ.)
-    // ----------------------------------------------------
+
     private fun loadClassTermAndStats() {
         val id = classId
         if (id.isNullOrEmpty()) {
@@ -194,9 +194,9 @@ class RealTimeActivity : AppCompatActivity() {
             })
     }
 
-    // ----------------------------------------------------
+
     // โหลด users ทั้งหมดเข้า cache
-    // ----------------------------------------------------
+
     private fun ensureUsersLoaded(onReady: () -> Unit) {
         if (usersLoaded) {
             onReady()
@@ -211,7 +211,7 @@ class RealTimeActivity : AppCompatActivity() {
                     for (userSnap in snapshot.children) {
                         val uid = userSnap.key ?: continue
 
-                        // อ่านข้อมูลจาก users/{uid}/... โดยตรง (ไม่ใช่ faceEmbedding)
+                        // อ่านข้อมูลจาก users/{uid}/... โดยตรง
                         val role = userSnap.child("role").getValue(String::class.java) ?: ""
                         if (role != "student") continue
 
@@ -240,10 +240,10 @@ class RealTimeActivity : AppCompatActivity() {
             })
     }
 
-    // ----------------------------------------------------
+
     // โหลดสถิติ + รายชื่อ
     //   history/{uid}/{historyId}
-    // ----------------------------------------------------
+
     private fun loadDailyStats() {
         // เวลาเริ่ม/จบของวันนั้น
         val startCal = Calendar.getInstance().apply {
@@ -433,13 +433,6 @@ class RealTimeActivity : AppCompatActivity() {
                             Toast.makeText(
                                 this@RealTimeActivity,
                                 "ไม่พบข้อมูล history ในระบบ",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        } else if (studentStatusList.isEmpty()) {
-                            Toast.makeText(
-                                this@RealTimeActivity,
-                                "ไม่พบข้อมูลที่ตรงกับเงื่อนไข\nกรอง: year=$yearAdStr, semester=$termStr, classId=$classId\n" +
-                                "กรองออก: date=$dateFiltered, year=$yearFiltered, semester=$semesterFiltered, classId=$classIdFiltered",
                                 Toast.LENGTH_LONG
                             ).show()
                         }
