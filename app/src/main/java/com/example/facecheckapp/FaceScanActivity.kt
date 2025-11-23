@@ -27,12 +27,15 @@ import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.math.*
+import android.widget.ImageView // ⭐ ต้อง Import ImageView ด้วย
 
 class FaceScanActivity : AppCompatActivity() {
 
     private lateinit var previewView: PreviewView
     private lateinit var txtStatus: TextView
     private lateinit var btnStartScan: Button
+    // ⭐ ประกาศตัวแปรสำหรับปุ่มย้อนกลับ
+    private lateinit var btnBack: ImageView
 
     private lateinit var faceNet: FaceNetModel
     private var registeredEmbed: FloatArray? = null
@@ -67,6 +70,8 @@ class FaceScanActivity : AppCompatActivity() {
         previewView = findViewById(R.id.previewView)
         txtStatus = findViewById(R.id.faceStatusText)
         btnStartScan = findViewById(R.id.btnStartScan)
+        // ⭐ ผูกตัวแปรเข้ากับ View ใน XML
+        btnBack = findViewById(R.id.btnBack)
 
         faceNet = FaceNetModel(this)
         cameraExecutor = Executors.newSingleThreadExecutor()
@@ -82,6 +87,11 @@ class FaceScanActivity : AppCompatActivity() {
         loadFaceEmbedding()
 
         btnStartScan.setOnClickListener { requestCamera() }
+
+        // ⭐ เพิ่ม Listener สำหรับปุ่มย้อนกลับ: ปิด Activity ปัจจุบัน (กลับไปหน้าเดิม)
+        btnBack.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
     }
 
     // -------------------------- LOAD DATA -----------------------------
