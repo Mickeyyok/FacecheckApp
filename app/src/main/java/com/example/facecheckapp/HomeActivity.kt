@@ -3,6 +3,7 @@ package com.example.facecheckapp
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -10,7 +11,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -24,12 +24,14 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var tvLate: TextView
     private lateinit var tvAbsent: TextView
 
+    private lateinit var badgeNotification: View
+
     private val uid = FirebaseAuth.getInstance().uid!!
     private lateinit var db: FirebaseDatabase
     private lateinit var userSubjectsRef: DatabaseReference
 
     private val PICK_SUBJECT = 2000
-    private var selectedClassId: String? = null  // เก็บวิชาปัจจุบัน
+    private var selectedClassId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,32 +45,59 @@ class HomeActivity : AppCompatActivity() {
         tvLate = findViewById(R.id.tvLate)
         tvAbsent = findViewById(R.id.tvAbsent)
 
+        val btnNotification = findViewById<ImageButton>(R.id.btnNotification)
+        badgeNotification = findViewById(R.id.badgeNotification)
+
         db = FirebaseDatabase.getInstance()
         userSubjectsRef = db.getReference("students").child(uid).child("subjects")
 
         loadSelectedSubject()
-        loadSummary()   // ⭐ โหลดสรุปการเข้าเรียน
+        loadSummary()
+        observeNotificationBadge()   // ⭐ ติดตาม noti
 
         btnAddSubject.setOnClickListener {
             startActivity(Intent(this, AddSubjectActivity::class.java))
         }
 
-        // คลิกเลือกวิชา
         tvSelectedSubject.setOnClickListener {
             val intent = Intent(this, SubjectListActivity::class.java)
             startActivityForResult(intent, PICK_SUBJECT)
         }
 
-        // ปุ่มเช็คชื่อ
         btnCheckin.setOnClickListener {
             openLocationCheck()
         }
-// ปุ่มกระดิ่งไปหน้า NotificationActivity
-        val btnNotification = findViewById<ImageButton>(R.id.btnNotification)
+
         btnNotification.setOnClickListener {
             startActivity(Intent(this, NotificationActivity::class.java))
         }
+
         setupBottomNav()
+    }
+
+    /** ดูว่ามี notification ที่ seen=false หรือไม่มี field seen ไหม */
+    private fun observeNotificationBadge() {
+        val notifRef = FirebaseDatabase.getInstance()
+            .getReference("notifications")
+            .child(uid)
+
+        notifRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var hasUnread = false
+
+                for (child in snapshot.children) {
+                    val seen = child.child("seen").getValue(Boolean::class.java) ?: false
+                    if (!seen) {
+                        hasUnread = true
+                        break
+                    }
+                }
+
+                badgeNotification.visibility = if (hasUnread) View.VISIBLE else View.GONE
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 
     /** Bottom Navigation */
@@ -115,7 +144,6 @@ class HomeActivity : AppCompatActivity() {
     }
 
     /** โหลดข้อมูลคลาส */
-    /** โหลดข้อมูลคลาส */
     private fun loadSubjectById(classId: String) {
 
         val ref = db.getReference("classes").child(classId)
@@ -132,34 +160,18 @@ class HomeActivity : AppCompatActivity() {
             val name = data.child("className").value?.toString().orEmpty()
             val room = data.child("classRoom").value?.toString().orEmpty()
 
-            // เวลาตามจริง
             val start = data.child("startTime").value?.toString().orEmpty()
             val end = data.child("endTime").value?.toString().orEmpty()
             val classTime = data.child("classTime").value?.toString().orEmpty()
-            val dayTime = data.child("dayTime").value?.toString().orEmpty()
 
-            // ✔ ประกอบเวลาตามรูปแบบที่ต้องการ
-            val timeText = when {
-                start.isNotEmpty() && end.isNotEmpty() -> "$start - $end น."
-                classTime.isNotEmpty() -> classTime
-                dayTime.isNotEmpty() -> dayTime
-                else -> "-"
-            }
-
-            // ✔ แสดงแบบใหม่ (เหมือน ClassAdapter)
             tvSelectedSubject.text =
-                "$code" +
-                        " $name\n" +
-                        "ห้องเรียน $room\n" +
-                        "$classTime"
+                "$code $name\nห้องเรียน $room\n$classTime"
 
-            // ตรวจสอบเวลาเรียนเพื่อเปิดปิดปุ่มเช็กชื่อ
             checkClassTime(start, end)
         }
     }
 
-
-    /** เช็คเวลาเรียน */
+    /** เช็คว่าอยู่ในช่วงเวลาเรียนไหม */
     private fun checkClassTime(start: String, end: String) {
 
         if (start.isEmpty() || end.isEmpty()) {
@@ -174,15 +186,9 @@ class HomeActivity : AppCompatActivity() {
         val endTime = sdf.parse(end)
 
         when {
-            now.before(startTime) -> {
-                disableCheckin("ยังไม่ถึงเวลาเรียน")
-            }
-            now.after(endTime) -> {
-                disableCheckin("หมดเวลาเช็คชื่อแล้ว")
-            }
-            else -> {
-                enableCheckin()
-            }
+            now.before(startTime) -> disableCheckin("ยังไม่ถึงเวลาเรียน")
+            now.after(endTime) -> disableCheckin("หมดเวลาเช็คชื่อแล้ว")
+            else -> enableCheckin()
         }
     }
 
@@ -229,20 +235,17 @@ class HomeActivity : AppCompatActivity() {
             }
     }
 
-    /** เมื่อผู้ใช้เลือกวิชาใหม่ */
     override fun onActivityResult(req: Int, result: Int, data: Intent?) {
         super.onActivityResult(req, result, data)
 
         if (req == PICK_SUBJECT && result == Activity.RESULT_OK && data != null) {
-
             val classId = data.getStringExtra("selectedClassId") ?: return
             selectedClassId = classId
-
             loadSubjectById(classId)
         }
     }
 
-    /** ⭐ โหลดสรุปการเข้าเรียนจาก Firebase */
+    /** โหลดสรุปการเข้าเรียนจาก Firebase */
     private fun loadSummary() {
 
         val historyRef = FirebaseDatabase.getInstance()
@@ -257,9 +260,7 @@ class HomeActivity : AppCompatActivity() {
                 var absent = 0
 
                 for (h in snapshot.children) {
-
                     val status = h.child("status").value.toString()
-
                     when (status) {
                         "ตรงเวลา" -> onTime++
                         "มาสาย" -> late++

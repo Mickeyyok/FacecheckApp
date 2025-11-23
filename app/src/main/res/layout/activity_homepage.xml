@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <!-- ส่วนหัว -->
+    <!-- 🔹 ส่วนหัว -->
     <RelativeLayout
         android:id="@+id/headerLayout"
         android:layout_width="match_parent"
@@ -23,6 +23,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="35dp" />
 
+        <!-- ปุ่มกระดิ่ง -->
         <ImageButton
             android:id="@+id/btnNotification"
             android:layout_width="30dp"
@@ -35,6 +36,19 @@
             android:src="@drawable/ic_notifications"
             android:background="@android:color/transparent"
             android:tint="@android:color/white" />
+
+        <!-- จุดแดงแจ้งเตือน -->
+        <View
+            android:id="@+id/badgeNotification"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_alignEnd="@id/btnNotification"
+            android:layout_alignTop="@id/btnNotification"
+            android:layout_marginEnd="2dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/bg_badge_red"
+            android:visibility="gone" />
+
     </RelativeLayout>
 
     <!-- เนื้อหา -->
