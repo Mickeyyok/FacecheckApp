@@ -3,6 +3,7 @@ package com.example.facecheckapp
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -45,8 +46,30 @@ class TeacherHomeActivity : AppCompatActivity() {
         btnCreateClass.setOnClickListener {
             startActivity(Intent(this, CreateClassActivity::class.java))
         }
+        setupBottomNav()
     }
 
+    /** Bottom Navigation - แก้ไข Intent ให้เป็นของอาจารย์ */
+    private fun setupBottomNav() {
+        val navHome = findViewById<LinearLayout>(R.id.navHome)
+        val navSetting = findViewById<LinearLayout>(R.id.navSetting)
+
+        // 1. หน้าหลัก (navHome)
+        navHome.setOnClickListener {
+            // ⭐ เปลี่ยนเป็น TeacherHomeActivity::class.java เพื่อให้วนกลับมาที่หน้านี้
+            startActivity(Intent(this, TeacherHomeActivity::class.java))
+            overridePendingTransition(0, 0)
+        }
+
+        // 2. ตั้งค่า (navSetting)
+        navSetting.setOnClickListener {
+            // ⭐ เปลี่ยนเป็น SettingActivityTeacher::class.java (สมมติว่าคุณมีคลาสนี้)
+            startActivity(Intent(this, SettingActivityTeacher::class.java))
+            overridePendingTransition(0, 0)
+        }
+    }
+
+    // ... (ฟังก์ชัน loadClasses(userId: String) ยังคงเดิม)
     private fun loadClasses(userId: String) {
         classesRef
             .orderByChild("createdBy")

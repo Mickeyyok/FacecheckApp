@@ -44,7 +44,7 @@
         android:layout_below="@id/headerLayout"
         android:paddingTop="16dp"
         android:paddingHorizontal="16dp"
-        android:layout_above="@id/bottomBar"
+        android:layout_above="@id/bottomBarTeacher"
         android:elevation="6dp">
 
         <!-- หัวข้อ “คลาสของฉัน” -->
@@ -69,8 +69,8 @@
     </LinearLayout>
 
     <include
-        android:id="@+id/bottomBar"
-        layout="@layout/bottom_navbar"
+        android:id="@+id/bottomBarTeacher"
+        layout="@layout/bottom_navbarteacher"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_alignParentBottom="true"/>
