@@ -19,12 +19,17 @@ class NotificationActivity : AppCompatActivity() {
     private val dbRef: DatabaseReference =
         FirebaseDatabase.getInstance().getReference("notifications").child(uid)
 
+    // ⭐ เก็บ query + listener ไว้เพื่อลบตอน onStop
+    private var notifQuery: Query? = null
+    private var notifListener: ValueEventListener? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_notification)
 
         container = findViewById(R.id.containerNotifications)
 
+        // ปุ่มย้อนกลับ
         findViewById<ImageView>(R.id.btnBack).setOnClickListener { finish() }
 
         setupBottomNav()
@@ -33,41 +38,69 @@ class NotificationActivity : AppCompatActivity() {
 
     /** ดึง notification จาก Firebase (เฉพาะ มาสาย / ขาด) */
     private fun loadNotifications() {
-        dbRef.orderByChild("createdAt")
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
 
-                    val list = mutableListOf<NotificationModel>()
-                    val toMarkSeen = mutableListOf<String>()
+        // ลบ listener เก่า (กันซ้อน)
+        notifQuery?.let { q ->
+            notifListener?.let { q.removeEventListener(it) }
+        }
 
-                    for (child in snapshot.children) {
-                        val model = child.getValue(NotificationModel::class.java)
-                        model?.id = child.key
+        notifQuery = dbRef.orderByChild("createdAt")
 
-                        if (model != null &&
-                            (model.status == "มาสาย" || model.status == "ขาด")
-                        ) {
-                            list.add(model)
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
 
-                            if (model.seen != true) {
-                                model.id?.let { toMarkSeen.add(it) }
-                            }
+                val list = mutableListOf<NotificationModel>()
+                val toMarkSeen = mutableListOf<String>()
+
+                for (child in snapshot.children) {
+                    val model = child.getValue(NotificationModel::class.java)
+                    model?.id = child.key
+
+                    // เอาเฉพาะ สถานะ "มาสาย" หรือ "ขาด"
+                    if (model != null &&
+                        (model.status == "มาสาย" || model.status == "ขาด")
+                    ) {
+                        list.add(model)
+
+                        // ถ้ายังไม่ seen → เก็บไว้ mark ทีหลัง
+                        if (model.seen != true) {
+                            model.id?.let { toMarkSeen.add(it) }
                         }
-                    }
-
-                    list.sortByDescending { it.createdAt ?: 0L }
-
-                    container.removeAllViews()
-                    list.forEach { addCard(it) }
-
-                    // mark ว่าอ่านแล้ว
-                    for (id in toMarkSeen) {
-                        dbRef.child(id).child("seen").setValue(true)
                     }
                 }
 
-                override fun onCancelled(error: DatabaseError) {}
-            })
+                // ใหม่สุดอยู่บน
+                list.sortByDescending { it.createdAt ?: 0L }
+
+                container.removeAllViews()
+                list.forEach { addCard(it) }
+
+                // mark ว่าอ่านแล้ว (เฉพาะที่เพิ่งโหลดมารอบนี้)
+                for (id in toMarkSeen) {
+                    dbRef.child(id).child("seen").setValue(true)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        }
+
+        notifListener = listener
+        notifQuery?.addValueEventListener(listener)
+    }
+
+    // ❗ ตรงนี้สำคัญ – ถ้า Activity ไม่ visible แล้ว ให้ถอด listener
+    override fun onStop() {
+        super.onStop()
+        notifQuery?.let { q ->
+            notifListener?.let { q.removeEventListener(it) }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        notifQuery?.let { q ->
+            notifListener?.let { q.removeEventListener(it) }
+        }
     }
 
     /** สร้าง card ทีละอันแล้วใส่เข้า LinearLayout */
@@ -85,34 +118,37 @@ class NotificationActivity : AppCompatActivity() {
             "มาสาย" -> {
                 iconCircle.background = ContextCompat.getDrawable(
                     this,
-                    R.drawable.bg_notify_late_circle
+                    R.drawable.bg_notify_late_circle   // วงกลมส้ม/เหลือง
                 )
 
                 tvTitle.text = "แจ้งเตือน: มาสาย"
 
-                val studentId = n.studentId ?: "-"
+                val subjectName = n.subjectName ?: "-"
                 val time = n.checkinTime ?: "-"
 
-                tvLine1.text = "[$studentId] มาสายในวันนี้"
+                tvLine1.text = "[$subjectName] มาสายในวันนี้"
                 tvLine2.text = "เวลา $time น. โปรดตรวจสอบสาเหตุ"
             }
 
             "ขาด" -> {
                 iconCircle.background = ContextCompat.getDrawable(
                     this,
-                    R.drawable.circle_red
+                    R.drawable.bg_notify_absent_circle               // วงกลมแดง
                 )
 
                 tvTitle.text = "แจ้งเตือน: ขาดเรียนวันนี้"
 
                 val studentId = n.studentId ?: "-"
-                val code = n.subjectCode ?: "-"
+                val subjectName = n.subjectName ?: "-"
 
-                tvLine1.text = "[$studentId] ขาดเรียนวิชา [$code]"
+                tvLine1.text = "[$studentId] ขาดเรียนวิชา [$subjectName]"
                 tvLine2.text = "ในวันนี้ หากมีเหตุจำเป็นโปรดแจ้งอาจารย์ผู้สอน"
             }
 
-            else -> return
+            else -> {
+                // สถานะอื่นไม่ต้องแสดง
+                return
+            }
         }
 
         container.addView(view)

@@ -2,10 +2,7 @@ package com.example.facecheckapp
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -57,9 +54,6 @@ class CheckinSuccessActivity : AppCompatActivity() {
 
         if (status == "มาสาย") {
             tvStatus.text = "มาสาย"
-            statusBox.setBackgroundResource(R.drawable.bg_late_orange_box)
-        } else if (status == "ขาด") {
-            tvStatus.text = "ขาด"
             statusBox.setBackgroundResource(R.drawable.bg_late_orange_box)
         } else {
             tvStatus.text = "ตรงเวลา"
@@ -205,13 +199,13 @@ class CheckinSuccessActivity : AppCompatActivity() {
 
                 val notif = NotificationModel(
                     id = notifId,
-                    status = status,
+                    status = status,              // "มาสาย" หรือ "ขาด"
                     subjectCode = subjectCode,
                     subjectName = className,
                     studentId = studentId,
                     checkinTime = checkTime,
                     createdAt = System.currentTimeMillis(),
-                    seen = false               // ⭐ ยังไม่อ่าน
+                    seen = false                  // ✅ ทุกอันใหม่ = ยังไม่อ่าน
                 )
 
                 notifRef.setValue(notif)
