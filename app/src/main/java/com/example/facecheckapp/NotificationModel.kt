@@ -7,6 +7,6 @@ data class NotificationModel(
     var subjectName: String? = null, // ชื่อวิชา
     var studentId: String? = null,   // รหัสนักศึกษา
     var checkinTime: String? = null, // เวลาเช็กชื่อ
-    var createdAt: Long? = null,     // ใช้ sort
-    var seen: Boolean? = null        // true = อ่านแล้ว, false/null = ยังไม่อ่าน
+    var createdAt: Long? = null,     // ใช้ sort ล่าสุดอยู่บน
+    var seen: Boolean? = false       // ✅ ยังไม่อ่าน = false, อ่านแล้ว = true
 )
