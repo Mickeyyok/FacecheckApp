@@ -9,31 +9,31 @@
     <!-- HEADER -->
     <RelativeLayout
         android:id="@+id/header"
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:background="@drawable/bg_gradient"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        android:background="@drawable/bg_gradient">
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="สแกนใบหน้า"
-            android:textSize="22sp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="22dp"/>
+        <!-- ปุ่มย้อนกลับ -->
         <ImageView
             android:id="@+id/btnBack"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="38dp"
             android:src="@drawable/ic_arrow_back_white"
             android:tint="@android:color/white" />
+
+
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="สเเกนใบหน้า"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="35dp" />
     </RelativeLayout>
 
 
